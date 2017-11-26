@@ -1,0 +1,47 @@
+@CHARSET "ISO-8859-1";
+
+@external .*;
+
+@def nav_height 46px;
+
+nav {
+	height: nav_height;
+	line-height: nav_height;
+}
+
+nav .button-collapse {
+	height: nav_height;
+}
+
+.aqcard.horizontal.card-image img, .aqcard.horizontal.card {
+	height: initial !important;
+	min-height: 120px;
+}
+
+.aqcard {
+/* 	position: relative; */
+}
+
+.aqcard .card-image {
+	width: 120px  !important;
+} 
+
+.aqcard .card-content {
+	width: initial !important; 
+	float: none; 
+	overflow: hidden;
+	padding: 5px 20px 0px 20px;
+} 
+
+.aqcard .card-content .card-title {
+	line-height: 1.2;
+}
+
+.aqcard .card-action {
+	padding: 5px 20px 5px 20px;
+/* 	position: absolute; */
+/* 	right: 0; */
+/* 	bottom: 0; */
+/* 	float: none;  */
+/* 	overflow: hidden; */
+} 

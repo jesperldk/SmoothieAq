@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  When updating your version of GWT, you should also update this DTD reference,
+  so that your app can take advantage of the latest GWT module capabilities.
+-->
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.8.0//EN"
+  "http://gwtproject.org/doctype/2.8.0/gwt-module.dtd">
+<module rename-to='smoothieaq'>
+	<inherits name='com.google.gwt.user.User'/>
+	<set-configuration-property name="CssResource.enableGss" value="true"/>
+	
+	<inherits name="com.google.gwt.logging.Logging"/>
+<!--   <set-property name="gwt.logging.logLevel" value="SEVERE"/> -->
+
+	<inherits name='com.google.gwt.i18n.I18N'/>
+	<extend-property name='locale' values='en, da'/>
+<!-- 	<set-property-fallback name="locale" value="en"/> -->
+
+	<inherits name='com.intendia.gwt.autorest.AutoRest'/>
+	
+	<inherits name="gwt.material.design.GwtMaterialWithJQueryDebug"/>
+	<inherits name="gwt.material.design.themes.ThemeOrange"/>
+	<inherits name="gwt.material.design.addins.GwtMaterialAddinsDebug"/>
+	<inherits name="gwt.material.design.GwtMaterialTableDebug"/>
+
+	<inherits name="org.moxieapps.gwt.highcharts.Highcharts"/>
+
+	<entry-point class='jesperl.dk.smoothieaq.client.SmoothieAq'/>
+  
+	<source path='client'/>
+	<source path='shared'/>
+
+	<!-- allow Super Dev Mode -->
+	<add-linker name="xsiframe"/>
+</module>

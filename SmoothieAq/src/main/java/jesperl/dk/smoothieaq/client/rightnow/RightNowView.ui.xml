@@ -1,0 +1,10 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:m="urn:import:gwt.material.design.client.ui">
+
+<!--     <ui:with field="res" type="jl.dk.client.resources.AppResources"/> -->
+
+            <m:MaterialPanel ui:field="panel" textAlign="CENTER">
+                <m:MaterialLabel text="Right now..." textColor="ORANGE" fontSize="2em"/>
+            </m:MaterialPanel>
+</ui:UiBinder>

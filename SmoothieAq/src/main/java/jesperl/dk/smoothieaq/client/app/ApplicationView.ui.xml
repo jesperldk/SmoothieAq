@@ -1,0 +1,32 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:m="urn:import:gwt.material.design.client.ui">
+
+    <ui:with field="msg" type="jesperl.dk.smoothieaq.client.app.AppMessages"/>
+
+    <m:MaterialPanel>
+        <m:MaterialHeader>
+            <m:MaterialNavBar activates="sidenav">
+                <m:MaterialNavBrand paddingLeft="60" text="Smoothie Aq" />
+<!--                 <m:MaterialNavSection float="RIGHT" hideOn="NONE"> -->
+<!--                     <m:MaterialLink text="Link 1" hideOn="HIDE_ON_SMALL_DOWN"/> -->
+<!--                     <m:MaterialLink iconType="POLYMER"/> -->
+<!--                 </m:MaterialNavSection> -->
+            </m:MaterialNavBar>
+            <m:MaterialSideNav ui:field="sidenav" m:id="sidenav" type="PUSH" width="280" alwaysShowActivator="true" showOnAttach="true">
+<!--                 <m:MaterialLink ui:field="menuRightnow" text="{msg.menuRightnow}" iconType="POLYMER"/> -->
+<!--                 <m:MaterialLink text="Link 2" iconType="POLYMER"/> -->
+<!--                 <m:MaterialLink text="Link 3" iconType="POLYMER"/> -->
+            </m:MaterialSideNav>
+        </m:MaterialHeader>
+
+        <m:MaterialContainer ui:field="main">
+            <m:MaterialPanel textAlign="CENTER">
+<!--                 <m:MaterialIcon marginTop="120" textColor="BLUE_DARKEN_1" iconType="POLYMER" iconSize="LARGE"/> -->
+<!--                 <m:MaterialLabel text="GMD 2.0" textColor="BLUE" fontSize="2em"/> -->
+                <m:MaterialLabel text="Welcome" textColor="ORANGE" fontSize="1em"/>
+            </m:MaterialPanel>
+        </m:MaterialContainer>
+
+    </m:MaterialPanel> 
+</ui:UiBinder>
