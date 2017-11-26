@@ -2,8 +2,8 @@ package jesperl.dk.smoothieaq.server.driver;
 
 import static javax.xml.bind.DatatypeConverter.*;
 import static jesperl.dk.smoothieaq.server.access.abstracts.DeviceAccessUtils.*;
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
 import java.io.*;
 
@@ -12,7 +12,7 @@ import jesperl.dk.smoothieaq.server.access.classes.*;
 /**
   * http://www.analog.com/media/en/technical-documentation/data-sheets/AD7792_7793.pdf
  */
-public class AD7793AdcUtil {
+public class  AD7793AdcUtil {
 	
 	/*AD7793 Registers*/
 	public static final byte regComm		= 0; /* Communications Register(WO, 8-bit) */

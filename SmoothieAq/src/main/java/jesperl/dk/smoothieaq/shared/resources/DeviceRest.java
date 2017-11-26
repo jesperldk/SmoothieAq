@@ -5,7 +5,7 @@ import javax.ws.rs.core.*;
 
 import com.intendia.gwt.autorest.client.*;
 
-import jesperl.dk.smoothieaq.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 import jsinterop.annotations.*;
@@ -14,7 +14,7 @@ import rx.*;
 @AutoRestGwt @Path("device") @Produces(MediaType.APPLICATION_JSON) @Consumes(MediaType.APPLICATION_JSON)
 public interface DeviceRest { 
 
-	@GET Single<Device> get(@QueryParam("id") int deviceId);
+	@GET Single<Device> get(@QueryParam("id") int deviceId);  
 	@PUT Single<DeviceCompactView> create(Device device);
 	@POST Single<DeviceCompactView> update(Device device);
 	
@@ -30,20 +30,20 @@ public interface DeviceRest {
 	@GET @Path("drivers") Observable<DriverView> drivers();
 	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-	public static class LegalStatusChanges {
+	public static class  LegalStatusChanges {
 		public DeviceStatusChange[] legalChanges;
 	}
 	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-	public static class DeviceView {
+	public static class  DeviceView {
 		public Device device;
 		public DeviceStatusType statusType;
 //		public boolean on;
-		public Task[] tasks;
+		public Task[] tasks; 
 	}
 	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-	public class DeviceCompactView {
+	public class  DeviceCompactView {
 		public short deviceId;
 		public DeviceType deviceClass;
 		public DeviceClass deviceType;
@@ -54,7 +54,7 @@ public interface DeviceRest {
 	}
 	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-	public class DriverView {
+	public class  DriverView {
 		public short driverId;
 		public DeviceClass deviceClass;
 		public Message name;

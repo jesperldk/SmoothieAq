@@ -2,7 +2,7 @@ package doit;
 
 
 
-import static jesperl.dk.smoothieaq.server.util.Utils.*;
+import static jesperl.dk.smoothieaq.util.server.Utils.*;
 
 import com.fazecast.jSerialComm.*;
 
@@ -10,7 +10,7 @@ import jesperl.dk.smoothieaq.server.access.*;
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.driver.*;
 
-public class Do2 {
+public class  Do2 {
 
 	public static void main(String[] args) throws Exception {
 		

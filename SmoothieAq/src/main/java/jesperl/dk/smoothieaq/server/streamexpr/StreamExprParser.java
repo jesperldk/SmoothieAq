@@ -1,16 +1,16 @@
 package jesperl.dk.smoothieaq.server.streamexpr;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
 import java.util.*;
 
 import jesperl.dk.smoothieaq.server.device.*;
 import jesperl.dk.smoothieaq.server.streamexpr.node.*;
-import jesperl.dk.smoothieaq.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 
-public class StreamExprParser {
+public class  StreamExprParser {
 	
 	public static final String spaceing = " \t";
 	public static final String delims = spaceing+",->()";

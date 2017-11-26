@@ -5,7 +5,7 @@ import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 
-public class DummyInstrument extends AbstractInstrumentX {
+public class  DummyInstrument extends AbstractInstrumentX {
 
 	public DummyInstrument() {
 		super("Dummy Instrument", MeasurementType.temperature, 0.1);

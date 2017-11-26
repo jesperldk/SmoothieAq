@@ -10,7 +10,7 @@ import jesperl.dk.smoothieaq.shared.model.measure.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class ValueTaskArg extends TaskArg { 
+public class  ValueTaskArg extends TaskArg { 
 	
 	public MeasurementType measurementType;
 	public float value;
@@ -26,7 +26,7 @@ public class ValueTaskArg extends TaskArg {
 		valueTaskArg.measurementType = measurementType;
 		valueTaskArg.value = value;
 		valueTaskArg.unit = unit;
-		valueTaskArg.substance = substance;
+		valueTaskArg.substance = substance; 
 		return valueTaskArg;
 	}
 

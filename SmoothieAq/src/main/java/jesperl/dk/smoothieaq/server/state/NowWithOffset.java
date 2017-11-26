@@ -5,7 +5,7 @@ import java.time.temporal.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
-public class NowWithOffset {
+public class  NowWithOffset {
 
 	private AtomicReference<Clock> clockRef = new AtomicReference<Clock>(Clock.systemDefaultZone());
 	private boolean timeIsFlying = false;

@@ -30,13 +30,13 @@ public interface TaskRest {
 	@GET @Path("validatestreamexpr") Single<String> validateStreamExpr(String streamExpr);
 
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-	public static class TaskView {
+	public static class  TaskView {
 		public Task task;
 		public TaskScheduleView scheduleView;
 	}
 	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-	public static class TaskScheduleView {
+	public static class  TaskScheduleView {
 		public short taskId;
 		public TaskStatusType statusType;
 		public long lastStart;

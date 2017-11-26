@@ -1,6 +1,6 @@
 package jesperl.dk.smoothieaq.server.driver;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
 
 import java.util.*;
 
@@ -8,13 +8,13 @@ import jesperl.dk.smoothieaq.server.access.*;
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.driver.abstracts.*;
 import jesperl.dk.smoothieaq.server.driver.classes.*;
-import jesperl.dk.smoothieaq.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
 import sun.reflect.generics.reflectiveObjects.*;
 
-public class SaqOnoffDriver extends AbstractOnoffDriver<AbstractOnoffDriver.Storage,SaqDeviceAccess> implements StatusDriver {
+public class  SaqOnoffDriver extends AbstractOnoffDriver<AbstractOnoffDriver.Storage,SaqDeviceAccess> implements StatusDriver {
 
 	@Override public void init(DeviceAccessContext context, String urlString, float[] calibration) {
-		init(context, urlString, SaqDeviceAccess.class, SaqOnoffDriver.class, () -> new Storage(), calibration);
+		init(context, urlString, SaqDeviceAccess.class , SaqOnoffDriver.class , () -> new Storage(), calibration);
 	}
 	
 	@Override public Message name() { return msg(20301,"Generic Saq ON/OFF device"); }

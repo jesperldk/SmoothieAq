@@ -7,10 +7,10 @@ import java.util.logging.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
 import jesperl.dk.smoothieaq.server.driver.classes.*;
 
-public abstract class AbstractToggleDriver<S extends AbstractToggleDriver.Storage, D extends DeviceAccess> extends AbstractSensorDriver<S,D> implements ToggleDriver {
-	private final static Logger log = Logger.getLogger(AbstractToggleDriver.class.getName());
+public abstract class  AbstractToggleDriver<S extends AbstractToggleDriver.Storage, D extends DeviceAccess> extends AbstractSensorDriver<S,D> implements ToggleDriver {
+	private final static Logger log = Logger.getLogger(AbstractToggleDriver.class .getName());
 	
-	public static class Storage extends AbstractSensorDriver.Storage {
+	public static class  Storage extends AbstractSensorDriver.Storage {
 		public Map<Object, Consumer<Boolean>> onListeners = new HashMap<>();
 	}
 

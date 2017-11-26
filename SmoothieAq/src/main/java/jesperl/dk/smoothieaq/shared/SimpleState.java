@@ -2,7 +2,7 @@ package jesperl.dk.smoothieaq.shared;
 
 import java.util.*;
 
-public class SimpleState {
+public class  SimpleState {
 	protected static SimpleState state;
 	static { if (state == null) state = new SimpleState(); }
 	

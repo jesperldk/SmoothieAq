@@ -11,7 +11,7 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class PointEqualToEnd extends SchedulePoint {
+public class  PointEqualToEnd extends SchedulePoint {
 	
 	public int equalToDeviceId;
 
@@ -26,7 +26,7 @@ public class PointEqualToEnd extends SchedulePoint {
 	public Instant next(TaskContext context) {
 		return null; // TODO the code below if from PointEqualTo - this is a litte different...
 //		Task task = context.getDeviceTask(equalToDeviceId);
-//		if (task == null) return null; // TASK no longer exists - TODO
+//		if (task == null) return null; // TASK no longer exists - TODO 
 //		TaskContext taskContext = context.taskContext(task.id);
 //		do {
 //			Pair<? extends Schedule, Interval> next = task.nextForTask(taskContext);

@@ -28,9 +28,9 @@ import com.google.gwt.user.client.ui.*;
 import gwt.material.design.client.ui.*;
 import jesperl.dk.smoothieaq.client.*;
 
-public class RightNowView  extends Composite {
+public class  RightNowView  extends Composite {
     interface Binder extends UiBinder<Widget, RightNowView> {}
-	private static Binder binder = GWT.create(Binder.class);
+	private static Binder binder = GWT.create(Binder.class );
 	
 	@UiField
 	MaterialPanel panel;

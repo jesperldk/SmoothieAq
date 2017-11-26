@@ -1,10 +1,10 @@
 package jesperl.dk.smoothieaq.server.driver.test;
 
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import jesperl.dk.smoothieaq.server.driver.abstracts.*;
 
-public class TestInterpolator {
+public class  TestInterpolator {
 
 	public static void main(String[] args) {
 		SplineInterpolator si = SplineInterpolator.createMonotoneCubicSpline(list(15.0f,20.0f,25.0f,30.0f,35.0f), list(3.998070105f,4.000628691f,4.004823328f,4.010654014f,4.018120751f));

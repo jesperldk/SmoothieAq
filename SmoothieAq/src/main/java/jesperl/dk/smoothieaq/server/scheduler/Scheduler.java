@@ -8,12 +8,12 @@ import java.util.logging.*;
 
 import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.shared.model.schedule.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 
-public class Scheduler implements Runnable {
-	private final static Logger log = Logger.getLogger(Scheduler.class.getName());
+public class  Scheduler implements Runnable {
+	private final static Logger log = Logger.getLogger(Scheduler.class .getName());
 	
-	public static class Scheduled implements Comparable<Scheduled> {
+	public static class  Scheduled implements Comparable<Scheduled> {
 		public final Instant at;
 		public final ITask task;
 		public final boolean forStart;

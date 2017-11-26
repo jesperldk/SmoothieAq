@@ -1,7 +1,7 @@
 package jesperl.dk.smoothieaq.server.driver;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -10,12 +10,12 @@ import jesperl.dk.smoothieaq.server.access.*;
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
 import jesperl.dk.smoothieaq.server.driver.abstracts.*;
-import jesperl.dk.smoothieaq.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
 
-public class GpioToggleDriver extends AbstractToggleDriver<AbstractToggleDriver.Storage,GpioDeviceAccess> {
+public class  GpioToggleDriver extends AbstractToggleDriver<AbstractToggleDriver.Storage,GpioDeviceAccess> {
 
 	@Override public void init(DeviceAccessContext context, String urlString, float[] calibration) {
-		init(context, urlString, GpioDeviceAccess.class, GpioToggleDriver.class, () -> new Storage(), calibration);
+		init(context, urlString, GpioDeviceAccess.class , GpioToggleDriver.class , () -> new Storage(), calibration);
 	}
 	
 	@Override public Message name() { return msg(20411,"Generic GPIO switch device"); }

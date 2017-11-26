@@ -1,8 +1,8 @@
 package jesperl.dk.smoothieaq.server.streamexpr.node;
 
 import static jesperl.dk.smoothieaq.server.streamexpr.node.StreamFunc.*;
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
 import java.util.*;
 import java.util.function.Function;
@@ -13,7 +13,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.functions.*;
 
-public class StreamApply extends StreamNode {
+public class  StreamApply extends StreamNode {
 	public StreamFunc func;
 	public List<StreamNode> args = new ArrayList<>();
 	public int argsAfter;

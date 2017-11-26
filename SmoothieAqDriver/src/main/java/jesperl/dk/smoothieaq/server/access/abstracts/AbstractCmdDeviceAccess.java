@@ -1,21 +1,21 @@
 package jesperl.dk.smoothieaq.server.access.abstracts;
 
-import static jesperl.dk.smoothieaq.server.util.Utils.*;
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.server.Utils.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
 import java.util.*;
 import java.util.logging.*;
 
 import jesperl.dk.smoothieaq.server.access.classes.*;
-import jesperl.dk.smoothieaq.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
 
 
 /**
  * Implementation of a subset of http://playground.arduino.cc/Code/CmdMessenger
  */
-public abstract class AbstractCmdDeviceAccess extends WrapperDeviceAccess<ByteDeviceAccess> implements CmdDeviceAccess {
-	private final static Logger log = Logger.getLogger(AbstractCmdDeviceAccess.class.getName());
+public abstract class  AbstractCmdDeviceAccess extends WrapperDeviceAccess<ByteDeviceAccess> implements CmdDeviceAccess {
+	private final static Logger log = Logger.getLogger(AbstractCmdDeviceAccess.class .getName());
 
 	public int maxSimpleRetries = 3;
 	public int maxReopenRetries = 3;

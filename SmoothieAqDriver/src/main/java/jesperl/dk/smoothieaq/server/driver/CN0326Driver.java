@@ -2,9 +2,9 @@ package jesperl.dk.smoothieaq.server.driver;
 
 import static java.lang.Math.*;
 import static jesperl.dk.smoothieaq.server.driver.AD7793AdcUtil.*;
-import static jesperl.dk.smoothieaq.server.util.Utils.*;
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.server.Utils.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 
@@ -14,8 +14,8 @@ import jesperl.dk.smoothieaq.server.access.*;
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
 import jesperl.dk.smoothieaq.server.driver.abstracts.*;
-import jesperl.dk.smoothieaq.shared.error.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 
 /**
  * Read about the CN0326 at 
@@ -29,18 +29,18 @@ import jesperl.dk.smoothieaq.shared.util.*;
  * @author jesper
  *
  */
-public abstract class CN0326Driver extends AbstractPhSensorDriver<CN0326Driver.Storage,ByteDeviceAccess> {
+public abstract class  CN0326Driver extends AbstractPhSensorDriver<CN0326Driver.Storage,ByteDeviceAccess> {
 	
 	public float resistorValue = 5000.0f;
 	public float ohmPerDegree = 3.85f;
 	
-	public static class Storage extends AbstractPhSensorDriver.Storage {
+	public static class  Storage extends AbstractPhSensorDriver.Storage {
 		public float extVrefVolt;
 		public float tempVolt;
 	}
 
 	@Override public void init(DeviceAccessContext context, String urlString, float[] calibration) {
-		init(context, urlString, ByteDeviceAccess.class, CN0326Driver.class, () -> new Storage(), calibration);
+		init(context, urlString, ByteDeviceAccess.class , CN0326Driver.class , () -> new Storage(), calibration);
 		useDeviceAccess(da -> init(da));
 	}
 	@Override public Message description() { return msg(20201,

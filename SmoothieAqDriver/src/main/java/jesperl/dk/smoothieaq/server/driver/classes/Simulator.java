@@ -4,7 +4,7 @@ import static java.lang.Math.*;
 
 import java.util.function.*;
 
-public class Simulator implements Supplier<Float> {
+public class  Simulator implements Supplier<Float> {
 	public float defaultValue;
 	public float variation;
 	public float drift;

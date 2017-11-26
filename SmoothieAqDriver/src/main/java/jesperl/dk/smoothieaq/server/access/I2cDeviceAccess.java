@@ -1,9 +1,9 @@
 package jesperl.dk.smoothieaq.server.access;
 
 import static javax.xml.bind.DatatypeConverter.*;
-import static jesperl.dk.smoothieaq.server.util.Utils.*;
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.server.Utils.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
 import java.io.*;
 import java.util.*;
@@ -15,10 +15,10 @@ import com.pi4j.io.i2c.I2CFactory.*;
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
 
-public class I2cDeviceAccess extends AbstractDeviceAccess implements ByteDeviceAccess {
-	private final static Logger log = Logger.getLogger(I2cDeviceAccess.class.getName());
+public class  I2cDeviceAccess extends AbstractDeviceAccess implements ByteDeviceAccess {
+	private final static Logger log = Logger.getLogger(I2cDeviceAccess.class .getName());
 	
-	public static String bus = bus(I2cDeviceAccess.class);
+	public static String bus = bus(I2cDeviceAccess.class );
 	
 	public int sleepAfterFlushMillis = 100;
 

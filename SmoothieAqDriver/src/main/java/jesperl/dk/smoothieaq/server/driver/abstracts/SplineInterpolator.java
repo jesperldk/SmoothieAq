@@ -21,7 +21,7 @@ import java.util.*;
  * Performs spline interpolation given a set of control points.
  * From: https://gist.github.com/lecho/7627739
  */
-public class SplineInterpolator {
+public class  SplineInterpolator {
 
 
 	private final List<Float> mX;

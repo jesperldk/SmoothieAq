@@ -2,6 +2,6 @@ eclipse.preferences.version=1
 gwtMavenModuleName=jesperl.dk.smoothieaq.SmoothieAq
 gwtMavenModuleShortName=SmoothieAq
 jarsExcludedFromWebInfLib=
-lastWarOutDir=D\:/eclipse-ws/test-ws/SmoothieAq/target/SmoothieAq-1.0-SNAPSHOT
+lastWarOutDir=E\:/git/SmoothieAq/SmoothieAq/target/SmoothieAq-1.0-SNAPSHOT
 warSrcDir=src/main/webapp
 warSrcDirIsOutput=false

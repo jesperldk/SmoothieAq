@@ -32,7 +32,7 @@ import jesperl.dk.smoothieaq.client.devices.img.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
 
-public class DevicesView extends MaterialRow {
+public class  DevicesView extends MaterialRow {
 
 	@Override
 	protected void onLoad() {

@@ -1,6 +1,6 @@
-package jesperl.dk.smoothieaq.shared.util;
+package jesperl.dk.smoothieaq.util.shared;
 
-public class Triple<S,T,U> {
+public class  Triple<S,T,U> {
 	public final S a;
 	public final T b;
 	public final U c;

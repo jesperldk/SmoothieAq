@@ -9,7 +9,7 @@ import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 import jesperl.dk.smoothieaq.shared.resources.*;
 
-public class StreamExprTest extends Test {
+public class  StreamExprTest extends Test {
 
 	public static void main(String[] args) throws Exception {
 		state.dContext.init();

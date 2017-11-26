@@ -1,6 +1,6 @@
 package jesperl.dk.smoothieaq.server;
 
-public class TestRx extends Test {
+public class  TestRx extends Test {
 
 	public static void main(String[] args) throws InterruptedException {
 //		Flowable.fromCallable(() -> {

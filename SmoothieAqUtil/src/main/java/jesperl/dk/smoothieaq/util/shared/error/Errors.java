@@ -1,14 +1,14 @@
-package jesperl.dk.smoothieaq.shared.error;
+package jesperl.dk.smoothieaq.util.shared.error;
 
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
 import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 
-public abstract class Errors {
-	private final static Logger log = Logger.getLogger(Errors.class.getName());
+public abstract class  Errors {
+	private final static Logger log = Logger.getLogger(Errors.class .getName());
 
 	public interface Doit { void doit() throws Exception; }
 	public interface Supplyit<T> { T doit() throws Exception; }

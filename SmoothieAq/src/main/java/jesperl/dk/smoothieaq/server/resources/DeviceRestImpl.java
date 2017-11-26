@@ -1,6 +1,6 @@
 package jesperl.dk.smoothieaq.server.resources;
 
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import jesperl.dk.smoothieaq.server.device.classes.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
@@ -8,7 +8,7 @@ import jesperl.dk.smoothieaq.shared.model.task.*;
 import jesperl.dk.smoothieaq.shared.resources.*;
 import rx.*;
 
-public class DeviceRestImpl extends RestImpl implements DeviceRest {
+public class  DeviceRestImpl extends RestImpl implements DeviceRest {
 	
 	@Override public Single<Device> get(int id) { 
 		return Single.just(idev(id).model().getDevice()); 

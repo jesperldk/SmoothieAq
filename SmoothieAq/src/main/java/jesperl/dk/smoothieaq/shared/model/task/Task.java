@@ -1,6 +1,6 @@
 package jesperl.dk.smoothieaq.shared.model.task;
 
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.nio.*;
 
@@ -10,14 +10,14 @@ import jesperl.dk.smoothieaq.server.db.*;
 import jesperl.dk.smoothieaq.server.scheduler.*;
 import jesperl.dk.smoothieaq.shared.model.db.*;
 import jesperl.dk.smoothieaq.shared.model.schedule.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class Task extends DbWithId {
+public class  Task extends DbWithId {
 
 	public short deviceId;
-	public TaskType taskType;
+	public TaskType taskType; 
 	public TaskArg taskArg;
 	public Schedule schedule;
 	public String whenStream;

@@ -1,4 +1,4 @@
-package jesperl.dk.smoothieaq.shared.util;
+package jesperl.dk.smoothieaq.util.shared;
 
 public enum BaseType {
 	notype(0),

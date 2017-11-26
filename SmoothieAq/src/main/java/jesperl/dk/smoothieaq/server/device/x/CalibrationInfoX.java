@@ -1,6 +1,6 @@
 package jesperl.dk.smoothieaq.server.device.x;
 
-public class CalibrationInfoX {
+public class  CalibrationInfoX {
 
 	// TOD
 }

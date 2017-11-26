@@ -1,10 +1,10 @@
 package jesperl.dk.smoothieaq.server.device;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceStatusChange.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceStatusType.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -15,18 +15,18 @@ import jesperl.dk.smoothieaq.server.driver.classes.*;
 import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.server.task.*;
 import jesperl.dk.smoothieaq.server.task.classes.*;
-import jesperl.dk.smoothieaq.shared.error.Error;
+import jesperl.dk.smoothieaq.util.shared.error.Error;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 import rx.*;
 import rx.Observable;
 import rx.Observer;
 import rx.subjects.*;
 
-public abstract class WDevice<DRIVER extends Driver> extends IdableType implements IDevice {
-	private final static Logger log = Logger.getLogger(WDevice.class.getName());
+public abstract class  WDevice<DRIVER extends Driver> extends IdableType implements IDevice {
+	private final static Logger log = Logger.getLogger(WDevice.class .getName());
 	
 	protected Device device;
 	protected DeviceCalibration calibration;
@@ -189,7 +189,7 @@ public abstract class WDevice<DRIVER extends Driver> extends IdableType implemen
 	}
 
 	protected EnumSet<DeviceStatusChange> internalLegalCommands() {
-		EnumSet<DeviceStatusChange> types = EnumSet.noneOf(DeviceStatusChange.class);
+		EnumSet<DeviceStatusChange> types = EnumSet.noneOf(DeviceStatusChange.class );
 		DeviceStatusType statusType = status.statusType;
 		
 		if (statusType == deleted) return types;

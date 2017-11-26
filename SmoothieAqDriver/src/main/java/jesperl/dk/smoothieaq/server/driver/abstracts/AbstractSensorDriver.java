@@ -1,21 +1,21 @@
 package jesperl.dk.smoothieaq.server.driver.abstracts;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 import java.util.function.*;
 
 import jesperl.dk.smoothieaq.server.access.classes.*;
 import jesperl.dk.smoothieaq.server.driver.classes.*;
-import jesperl.dk.smoothieaq.shared.error.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 
-public abstract class AbstractSensorDriver<S extends AbstractSensorDriver.Storage, D extends DeviceAccess> extends AbstractDriver<S,D> implements SensorDriver {
+public abstract class  AbstractSensorDriver<S extends AbstractSensorDriver.Storage, D extends DeviceAccess> extends AbstractDriver<S,D> implements SensorDriver {
 	
 	public static final long measureValidMillis = 3 * 1000;
 
-	public static class Storage extends AbstractDriver.Storage {
+	public static class  Storage extends AbstractDriver.Storage {
 		public long stamp = 0;
 		public Map<Class<?>, Consumer<Float>> listeners = new HashMap<>();
 	}

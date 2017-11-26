@@ -1,19 +1,19 @@
 package jesperl.dk.smoothieaq.server.access.abstracts;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
 import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 
 import jesperl.dk.smoothieaq.server.access.classes.*;
-import jesperl.dk.smoothieaq.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
 
-public abstract class AbstractDeviceAccess implements DeviceAccess {
-	private final static Logger log = Logger.getLogger(AbstractDeviceAccess.class.getName());
+public abstract class  AbstractDeviceAccess implements DeviceAccess {
+	private final static Logger log = Logger.getLogger(AbstractDeviceAccess.class .getName());
 	
-	public static String bus(Class<? extends DeviceAccess> cls) { return cls.getSimpleName().substring(0, cls.getSimpleName().length()-DeviceAccess.class.getSimpleName().length()).toLowerCase(); }
+	public static String bus(Class<? extends DeviceAccess> cls) { return cls.getSimpleName().substring(0, cls.getSimpleName().length()-DeviceAccess.class .getSimpleName().length()).toLowerCase(); }
 	
 	private DeviceAccessContext context;
 	private int count = 0;

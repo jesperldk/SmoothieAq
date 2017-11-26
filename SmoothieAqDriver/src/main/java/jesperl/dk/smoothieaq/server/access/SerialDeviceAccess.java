@@ -1,10 +1,10 @@
 package jesperl.dk.smoothieaq.server.access;
 
 import static com.fazecast.jSerialComm.SerialPort.*;
-import static jesperl.dk.smoothieaq.server.util.Utils.*;
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.server.Utils.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 import java.util.logging.*;
@@ -13,12 +13,12 @@ import com.fazecast.jSerialComm.*;
 
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 
-public class SerialDeviceAccess extends AbstractDeviceAccess implements ByteDeviceAccess {
-	private final static Logger log = Logger.getLogger(SerialDeviceAccess.class.getName());
+public class  SerialDeviceAccess extends AbstractDeviceAccess implements ByteDeviceAccess {
+	private final static Logger log = Logger.getLogger(SerialDeviceAccess.class .getName());
 	
-	public static String bus = bus(SerialDeviceAccess.class);
+	public static String bus = bus(SerialDeviceAccess.class );
 
 	public long waitAfterOpenMillis = 200;
 	public int sleepAfterFlushMillis = 50;

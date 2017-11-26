@@ -10,7 +10,7 @@ import jesperl.dk.smoothieaq.shared.resources.*;
 import rx.*;
 import rx.Observable;
 
-public class TaskRestImpl extends RestImpl implements TaskRest {
+public class  TaskRestImpl extends RestImpl implements TaskRest {
 
 	protected ITask itask(int taskId) { return context().getTask(taskId); }
 

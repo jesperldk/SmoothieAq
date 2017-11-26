@@ -1,7 +1,7 @@
 package jesperl.dk.smoothieaq.server.driver;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 
@@ -9,12 +9,12 @@ import jesperl.dk.smoothieaq.server.access.*;
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.driver.abstracts.*;
 import jesperl.dk.smoothieaq.server.driver.classes.*;
-import jesperl.dk.smoothieaq.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
 
-public class SaqLevelDriver extends AbstractLevelDriver<AbstractOnoffDriver.Storage,SaqDeviceAccess> {
+public class  SaqLevelDriver extends AbstractLevelDriver<AbstractOnoffDriver.Storage,SaqDeviceAccess> {
 
 	@Override public void init(DeviceAccessContext context, String urlString, float[] calibration) {
-		init(context, urlString, SaqDeviceAccess.class, SaqLevelDriver.class, () -> new Storage(), calibration);
+		init(context, urlString, SaqDeviceAccess.class , SaqLevelDriver.class , () -> new Storage(), calibration);
 	}
 	
 	@Override public Message name() { return msg(20321,"Generic Saq level device"); }

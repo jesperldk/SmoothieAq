@@ -1,6 +1,6 @@
-package jesperl.dk.smoothieaq.shared.util;
+package jesperl.dk.smoothieaq.util.shared;
 
-public class Pair<S,T> {
+public class  Pair<S,T> {
 	public final S a;
 	public final T b;
 	public Pair(S a, T b) { this.a = a; this.b = b; }

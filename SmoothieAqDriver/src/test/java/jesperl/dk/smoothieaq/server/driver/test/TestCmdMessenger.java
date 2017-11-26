@@ -6,7 +6,7 @@ import java.io.*;
 import com.fazecast.jSerialComm.*;
 import com.pi4j.io.gpio.*;
 
-public class TestCmdMessenger {
+public class  TestCmdMessenger {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		

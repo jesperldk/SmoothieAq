@@ -1,10 +1,10 @@
-package jesperl.dk.smoothieaq.shared.util;
+package jesperl.dk.smoothieaq.util.shared;
 
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-public class Objects {
+public class  Objects {
 	
 	public static <T> T nnv(T valueOrNull, T defaultValue) { return notNullValue(valueOrNull, defaultValue); }
 	public static <T> T nnv(T valueOrNull, Supplier<T> supplier) { return notNullValue(valueOrNull, supplier); }

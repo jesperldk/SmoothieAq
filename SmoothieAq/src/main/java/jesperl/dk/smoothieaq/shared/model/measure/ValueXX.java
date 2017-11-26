@@ -5,7 +5,7 @@ import com.google.gwt.core.shared.*;
 import jsinterop.annotations.*;
 
 @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class ValueXX {
+public class  ValueXX {
 	
 	public float value;
 	public Unit unit;

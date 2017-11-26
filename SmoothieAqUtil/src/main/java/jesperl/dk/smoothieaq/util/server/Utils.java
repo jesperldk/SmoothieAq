@@ -1,6 +1,6 @@
-package jesperl.dk.smoothieaq.server.util;
+package jesperl.dk.smoothieaq.util.server;
 
-public class Utils {
+public class  Utils {
 
 	public static void reallySleep(long millis) {
 		long end = System.currentTimeMillis()+millis;

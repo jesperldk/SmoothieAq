@@ -4,9 +4,9 @@ import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 
-public abstract class AbstractInstrumentX extends AbstractDeviceX implements InstrumentX {
+public abstract class  AbstractInstrumentX extends AbstractDeviceX implements InstrumentX {
 
-	public static class CanMeasureImpl implements InstrumentX.CanMeasure {
+	public static class  CanMeasureImpl implements InstrumentX.CanMeasure {
 		private double precision;
 		
 		CanMeasureImpl(double precision) {
@@ -46,7 +46,7 @@ public abstract class AbstractInstrumentX extends AbstractDeviceX implements Ins
 //		component.addTask(state, measureTask);
 //	}
 
-//	public class CanMeassureImpl implements CanMeasure {
+//	public class  CanMeassureImpl implements CanMeasure {
 //		MeasurementType canMeassure;
 //		List<MeasurementType> willAlsoMeassure = Collections.emptyList();
 //		Set<MeasurementType> requiresMeassure = Collections.emptySet();
@@ -82,7 +82,7 @@ public abstract class AbstractInstrumentX extends AbstractDeviceX implements Ins
 //		@Override public List<CalibrationType> getCalibrationTypes() { return calibrationTypes; }
 //	}
 //	
-//	public class CalibrationTypeImpl implements CalibrationType {
+//	public class  CalibrationTypeImpl implements CalibrationType {
 //		String description;
 //		String longDescription;
 //		List<List<Value>> calibrationValues = new ArrayList<>();
@@ -97,7 +97,7 @@ public abstract class AbstractInstrumentX extends AbstractDeviceX implements Ins
 //		@Override public List<List<Value>> calibrationValues() { return calibrationValues; }
 //	}
 //	
-//	public abstract class CalibrationImpl implements Calibration {
+//	public abstract class  CalibrationImpl implements Calibration {
 //		private static final long serialVersionUID = 9001L;
 //		private Date calibrationDate = new Date();
 //		private boolean finalized = false;

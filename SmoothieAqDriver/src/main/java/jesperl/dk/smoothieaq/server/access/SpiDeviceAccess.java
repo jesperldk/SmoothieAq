@@ -1,8 +1,8 @@
 package jesperl.dk.smoothieaq.server.access;
 
 import static javax.xml.bind.DatatypeConverter.*;
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
 import java.io.*;
 import java.util.*;
@@ -13,10 +13,10 @@ import com.pi4j.io.spi.*;
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
 
-public class SpiDeviceAccess extends AbstractDeviceAccess implements ByteDeviceAccess {
-	private final static Logger log = Logger.getLogger(SpiDeviceAccess.class.getName());
+public class  SpiDeviceAccess extends AbstractDeviceAccess implements ByteDeviceAccess {
+	private final static Logger log = Logger.getLogger(SpiDeviceAccess.class .getName());
 
-	public static String bus = bus(SpiDeviceAccess.class);
+	public static String bus = bus(SpiDeviceAccess.class );
 
 	private int spiBus; // only 0 currently
 	private SpiChannel spiChannel; // CS0 or CS1 only

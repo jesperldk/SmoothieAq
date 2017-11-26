@@ -11,7 +11,7 @@ import jesperl.dk.smoothieaq.shared.model.db.DbVersion;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class ScheduleTime extends DbObject {
+public class  ScheduleTime extends DbObject {
 
 	public short hour;
 	public short minute;
@@ -24,7 +24,7 @@ public class ScheduleTime extends DbObject {
 		scheduleTime.hour = (short) hour;
 		scheduleTime.minute = (short) minute;
 		return scheduleTime;
-	}
+	} 
 
 	@GwtIncompatible
 	public LocalTime asTime() {

@@ -7,7 +7,7 @@ import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.shared.model.schedule.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 
-public class WManualTask extends WTask implements ManualTask {
+public class  WManualTask extends WTask implements ManualTask {
 	
 	@Override public synchronized void start(State state) {
 		internalSetManualState(state,state.now.millis(),0);

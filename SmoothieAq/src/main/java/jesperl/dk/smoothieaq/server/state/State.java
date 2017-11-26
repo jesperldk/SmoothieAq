@@ -1,6 +1,6 @@
 package jesperl.dk.smoothieaq.server.state;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -10,14 +10,14 @@ import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.db.*;
 import jesperl.dk.smoothieaq.server.device.*;
 import jesperl.dk.smoothieaq.server.scheduler.*;
+import jesperl.dk.smoothieaq.server.scheduler.Scheduler;
 import jesperl.dk.smoothieaq.shared.*;
 import jesperl.dk.smoothieaq.shared.model.db.*;
-import jesperl.dk.smoothieaq.shared.model.device.*;
 import rx.Observable;
 import rx.functions.*;
 
 // This is a singleton (of some sort)!
-public class State extends SimpleState {
+public class  State extends SimpleState {
 	
 	static { state = new State(); }
 	static public State state() { return (State) state; }

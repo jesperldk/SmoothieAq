@@ -8,7 +8,7 @@ import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.shared.model.schedule.*;
 import rx.*;
 
-public abstract class WAutoTask extends WTask implements ITask {
+public abstract class  WAutoTask extends WTask implements ITask {
 	
 	protected List<Subscription> substriptions = null;
 	

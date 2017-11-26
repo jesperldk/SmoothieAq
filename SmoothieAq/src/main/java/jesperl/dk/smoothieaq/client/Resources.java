@@ -5,7 +5,7 @@ import com.intendia.gwt.autorest.client.*;
 
 import jesperl.dk.smoothieaq.shared.resources.*;
 
-public abstract class Resources {
+public abstract class  Resources {
 
 	public static DeviceRest device = new DeviceRest_RestServiceModel(()->osm());
 

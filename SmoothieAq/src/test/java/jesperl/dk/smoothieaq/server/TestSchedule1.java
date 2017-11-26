@@ -6,7 +6,7 @@ import jesperl.dk.smoothieaq.server.scheduler.*;
 import jesperl.dk.smoothieaq.shared.model.schedule.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 
-public class TestSchedule1 extends Test {
+public class  TestSchedule1 extends Test {
 
 	public static void main(String[] args) {
 		

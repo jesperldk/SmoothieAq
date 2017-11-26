@@ -1,14 +1,14 @@
 package jesperl.dk.smoothieaq.server.access.classes;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.function.*;
 import java.util.logging.*;
 
-public class DeviceUrl {
-	private final static Logger log = Logger.getLogger(DeviceUrl.class.getName());
+public class  DeviceUrl {
+	private final static Logger log = Logger.getLogger(DeviceUrl.class .getName());
 
 	public String urlString;
 	public String bus;

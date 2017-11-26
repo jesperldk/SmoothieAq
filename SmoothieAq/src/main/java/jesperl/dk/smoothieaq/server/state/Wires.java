@@ -16,7 +16,7 @@ import rx.Observer;
 import rx.schedulers.*;
 import rx.subjects.*;
 
-public class Wires {
+public class  Wires {
 	
 	public final Subject<Measure,Measure> devMeasure = new SerializedSubject<>(PublishSubject.create());
 	public final Subject<Measure,Measure> devOnoffX = new SerializedSubject<>(PublishSubject.create());
@@ -45,13 +45,13 @@ public class Wires {
 	}
 	
 	public void init() {
-		initSave(Device.class, 50, state.dbContext.dbDevice);
-		initSave(DeviceStatus.class, 50, state.dbContext.dbDeviceStatus);
-		initSave(DeviceCalibration.class, 50, state.dbContext.dbDeviceCalibration);
-		initSave(Task.class, 50, state.dbContext.dbTask);
-		initSave(TaskStatus.class, 50, state.dbContext.dbTaskStatus);
-		initSave(TaskDone.class, 50, state.dbContext.dbTaskDone);
-		devMeasure.subscribe(initSave(Measure.class, 200, state.dbContext.dbMeasure));
+		initSave(Device.class , 50, state.dbContext.dbDevice);
+		initSave(DeviceStatus.class , 50, state.dbContext.dbDeviceStatus);
+		initSave(DeviceCalibration.class , 50, state.dbContext.dbDeviceCalibration);
+		initSave(Task.class , 50, state.dbContext.dbTask);
+		initSave(TaskStatus.class , 50, state.dbContext.dbTaskStatus);
+		initSave(TaskDone.class , 50, state.dbContext.dbTaskDone);
+		devMeasure.subscribe(initSave(Measure.class , 200, state.dbContext.dbMeasure));
 		saveDbClass.map(Collections::singletonList).subscribe(state.dbContext.dbClass.drain());
 	}
 	

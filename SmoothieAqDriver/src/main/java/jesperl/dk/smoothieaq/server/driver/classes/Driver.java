@@ -5,8 +5,8 @@ import java.util.*;
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
 import jesperl.dk.smoothieaq.server.driver.abstracts.AbstractDriver.*;
-import jesperl.dk.smoothieaq.shared.error.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 
 public interface Driver {
 

@@ -1,10 +1,10 @@
 package jesperl.dk.smoothieaq.server.driver;
 
 import static jesperl.dk.smoothieaq.server.access.abstracts.DeviceAccessUtils.*;
-import static jesperl.dk.smoothieaq.server.util.Utils.*;
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.server.Utils.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -14,8 +14,8 @@ import jesperl.dk.smoothieaq.server.access.*;
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
 import jesperl.dk.smoothieaq.server.driver.abstracts.*;
-import jesperl.dk.smoothieaq.shared.error.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 
 /**
  * http://akizukidenshi.com/download/ds/aosong/AM2321_e.pdf
@@ -30,22 +30,22 @@ import jesperl.dk.smoothieaq.shared.util.*;
  *   Send: (SLA+W)+0x03+0x08+0x07
  *   Return: 0x03+0x07+Model(16)+version number(8)+ID(32-bit)+CRC
  */
-public abstract class AM2321Driver extends AbstractSensorDriver<AM2321Driver.Storage,ByteDeviceAccess> {
-	private final static Logger log = Logger.getLogger(AM2321Driver.class.getName());
+public abstract class  AM2321Driver extends AbstractSensorDriver<AM2321Driver.Storage,ByteDeviceAccess> {
+	private final static Logger log = Logger.getLogger(AM2321Driver.class .getName());
 
 	private static final byte fixedI2Caddress = 0x5c;
 	private static final byte readRegistersFunctionCode = 0x03;
 	@SuppressWarnings("unused")	private static final byte tempRegisterAdr = 0x02;
 	private static final byte humidRegisterAdr = 0x00;
 	
-	public static class Storage extends AbstractSensorDriver.Storage {
+	public static class  Storage extends AbstractSensorDriver.Storage {
 		public float temp;
 		public float humid;
 		{ initCalibration(2); }
 	}
 
 	@Override public void init(DeviceAccessContext context, String urlString, float[] calibration) {
-		init(context, urlString, ByteDeviceAccess.class, AM2321Driver.class, () -> new Storage(), calibration);
+		init(context, urlString, ByteDeviceAccess.class , AM2321Driver.class , () -> new Storage(), calibration);
 	}
 	@Override public Message description() { return msg(20102,"AM2321 low precision humidity (relative humidity in %) and temperature (°C) sensor"); }
 	@Override public List<String> getDefaultUrls(DeviceAccessContext context) { return list(DeviceUrl.url(I2cDeviceAccess.bus, "1", ""+fixedI2Caddress)); }

@@ -8,7 +8,7 @@ import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 
-public class WToggleDevice extends WDevice<ToggleDriver> implements ToggleDevice {
+public class  WToggleDevice extends WDevice<ToggleDriver> implements ToggleDevice {
 	
 	public static final float disabledLevel = -999999;
 	

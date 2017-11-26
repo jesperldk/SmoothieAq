@@ -4,7 +4,7 @@ import jesperl.dk.smoothieaq.server.device.*;
 import jesperl.dk.smoothieaq.server.device.classes.*;
 import jesperl.dk.smoothieaq.server.state.*;
 
-public class RestImpl {
+public class  RestImpl {
 	
 	public State state() { return State.state(); }
 

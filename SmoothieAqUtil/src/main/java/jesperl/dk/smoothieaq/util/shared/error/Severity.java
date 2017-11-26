@@ -1,4 +1,4 @@
-package jesperl.dk.smoothieaq.shared.error;
+package jesperl.dk.smoothieaq.util.shared.error;
 
 public enum Severity {
 	info(10),

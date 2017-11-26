@@ -1,8 +1,8 @@
 package jesperl.dk.smoothieaq.server.access.abstracts;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -10,14 +10,14 @@ import java.util.function.*;
 import java.util.logging.*;
 
 import jesperl.dk.smoothieaq.server.access.classes.*;
-import jesperl.dk.smoothieaq.shared.error.*;
-import jesperl.dk.smoothieaq.shared.error.Error;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.error.Error;
 
-public class DeviceAccessContext {
-	private final static Logger log = Logger.getLogger(DeviceAccessContext.class.getName());
+public class  DeviceAccessContext {
+	private final static Logger log = Logger.getLogger(DeviceAccessContext.class .getName());
 	
-	private static class CachedEnumeration {
+	private static class  CachedEnumeration {
 		public long stamp;
 		public List<Pair<DeviceUrl,String>> enumeration;
 	}
@@ -58,7 +58,7 @@ public class DeviceAccessContext {
 				final Class<AbstractDeviceAccess> cls = getDeviceAccessClass(url.bus);
 				instantiater = () -> funcGuardedX(() -> cls.newInstance(), e ->  error(log,e,10003,major,"Can not handle buss >{0}<",url.bus));
 			} catch (Exception e) {
-				log.warning("Could not get DeviceAccess class for bus "+url.bus);
+				log.warning("Could not get DeviceAccess class  for bus "+url.bus);
 				instantiater = () -> { throw error(log,10002,major,"Can not handle buss >{0}<",url.bus); };
 			}
 			instantiaters.put(url.bus, instantiater);
@@ -68,7 +68,7 @@ public class DeviceAccessContext {
 
 	@SuppressWarnings("unchecked")
 	protected Class<AbstractDeviceAccess> getDeviceAccessClass(String bus) throws ClassNotFoundException {
-		String clsName = "jesperl.dk.smoothieaq.server.access."+bus.substring(0, 1).toUpperCase()+bus.substring(1)+DeviceAccess.class.getSimpleName();
+		String clsName = "jesperl.dk.smoothieaq.server.access."+bus.substring(0, 1).toUpperCase()+bus.substring(1)+DeviceAccess.class .getSimpleName();
 		Class<?> cls = this.getClass().getClassLoader().loadClass(clsName);
 		return (Class<AbstractDeviceAccess>) cls;
 	}

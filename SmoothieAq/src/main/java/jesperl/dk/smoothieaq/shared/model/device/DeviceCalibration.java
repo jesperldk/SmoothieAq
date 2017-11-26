@@ -9,7 +9,7 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class DeviceCalibration extends DbWithParrentId {
+public class  DeviceCalibration extends DbWithParrentId {
 	
 //	public short deviceId;
 	public float[] values;
@@ -17,8 +17,8 @@ public class DeviceCalibration extends DbWithParrentId {
 	@JsOverlay 
 	static public DeviceCalibration create(short deviceId) {
 		DeviceCalibration deviceCalibration = new DeviceCalibration();
-		deviceCalibration.setId(deviceId);
-		return deviceCalibration;
+		deviceCalibration.id = deviceId;
+		return deviceCalibration; 
 	}
 
 	@JsOverlay @GwtIncompatible 

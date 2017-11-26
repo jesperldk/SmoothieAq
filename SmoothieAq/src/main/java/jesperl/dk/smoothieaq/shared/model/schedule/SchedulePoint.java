@@ -11,7 +11,7 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public abstract class SchedulePoint extends Schedule {
+public abstract class  SchedulePoint extends Schedule {
 
 	@Override @GwtIncompatible 
 	public Interval nextInterval(TaskContext context) {
@@ -22,3 +22,4 @@ public abstract class SchedulePoint extends Schedule {
 	@Override @JsOverlay public abstract SchedulePoint copy();
 	@Override @JsOverlay @GwtIncompatible public abstract SchedulePoint deserialize(int ver, ByteBuffer in, DbContext context);
 }
+ 

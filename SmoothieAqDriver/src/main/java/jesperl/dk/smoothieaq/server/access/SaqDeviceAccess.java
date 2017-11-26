@@ -1,8 +1,8 @@
 package jesperl.dk.smoothieaq.server.access;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 import java.util.logging.*;
@@ -10,12 +10,12 @@ import java.util.stream.*;
 
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 
-public class SaqDeviceAccess extends SaqbDeviceAccess {
-	private final static Logger log = Logger.getLogger(SaqDeviceAccess.class.getName());
+public class  SaqDeviceAccess extends SaqbDeviceAccess {
+	private final static Logger log = Logger.getLogger(SaqDeviceAccess.class .getName());
 
-	public static String bus = bus(SaqDeviceAccess.class);
+	public static String bus = bus(SaqDeviceAccess.class );
 
 	public static int emptyCls = 0;
 	public static int onoffCls = 1;
@@ -75,7 +75,7 @@ public class SaqDeviceAccess extends SaqbDeviceAccess {
 		List<Pair<DeviceUrl,String>> urls = new ArrayList<>();
 		for (Pair<DeviceUrl,String> e: context.enumerate(SaqbDeviceAccess.bus))
 			doNoException(() -> {
-				SaqbDeviceAccess da = context.get(SaqbDeviceAccess.class,e.a.urlString);
+				SaqbDeviceAccess da = context.get(SaqbDeviceAccess.class ,e.a.urlString);
 				String[] conf = da.doCmd(confReply, confCmd);
 				for (int i = 0; i < conf.length/2; i++) {
 					int cmdType = intv(conf[i*2]);

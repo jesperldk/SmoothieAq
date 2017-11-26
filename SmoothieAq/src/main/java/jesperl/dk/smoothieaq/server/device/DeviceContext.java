@@ -1,8 +1,8 @@
 package jesperl.dk.smoothieaq.server.device;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -12,18 +12,18 @@ import java.util.logging.*;
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.device.classes.*;
 import jesperl.dk.smoothieaq.server.driver.classes.*;
-import jesperl.dk.smoothieaq.server.scheduler.*;
+import jesperl.dk.smoothieaq.server.scheduler.Scheduler;
 import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.server.task.*;
 import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.server.util.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 import rx.Observable;
 
-public class DeviceContext {
-	private final static Logger log = Logger.getLogger(DeviceContext.class.getName());
+public class  DeviceContext {
+	private final static Logger log = Logger.getLogger(DeviceContext.class .getName());
 
 	private State state;
 	private DeviceAccessContext daContext;
@@ -111,9 +111,9 @@ public class DeviceContext {
 	
 	public Observable<IDevice> devices() { return Observable.from(devices.values()); }
 	
-	public ITask load(Task task) {
-		
-	}
+//	public ITask load(Task task) {
+//		
+//	}
 	
 	public void addTask(WTask task) { tasks.put((int) task.getId(), task); }
 	
@@ -131,7 +131,7 @@ public class DeviceContext {
 
 	protected void loadDrivers(String pkg) {
 		FindClass.create(pkg)
-			.filter(c -> Driver.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers()))
+			.filter(c -> Driver.class .isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers()))
 			.forEach(c -> {
 				try {
 					addDriver((Driver) c.newInstance());
@@ -173,7 +173,7 @@ public class DeviceContext {
 		synchronized (scheduler) {
 			scheduler.clear();
 			tasks.values().forEach(t -> scheduler.addToSchedule(t));
-			notify();
+			scheduler.notify();
 		}
 	}
 	

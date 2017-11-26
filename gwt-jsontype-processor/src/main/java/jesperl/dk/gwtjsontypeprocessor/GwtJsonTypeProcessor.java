@@ -26,7 +26,7 @@ import jsinterop.annotations.*;
  * @author jesper Lauritsen (jesperl.dk)
  *
  */
-public class GwtJsonTypeProcessor extends AbstractProcessor {
+public class  GwtJsonTypeProcessor extends AbstractProcessor {
 
 	private Map<String, Set<String>> instanceOf = new HashMap<>();
 	private Set<String> abstractCls = new HashSet<>();
@@ -34,13 +34,13 @@ public class GwtJsonTypeProcessor extends AbstractProcessor {
 
 	@Override public Set<String> getSupportedOptions() { return singleton("debug"); }
 
-    @Override public Set<String> getSupportedAnnotationTypes() { return Arrays.asList(JsonTypeInfo.class,JsType.class).stream().map(c->c.getName()).collect(Collectors.toSet()); }
+    @Override public Set<String> getSupportedAnnotationTypes() { return Arrays.asList(JsonTypeInfo.class ,JsType.class ).stream().map(c->c.getName()).collect(Collectors.toSet()); }
 
     @Override public SourceVersion getSupportedSourceVersion() { return SourceVersion.latestSupported(); }
 
     @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
     	log("process, processingOver="+roundEnv.processingOver());
-        roundEnv.getElementsAnnotatedWith(JsType.class).stream()
+        roundEnv.getElementsAnnotatedWith(JsType.class ).stream()
                 .filter(e -> e.getKind().isClass() && e instanceof TypeElement)//.map(e -> (TypeElement) e)
                 .forEach(jsType -> {
                     try {
@@ -69,7 +69,7 @@ public class GwtJsonTypeProcessor extends AbstractProcessor {
     private void processElement(TypeMirror jsType) {
 		log("looking at "+jsType);
 		TypeElement jsTypeElm = (TypeElement) ((DeclaredType)jsType).asElement();
-		if (jsTypeElm.getAnnotation(JsonTypeInfo.class) != null) {
+		if (jsTypeElm.getAnnotation(JsonTypeInfo.class ) != null) {
 			log("root "+jsType);
 			rootClasses.add(jsTypeElm);
 //			instanceOf.put(jsType.toString(), Collections.emptySet());
@@ -96,7 +96,7 @@ public class GwtJsonTypeProcessor extends AbstractProcessor {
 		if (type.getKind() != TypeKind.DECLARED)
 			return Collections.emptySet();
 		TypeElement typeElm = (TypeElement) ((DeclaredType)type).asElement();
-		if (typeElm.getAnnotation(JsonTypeInfo.class) != null) {
+		if (typeElm.getAnnotation(JsonTypeInfo.class ) != null) {
 			rootClasses.add(typeElm);
 			return Collections.singleton(type.toString());
 		}
@@ -108,7 +108,7 @@ public class GwtJsonTypeProcessor extends AbstractProcessor {
 
 //	private void buildMap(String superc, CodeBlock.Builder builder) {
 //		instanceOf.entrySet().stream().filter(e -> e.getValue().contains(superc)).forEach(e -> {
-//			builder.add("$class($S",e.getKey());
+//			builder.add("$class ($S",e.getKey());
 //			e.getValue().stream().forEach(s -> builder.add(",$S",s));
 //			builder.add("),\n");
 //		});
@@ -150,7 +150,7 @@ public class GwtJsonTypeProcessor extends AbstractProcessor {
 	private void readOldHelper(Reader reader) throws IOException {
 		log("reading old helper");
 		try (BufferedReader bufferedReader = new BufferedReader(reader)) {
-			bufferedReader.lines().map(this::match$class).filter(l -> !l.isEmpty())
+			bufferedReader.lines().map(this::match$class ).filter(l -> !l.isEmpty())
 				.filter(l -> !instanceOf.containsKey(l.get(1)))
 				.forEach(l -> {
 					instanceOf.put(l.get(1), new HashSet<>(l.subList(2, l.size())));
@@ -159,9 +159,9 @@ public class GwtJsonTypeProcessor extends AbstractProcessor {
 		}
 	}
 	
-	static Pattern pCls = Pattern.compile("\\$(a?class)\\((\\\".*)\\)");
+	static Pattern pCls = Pattern.compile("\\$(a?class )\\((\\\".*)\\)");
 	static Pattern pStr = Pattern.compile("\"([^\"]*)\"");
-	private List<String> match$class(String l) { // TODO ugh! This is ugly! gotta find some streamified regexp library
+	private List<String> match$class (String l) { // TODO ugh! This is ugly! gotta find some streamified regexp library
 		List<String> match = new ArrayList<>();
 		Matcher mCls = pCls.matcher(l);
 		if (mCls.find()) {
@@ -210,7 +210,7 @@ public class GwtJsonTypeProcessor extends AbstractProcessor {
 		writer.write("	static Map<String,Set<String>> $instanceOf = $buildMap(\n");
 		
 		for (Map.Entry<String, Set<String>> e : ofType(root)) {
-			writer.write("\t\t$"+(abstractCls.contains(e.getKey())?"aclass":"class")+"("+
+			writer.write("\t\t$"+(abstractCls.contains(e.getKey())?"aclass":"class ")+"("+
 					stringify(Collections.singleton(e.getKey()))+","+
 					stringify(e.getValue())+"),\n");
 		}
@@ -223,15 +223,15 @@ public class GwtJsonTypeProcessor extends AbstractProcessor {
 		writer.write("	}\n");
 		writer.write("\n");
 		writer.write("	@JsOverlay\n");
-		writer.write("	static String[] $class(String... subThenSuperclasses) {\n");
+		writer.write("	static String[] $class (String... subThenSuperclasses) {\n");
 		writer.write("		return subThenSuperclasses;\n");
 		writer.write("	}\n");
 		writer.write("\n");
 		writer.write("	@JsOverlay\n");
 		writer.write("	static Map<String,Set<String>> $buildMap(String[]... $classes) {\n");
 		writer.write("		Map<String,Set<String>> map = new HashMap<>();\n");
-		writer.write("		stream($classes).filter(c -> c != null).forEach($class -> {\n");
-		writer.write("			map.put($minimalClass($class[0]), stream($class).map(s -> $minimalClass(s)).collect(toSet()));\n");
+		writer.write("		stream($classes).filter(c -> c != null).forEach($class  -> {\n");
+		writer.write("			map.put($minimalClass($class [0]), stream($class ).map(s -> $minimalClass(s)).collect(toSet()));\n");
 		writer.write("		});\n");
 		writer.write("		return map;\n");
 		writer.write("	}\n");
@@ -315,7 +315,7 @@ public class GwtJsonTypeProcessor extends AbstractProcessor {
 
 	private void processRoot(TypeElement root) throws Exception {
         ClassName rootName = ClassName.get(root); 
-        log("root class: " + root); 
+        log("root class : " + root); 
 
         String helperPkg = rootName.packageName();
         String helperName = rootName.simpleName() + "_Helper";
@@ -333,13 +333,13 @@ public class GwtJsonTypeProcessor extends AbstractProcessor {
 ////        buildMap(root.toString(), modelTypeBuilder);
 //
 //        modelTypeBuilder.addMethod(MethodSpec.methodBuilder("tt")
-////                .addAnnotation(Inject.class)
+////                .addAnnotation(Inject.class )
 //                .addModifiers(PUBLIC,DEFAULT)
 //                .returns(TypeName.INT)
-////                .addParameter(TypeName.get(ResourceVisitor.Supplier.class), "parent", FINAL)
+////                .addParameter(TypeName.get(ResourceVisitor.Supplier.class ), "parent", FINAL)
 //                .addParameter(TypeName.INT, "i")
 ////                .addStatement("super(new $T() { public $T get() { return $L.get().path($S); } })",
-////                        ResourceVisitor.Supplier.class, ResourceVisitor.class, "parent", rsPath)
+////                        ResourceVisitor.Supplier.class , ResourceVisitor.class , "parent", rsPath)
 //                .addStatement("return 1")
 //                .build());
 
@@ -355,7 +355,7 @@ public class GwtJsonTypeProcessor extends AbstractProcessor {
 //
 //            if (isIncompatible(method)) {
 //                modelTypeBuilder.addMethod(MethodSpec.overriding(method)
-//                        .addStatement("throw new $T(\"$L\")", UnsupportedOperationException.class, methodName)
+//                        .addStatement("throw new $T(\"$L\")", UnsupportedOperationException.class , methodName)
 //                        .build());
 //                continue;
 //            }
@@ -364,42 +364,42 @@ public class GwtJsonTypeProcessor extends AbstractProcessor {
 //            {
 //                // method type
 //                builder.add("method($L)", methodImport(methodImports, method.getAnnotationMirrors().stream()
-//                        .map(a -> asElement(a.getAnnotationType()).getAnnotation(HttpMethod.class))
+//                        .map(a -> asElement(a.getAnnotationType()).getAnnotation(HttpMethod.class ))
 //                        .filter(a -> a != null).map(HttpMethod::value).findFirst().orElse(GET)));
 //                // resolve paths
 //                builder.add(".path($L)", Arrays
-//                        .stream(ofNullable(method.getAnnotation(Path.class)).map(Path::value).orElse("").split("/"))
+//                        .stream(ofNullable(method.getAnnotation(Path.class )).map(Path::value).orElse("").split("/"))
 //                        .filter(s -> !s.isEmpty()).map(path -> !path.startsWith("{") ? "\"" + path + "\"" : method
 //                                .getParameters().stream()
-//                                .filter(a -> ofNullable(a.getAnnotation(PathParam.class)).map(PathParam::value)
+//                                .filter(a -> ofNullable(a.getAnnotation(PathParam.class )).map(PathParam::value)
 //                                        .map(v -> path.equals("{" + v + "}")).orElse(false))
 //                                .findFirst().map(VariableElement::getSimpleName).map(Object::toString)
 //                                .orElse("null /* path param " + path + " does not match any argument! */"))
 //                        .collect(Collectors.joining(", ")));
 //                // query params
-//                method.getParameters().stream().filter(p -> p.getAnnotation(QueryParam.class) != null).forEach(p ->
-//                        builder.add(".param($S, $L)", p.getAnnotation(QueryParam.class).value(), p.getSimpleName()));
+//                method.getParameters().stream().filter(p -> p.getAnnotation(QueryParam.class ) != null).forEach(p ->
+//                        builder.add(".param($S, $L)", p.getAnnotation(QueryParam.class ).value(), p.getSimpleName()));
 //                // header params
-//                method.getParameters().stream().filter(p -> p.getAnnotation(HeaderParam.class) != null).forEach(p ->
-//                        builder.add(".header($S, $L)", p.getAnnotation(HeaderParam.class).value(), p.getSimpleName()));
+//                method.getParameters().stream().filter(p -> p.getAnnotation(HeaderParam.class ) != null).forEach(p ->
+//                        builder.add(".header($S, $L)", p.getAnnotation(HeaderParam.class ).value(), p.getSimpleName()));
 //                // form params
-//                method.getParameters().stream().filter(p -> p.getAnnotation(FormParam.class) != null).forEach(p ->
-//                        builder.add(".form($S, $L)", p.getAnnotation(FormParam.class).value(), p.getSimpleName()));
+//                method.getParameters().stream().filter(p -> p.getAnnotation(FormParam.class ) != null).forEach(p ->
+//                        builder.add(".form($S, $L)", p.getAnnotation(FormParam.class ).value(), p.getSimpleName()));
 //                // data
 //                method.getParameters().stream().filter(this::isParam).findFirst()
 //                        .ifPresent(data -> builder.add(".data($L)", data.getSimpleName()));
 //            }
-//            builder.add(".as($T.class, $T.class);\n$]",
+//            builder.add(".as($T.class , $T.class );\n$]",
 //                    processingEnv.getTypeUtils().erasure(method.getReturnType()),
 //                    MoreTypes.asDeclared(method.getReturnType()).getTypeArguments().stream().findFirst()
-//                            .map(TypeName::get).orElse(TypeName.get(Void.class)));
+//                            .map(TypeName::get).orElse(TypeName.get(Void.class )));
 //
 //            modelTypeBuilder.addMethod(MethodSpec.overriding(method).addCode(builder.build()).build());
 //        }
 
 //        Filer filer = processingEnv.getFiler();
 //        JavaFile.Builder file = JavaFile.builder(rootName.packageName(), modelTypeBuilder.build());
-////        for (String methodImport : methodImports) file.addStaticImport(HttpMethod.class, methodImport);
+////        for (String methodImport : methodImports) file.addStaticImport(HttpMethod.class , methodImport);
 //        file.build().writeTo(filer);
     }
 

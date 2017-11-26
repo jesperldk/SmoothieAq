@@ -1,6 +1,6 @@
 package jesperl.dk.smoothieaq.server;
 
-public class TestDummyInstrument extends Test {
+public class  TestDummyInstrument extends Test {
 
 	public static void main(String[] args) {
 
@@ -9,7 +9,7 @@ public class TestDummyInstrument extends Test {
 //
 //		int  componentTypeId = state.dContext.addDriverForTest(new DummyInstrument()).getId();
 //		
-////		Instrument instrumentType = state.get(Instrument.class,componentTypeId);
+////		Instrument instrumentType = state.get(Instrument.class ,componentTypeId);
 //		Device inst = new Device();
 //		inst.driverId = componentTypeId;
 //		inst.dependencyType = DeviceDependencyType.none;

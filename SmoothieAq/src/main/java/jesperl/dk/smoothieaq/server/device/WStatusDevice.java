@@ -8,7 +8,7 @@ import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 
-public class WStatusDevice extends WDevice<StatusDriver> implements StatusDevice {
+public class  WStatusDevice extends WDevice<StatusDriver> implements StatusDevice {
 	
 	private int blinkGrade = 0; // our current state, 0=off, 1=on, >1=blink
 

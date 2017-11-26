@@ -4,7 +4,7 @@ import java.time.*;
 
 import jesperl.dk.smoothieaq.server.state.*;
 
-abstract public class Test {
+abstract public class  Test {
 	
 	public static State state = State.state();
 	public static NowWithOffset now = state.now;

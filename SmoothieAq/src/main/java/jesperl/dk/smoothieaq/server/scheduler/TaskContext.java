@@ -7,7 +7,7 @@ import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.shared.model.schedule.*;
 
-public class TaskContext extends SchedulerContext {
+public class  TaskContext extends SchedulerContext {
 	
 	private SchedulerContext parrent;
 	private ITask task;

@@ -11,5 +11,5 @@ public enum DeviceDependencyType {
 	
 	public int getId() {
 		return id;
-	}
+	} 
 }

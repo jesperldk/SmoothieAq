@@ -1,9 +1,9 @@
 package jesperl.dk.smoothieaq.server.access.classes;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
-import jesperl.dk.smoothieaq.shared.error.Error;
+import jesperl.dk.smoothieaq.util.shared.error.Error;
 
 /**
  * the interface from http://playground.arduino.cc/Code/CmdMessenger
@@ -14,7 +14,7 @@ public interface CmdDeviceAccess extends DeviceAccess {
 	static String sepChar = ",";
 
 	public static final int commErrorCmd = 299; 
-	static public class Cmd {
+	static public class  Cmd {
 		public int cmdNo;
 		public String[] args;
 		public Cmd(int cmdNo, String... args) { this.cmdNo = cmdNo; this.args = args; }

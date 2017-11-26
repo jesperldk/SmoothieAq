@@ -1,15 +1,15 @@
 package jesperl.dk.smoothieaq.server.access.abstracts;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
 import java.util.logging.*;
 
 import jesperl.dk.smoothieaq.server.access.classes.*;
 
 
-public abstract class WrapperDeviceAccess<DA extends DeviceAccess> extends AbstractDeviceAccess {
-	private final static Logger log = Logger.getLogger(WrapperDeviceAccess.class.getName());
+public abstract class  WrapperDeviceAccess<DA extends DeviceAccess> extends AbstractDeviceAccess {
+	private final static Logger log = Logger.getLogger(WrapperDeviceAccess.class .getName());
 
 	private DA da;
 	

@@ -13,12 +13,12 @@ import jsinterop.annotations.*;
 
 @JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include=JsonTypeInfo.As.PROPERTY, property="$type")
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public abstract class Schedule extends DbObject implements Schedule_Helper {
+public abstract class  Schedule extends DbObject implements Schedule_Helper {
 	@JsonIgnore public transient String $type;
 	
 	@GwtIncompatible public abstract Instant next(TaskContext context);
 	@GwtIncompatible public abstract Interval nextInterval(TaskContext context);
 
-	@Override @JsOverlay public abstract Schedule copy();
+	@Override @JsOverlay public abstract Schedule copy(); 
 	@Override @JsOverlay @GwtIncompatible public abstract Schedule deserialize(int ver, ByteBuffer in, DbContext context);
-}
+} 

@@ -1,6 +1,6 @@
 package jesperl.dk.smoothieaq.server.util;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
 
 import java.io.*;
 import java.net.*;
@@ -11,8 +11,8 @@ import java.util.logging.*;
 import rx.*;
 import rx.Observable;
 
-public class FindClass {
-	private final static Logger log = Logger.getLogger(FindClass.class.getName());
+public class  FindClass {
+	private final static Logger log = Logger.getLogger(FindClass.class .getName());
 	
 	public static Observable<Class<?>> create(final String packageName) {
 		return Observable.create(subscriber -> {
@@ -43,7 +43,7 @@ public class FindClass {
 	    	JarEntry jarEntry = entries.nextElement();
 	    	if (jarEntry == null) continue;
 	        String entryName = jarEntry.getName();
-	        if (entryName.endsWith(".class") && !entryName.contains("$")) {
+	        if (entryName.endsWith(".class ") && !entryName.contains("$")) {
 	            String name = entryName.substring(0, entryName.length() - 6).replace('/', '.');
 	            if (name.contains(packageName)) 
 		        	doNoException(() -> subscriber.onNext(Class.forName(name)));
@@ -57,7 +57,7 @@ public class FindClass {
 	        String name = file.getName();
 			if (file.isDirectory())
 				findInDir(file, packageName + "." + name,subscriber);
-	        else if (name.endsWith(".class") && !name.contains("$"))
+	        else if (name.endsWith(".class ") && !name.contains("$"))
 	        	doNoException(() -> subscriber.onNext(Class.forName(packageName + '.' + name.substring(0, name.length() - 6))));
 	    }
 	}

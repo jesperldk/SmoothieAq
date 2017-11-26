@@ -8,7 +8,7 @@ import jesperl.dk.smoothieaq.server.db.*;
 import jsinterop.annotations.*;
 
 @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public abstract class DbObject {
+public abstract class  DbObject {
 
 	@JsOverlay public abstract DbObject copy();
 	@JsOverlay @GwtIncompatible public abstract void serialize(ByteBuffer out, DbContext context);

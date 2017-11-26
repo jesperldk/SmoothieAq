@@ -6,7 +6,7 @@ import java.time.temporal.*;
 import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.shared.model.schedule.*;
 
-public class OffsetTaskContext extends TaskContext {
+public class  OffsetTaskContext extends TaskContext {
 	
 	private NowWithOffset now;
 	private Interval last;

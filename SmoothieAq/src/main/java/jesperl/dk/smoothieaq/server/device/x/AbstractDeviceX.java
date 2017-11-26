@@ -4,7 +4,7 @@ import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 
-public abstract class AbstractDeviceX extends IdableType implements DeviceX {
+public abstract class  AbstractDeviceX extends IdableType implements DeviceX {
 	
 	private String description;
 	private MeasurementType measurementType = MeasurementType.noMeasure;

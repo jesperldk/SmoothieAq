@@ -1,6 +1,6 @@
-package jesperl.dk.smoothieaq.shared.error;
+package jesperl.dk.smoothieaq.util.shared.error;
 
-public class Error extends Message {
+public class  Error extends Message {
 	public Severity severity;
 	public long stamp;
 	

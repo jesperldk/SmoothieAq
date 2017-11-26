@@ -1,6 +1,6 @@
 package jesperl.dk.smoothieaq.server.task;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
 
 import java.util.Date;
 
@@ -13,7 +13,7 @@ import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.shared.model.schedule.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 
-public abstract class WTask extends IdableType implements ITask {
+public abstract class  WTask extends IdableType implements ITask {
 	
 	protected Task task;
 	protected TaskStatus status;

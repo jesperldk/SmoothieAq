@@ -1,7 +1,7 @@
 package jesperl.dk.smoothieaq.server.device;
 
 import static java.lang.Math.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import jesperl.dk.smoothieaq.server.device.classes.*;
 import jesperl.dk.smoothieaq.server.driver.classes.*;
@@ -10,7 +10,7 @@ import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 import rx.subjects.*;
 
-public class WLevelDevice extends WDevice<LevelDriver> implements LevelDevice {
+public class  WLevelDevice extends WDevice<LevelDriver> implements LevelDevice {
 	
 	protected PublishSubject<Float> startstopX = PublishSubject.create();
 	private float prevLevel = 0;

@@ -2,7 +2,7 @@ package jesperl.dk.smoothieaq.server;
 
 import java.io.*;
 
-public class TestCmdMessenger {
+public class  TestCmdMessenger {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		

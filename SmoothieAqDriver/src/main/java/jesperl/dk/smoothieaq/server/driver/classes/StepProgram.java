@@ -1,6 +1,6 @@
 package jesperl.dk.smoothieaq.server.driver.classes;
 
-public class StepProgram extends LevelProgram {
+public class  StepProgram extends LevelProgram {
 	
 	public int algorithm; // 0=linear steps, 1=spline steps
 	public int stepDurationMinutes[];

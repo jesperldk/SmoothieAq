@@ -7,7 +7,7 @@ import jesperl.dk.smoothieaq.shared.model.device.*;
 import rx.*;
 import rx.Observable;
 
-public class StreamDevice extends StreamNode {
+public class  StreamDevice extends StreamNode {
 	public int deviceId;
 	public String deviceName;
 	public DeviceStream stream;

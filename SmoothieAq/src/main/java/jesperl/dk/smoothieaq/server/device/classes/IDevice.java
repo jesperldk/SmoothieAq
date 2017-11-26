@@ -4,12 +4,12 @@ import java.util.*;
 
 import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.server.task.classes.*;
-import jesperl.dk.smoothieaq.shared.error.Error;
 import jesperl.dk.smoothieaq.shared.model.db.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.*;
+import jesperl.dk.smoothieaq.util.shared.error.Error;
 import rx.Observable;
 import rx.Observer;
 

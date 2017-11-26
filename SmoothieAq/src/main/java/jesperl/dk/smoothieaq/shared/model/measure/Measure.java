@@ -10,7 +10,7 @@ import jesperl.dk.smoothieaq.shared.model.device.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class Measure extends DbWithStamp {
+public class  Measure extends DbWithStamp {
 	
 	public short deviceId;
 	public DeviceStream stream;
@@ -30,3 +30,4 @@ public class Measure extends DbWithStamp {
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { Measure_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public Measure deserialize(int ver, ByteBuffer in, DbContext context) { return Measure_Db.deserializeFields(this, in, context); }
 }
+ 

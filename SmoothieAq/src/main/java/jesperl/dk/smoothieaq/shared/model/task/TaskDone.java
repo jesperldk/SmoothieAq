@@ -9,19 +9,19 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class TaskDone extends DbWithParrentId { 
+public class  TaskDone extends DbWithParrentId { 
 	
 //	public short taskId;
 	public long start;
 	public long end;
-	public boolean manualNotDone;
+	public boolean manualNotDone; 
 	public TaskArg taskArg;
 	public String description;
 	
 	@JsOverlay 
 	public static TaskDone create(short taskId) {
 		TaskDone taskDone = new TaskDone();
-		taskDone.setId(taskId);
+		taskDone.id = taskId;
 		return taskDone;
 	}
 

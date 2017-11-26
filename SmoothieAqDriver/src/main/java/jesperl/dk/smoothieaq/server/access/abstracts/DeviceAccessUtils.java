@@ -1,11 +1,11 @@
 package jesperl.dk.smoothieaq.server.access.abstracts;
 
-import static jesperl.dk.smoothieaq.server.util.Utils.*;
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.server.Utils.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
 
 import java.util.function.*;
 
-public abstract class DeviceAccessUtils {
+public abstract class  DeviceAccessUtils {
 	
 	public static <T> T retry(UnsafeSupplier<T> supplier) { return retry(3, 400, supplier, null); }
 	public static <T> T retry(int retries, UnsafeSupplier<T> supplier) { return retry(retries, 400, supplier, null); }

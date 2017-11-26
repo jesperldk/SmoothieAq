@@ -1,6 +1,6 @@
 package jesperl.dk.smoothieaq.server.db;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
 
 import java.nio.*;
 import java.nio.channels.*;
@@ -12,8 +12,8 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import rx.Observable;
 import rx.Observer;
 
-public class DbFile<DBO extends DbObject> {
-	private final static Logger log = Logger.getLogger(DbFile.class.getName());
+public class  DbFile<DBO extends DbObject> {
+	private final static Logger log = Logger.getLogger(DbFile.class .getName());
 	
 	public static final int bufSize = 2*1024; // must be greater than the largest object size
 	public static final String header = "SmoothieAq 00.01";
@@ -69,7 +69,8 @@ public class DbFile<DBO extends DbObject> {
 				s.onCompleted();
 			} catch (Exception e) {
 				log.warning("exception reading - "+e.getMessage());
-				s.onError(e);
+				if (e instanceof NoSuchFileException) s.onCompleted();
+				else s.onError(e);
 			}
 		});
 	}

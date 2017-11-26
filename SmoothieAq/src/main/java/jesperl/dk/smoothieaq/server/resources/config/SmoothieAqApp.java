@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.*;
 import jesperl.dk.smoothieaq.server.util.*;
 
 @ApplicationPath("/smoothieaq/x")
-public class SmoothieAqApp extends ResourceConfig {
+public class  SmoothieAqApp extends ResourceConfig {
 	
     public SmoothieAqApp() throws Exception {
     	registerClasses();
@@ -52,9 +52,9 @@ public class SmoothieAqApp extends ResourceConfig {
 	}
 
 	public void registerClasses() {
-		FindClass.create("jesperl.dk.smoothieaq.server.resources").filter(c -> isAnnotatedWith(c, Path.class))
+		FindClass.create("jesperl.dk.smoothieaq.server.resources").filter(c -> isAnnotatedWith(c, Path.class ))
     		.forEach(c -> registerClasses(c));
-    	registerClasses(ObjectMapperContextResolver.class);
+    	registerClasses(ObjectMapperContextResolver.class );
 	}
 
 	protected boolean isAnnotatedWith(Class<?> clas, Class<? extends Annotation> annotation) {
@@ -65,7 +65,7 @@ public class SmoothieAqApp extends ResourceConfig {
 	}
 
     @Provider
-    public static class ObjectMapperContextResolver implements ContextResolver<ObjectMapper> {
+    public static class  ObjectMapperContextResolver implements ContextResolver<ObjectMapper> {
         final ObjectMapper objectMapper = new ObjectMapper();
         {
             objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);

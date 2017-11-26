@@ -1,8 +1,8 @@
 package jesperl.dk.smoothieaq.server.access;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 import java.util.logging.*;
@@ -11,12 +11,12 @@ import com.fazecast.jSerialComm.*;
 
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 
-public class SaqbDeviceAccess extends CmdserDeviceAccess {
-	private final static Logger log = Logger.getLogger(SaqbDeviceAccess.class.getName());
+public class  SaqbDeviceAccess extends CmdserDeviceAccess {
+	private final static Logger log = Logger.getLogger(SaqbDeviceAccess.class .getName());
 
-	public static String bus = bus(SaqbDeviceAccess.class);
+	public static String bus = bus(SaqbDeviceAccess.class );
 
 	public static int versionCmd = 1;     // -> versionReply
 	public static int timeCmd = 2;        // -> timeReply
@@ -43,7 +43,7 @@ public class SaqbDeviceAccess extends CmdserDeviceAccess {
 
 	static public int baud = 50000;
 	
-	public static class Storage {
+	public static class  Storage {
 		public Pair<String, String> saqbe = null;
 	}
 
@@ -70,10 +70,10 @@ public class SaqbDeviceAccess extends CmdserDeviceAccess {
 		return funcNoException(() -> {
 			log.fine("Checking for saqd on "+somePort.getDescriptivePortName()+"/"+somePort.getSystemPortName());
 			String urlString = DeviceUrl.url(CmdserDeviceAccess.bus, somePort.getSystemPortName(), array(strv(baud)), null, null);
-			CmdserDeviceAccess cmdDa = context.get(CmdserDeviceAccess.class, urlString);
+			CmdserDeviceAccess cmdDa = context.get(CmdserDeviceAccess.class , urlString);
 			try { synchronized (cmdDa) {
 				cmdDa.setNoretries(true);
-				Storage storage = cmdDa.retrieveOrCreate(SaqbDeviceAccess.class, Storage::new);
+				Storage storage = cmdDa.retrieveOrCreate(SaqbDeviceAccess.class , Storage::new);
 				if (storage.saqbe != null) return storage.saqbe;
 				storage.saqbe = pair(null,null); // because we may fail below
 				String[] ver = cmdDa.doCmd(versionReply,versionCmd);

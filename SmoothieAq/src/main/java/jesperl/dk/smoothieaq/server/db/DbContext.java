@@ -11,8 +11,8 @@ import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 
-public class DbContext {
-	private final static Logger log = Logger.getLogger(DbContext.class.getName());
+public class  DbContext {
+	private final static Logger log = Logger.getLogger(DbContext.class .getName());
 	
 	private State state;
 	private String dbRoot = ".";
@@ -37,14 +37,14 @@ public class DbContext {
 		if (root != null && !root.isEmpty()) dbRoot = root;
 		log.info("dbRoot="+dbRoot);
 		
-		dbDevice = DbFile.create(Device.class, false, this);
-		dbDeviceStatus = DbFile.create(DeviceStatus.class, false, this);
-		dbDeviceCalibration = DbFile.create(DeviceCalibration.class, false, this);
-		dbTask = DbFile.create(Task.class, false, this);
-		dbTaskStatus = DbFile.create(TaskStatus.class, false, this);
-		dbTaskDone = DbFile.create(TaskDone.class, false, this);
-		dbMeasure = DbFile.create(Measure.class, true, this);
-		dbClass = DbFile.create(DbClass.class, false, this);
+		dbDevice = DbFile.create(Device.class , false, this);
+		dbDeviceStatus = DbFile.create(DeviceStatus.class , false, this);
+		dbDeviceCalibration = DbFile.create(DeviceCalibration.class , false, this);
+		dbTask = DbFile.create(Task.class , false, this);
+		dbTaskStatus = DbFile.create(TaskStatus.class , false, this);
+		dbTaskDone = DbFile.create(TaskDone.class , false, this);
+		dbMeasure = DbFile.create(Measure.class , true, this);
+		dbClass = DbFile.create(DbClass.class , false, this);
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -4,11 +4,11 @@ import java.time.*;
 
 import com.google.gwt.core.shared.*;
 
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 
-@GwtIncompatible public class Interval extends Pair<Instant, Instant> {
+@GwtIncompatible public class  Interval extends Pair<Instant, Instant> {
 
-	public Interval(Instant start, Instant end) {
+	public Interval(Instant start, Instant end) { 
 		super(start, end);
 	}
 	

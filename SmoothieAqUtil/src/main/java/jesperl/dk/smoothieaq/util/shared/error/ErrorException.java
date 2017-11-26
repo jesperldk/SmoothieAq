@@ -1,6 +1,6 @@
-package jesperl.dk.smoothieaq.shared.error;
+package jesperl.dk.smoothieaq.util.shared.error;
 
-public class ErrorException extends RuntimeException {
+public class  ErrorException extends RuntimeException {
 	private static final long serialVersionUID = -944494660696905005L;
 
 	private Error error;

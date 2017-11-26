@@ -1,7 +1,7 @@
 package jesperl.dk.smoothieaq.server.driver;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 
@@ -10,13 +10,13 @@ import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
 import jesperl.dk.smoothieaq.server.driver.abstracts.*;
 import jesperl.dk.smoothieaq.server.driver.classes.*;
-import jesperl.dk.smoothieaq.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
 import sun.reflect.generics.reflectiveObjects.*;
 
-public class GpioOnoffDriver extends AbstractOnoffDriver<AbstractOnoffDriver.Storage,GpioDeviceAccess> implements StatusDriver {
+public class  GpioOnoffDriver extends AbstractOnoffDriver<AbstractOnoffDriver.Storage,GpioDeviceAccess> implements StatusDriver {
 
 	@Override public void init(DeviceAccessContext context, String urlString, float[] calibration) {
-		init(context, urlString, GpioDeviceAccess.class, GpioOnoffDriver.class, () -> new Storage(), calibration);
+		init(context, urlString, GpioDeviceAccess.class , GpioOnoffDriver.class , () -> new Storage(), calibration);
 	}
 	
 	@Override public Message name() { return msg(20401,"Generic GPIO ON/OFF device"); }

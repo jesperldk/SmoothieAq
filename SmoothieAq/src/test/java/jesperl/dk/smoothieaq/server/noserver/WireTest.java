@@ -5,7 +5,7 @@ import java.util.concurrent.*;
 import rx.*;
 import rx.subjects.*;
 
-public class WireTest {
+public class  WireTest {
 	
 	public static void main(String[] args) throws InterruptedException {
 		Observable<Long> interval1 = Observable.interval(1, TimeUnit.SECONDS);

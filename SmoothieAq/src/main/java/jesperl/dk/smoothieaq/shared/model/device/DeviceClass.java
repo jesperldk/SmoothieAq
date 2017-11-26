@@ -16,7 +16,7 @@ public enum DeviceClass {
 	private int id;
 	
 	private DeviceClass(int id) {
-		this.id = id;
+		this.id = id; 
 	}
 	
 	public int getId() {

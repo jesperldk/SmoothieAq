@@ -14,7 +14,7 @@ import rx.*;
 import rx.schedulers.*;
 import rx.subjects.*;
 
-public class WSensorDevice extends WDevice<SensorDriver> implements SensorDevice {
+public class  WSensorDevice extends WDevice<SensorDriver> implements SensorDevice {
 	
 	public static final float disabledLevel = -999999;
 	

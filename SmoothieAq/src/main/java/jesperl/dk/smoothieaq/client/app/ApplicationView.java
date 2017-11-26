@@ -15,9 +15,9 @@ import jesperl.dk.smoothieaq.client.css.*;
 import jesperl.dk.smoothieaq.client.devices.*;
 import jesperl.dk.smoothieaq.client.rightnow.*;
 
-public class ApplicationView  extends Composite {
+public class  ApplicationView  extends Composite {
     interface Binder extends UiBinder<Widget, ApplicationView> {}
-	private static Binder binder = GWT.create(Binder.class);
+	private static Binder binder = GWT.create(Binder.class );
 	
 	@UiField AppMessages msg = SmoothieAq.appMessages;
 	

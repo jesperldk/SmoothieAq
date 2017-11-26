@@ -3,6 +3,7 @@
   <groupId>jesperl.dk.smoothieaq</groupId>
   <artifactId>SmoothieAqUtil</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+    <packaging>gwt-lib</packaging>
 
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -14,18 +15,28 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-source-plugin</artifactId> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>attach-sources</id> -->
+<!-- 						<goals> -->
+<!-- 							<goal>jar</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
+           <plugin>
+                <groupId>net.ltgt.gwt.maven</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+<!--                 <version>${gwtPlugin.version}</version> -->
+                <extensions>true</extensions>
+                <configuration>
+                    <moduleName>jesperl.dk.smoothieaq.util.SmoothieAqUtil</moduleName>
+                    <skipModule>true</skipModule>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>  
 </project>

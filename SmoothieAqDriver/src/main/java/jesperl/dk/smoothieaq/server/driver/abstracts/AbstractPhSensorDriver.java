@@ -1,18 +1,18 @@
 package jesperl.dk.smoothieaq.server.driver.abstracts;
 
 import static java.lang.Math.*;
-import static jesperl.dk.smoothieaq.server.util.Utils.*;
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.server.Utils.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
 import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 
 import jesperl.dk.smoothieaq.server.access.classes.*;
-import jesperl.dk.smoothieaq.shared.error.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
 
 /**
  * You must subclass it with something that can measure temp and phVolt.
@@ -21,8 +21,8 @@ import jesperl.dk.smoothieaq.shared.util.*;
  * With a bit extra glanced from
  *   http://www2.emersonprocess.com/siteadmincenter/PM%20Rosemount%20Analytical%20Documents/LIQ_MAN_6033_Theory_Practice_pH_Measurement.pdf 		
  */
-public abstract class AbstractPhSensorDriver<S extends AbstractPhSensorDriver.Storage, D extends DeviceAccess> extends AbstractSensorDriver<S,D> {
-	private final static Logger log = Logger.getLogger(AbstractPhSensorDriver.class.getName());
+public abstract class  AbstractPhSensorDriver<S extends AbstractPhSensorDriver.Storage, D extends DeviceAccess> extends AbstractSensorDriver<S,D> {
+	private final static Logger log = Logger.getLogger(AbstractPhSensorDriver.class .getName());
 	
 	public int timesToMeasureForAverage = 3;
 	public int maxTimesToMeasureForStableCalibration = 60;
@@ -37,14 +37,14 @@ public abstract class AbstractPhSensorDriver<S extends AbstractPhSensorDriver.St
 
 	public static final String[] bufferTemps = new String[] {"15°C","20°C","25°C","30°C","35°C"};
 
-	public static class CalibrationMeasure { // Calibration temp values
+	public static class  CalibrationMeasure { // Calibration temp values
 		public Buffer buffer; // tempK -> pH
 		public float e;
 		public float t;
 		public float eSpan;
 	}
 
-	public static class Storage extends AbstractSensorDriver.Storage {
+	public static class  Storage extends AbstractSensorDriver.Storage {
 		public float temp;
 		public float pHVolt;
 		public float pH;
@@ -53,7 +53,7 @@ public abstract class AbstractPhSensorDriver<S extends AbstractPhSensorDriver.St
 	}
 
 	public interface Buffer extends Function<Float,Float> {}
-	public static class SiBuffer implements Buffer {
+	public static class  SiBuffer implements Buffer {
 		SplineInterpolator si;
 		public SiBuffer(List<Float> pH) { si = SplineInterpolator.createMonotoneCubicSpline(list(15.0f,20.0f,25.0f,30.0f,35.0f), pH); }
 		@Override public Float apply(Float t) { return si.interpolate(t); }

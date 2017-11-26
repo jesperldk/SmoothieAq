@@ -9,11 +9,11 @@ import jesperl.dk.smoothieaq.server.db.*;
 import jesperl.dk.smoothieaq.server.scheduler.*;
 import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.shared.model.db.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class PointEqualTo extends SchedulePoint {
+public class  PointEqualTo extends SchedulePoint {
 	
 	public int equalToDeviceId;
 
@@ -24,7 +24,7 @@ public class PointEqualTo extends SchedulePoint {
 		return pointEqualTo;
 	}
 
-	@Override @GwtIncompatible
+	@Override @GwtIncompatible 
 	public Instant next(TaskContext context) {
 		ITask task = context.getDeviceTask(equalToDeviceId);
 		if (task == null) return null; // TASK no longer exists - TODO

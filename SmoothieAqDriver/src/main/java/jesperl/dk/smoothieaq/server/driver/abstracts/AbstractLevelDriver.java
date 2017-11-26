@@ -1,19 +1,19 @@
 package jesperl.dk.smoothieaq.server.driver.abstracts;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 import java.util.logging.*;
 
 import jesperl.dk.smoothieaq.server.access.classes.*;
 import jesperl.dk.smoothieaq.server.driver.classes.*;
-import jesperl.dk.smoothieaq.shared.error.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 
-public abstract class AbstractLevelDriver<S extends AbstractDriver.Storage, D extends DeviceAccess> extends AbstractDriver<S,D> implements LevelDriver {
-	private final static Logger log = Logger.getLogger(AbstractLevelDriver.class.getName());
+public abstract class  AbstractLevelDriver<S extends AbstractDriver.Storage, D extends DeviceAccess> extends AbstractDriver<S,D> implements LevelDriver {
+	private final static Logger log = Logger.getLogger(AbstractLevelDriver.class .getName());
 
 	@Override protected int calibrationUse() { return maxIdx() + 1; }
 	protected final int maxIdx() { return super.calibrationUse(); }

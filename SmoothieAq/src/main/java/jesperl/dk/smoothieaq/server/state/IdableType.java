@@ -2,7 +2,7 @@ package jesperl.dk.smoothieaq.server.state;
 
 import jesperl.dk.smoothieaq.shared.model.db.*;
 
-public abstract class IdableType implements Idable {
+public abstract class  IdableType implements Idable {
 	
 	private short id = 0;
 	private String name;

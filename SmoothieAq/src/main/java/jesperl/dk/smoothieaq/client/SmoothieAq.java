@@ -5,9 +5,9 @@ import com.google.gwt.user.client.ui.*;
 
 import jesperl.dk.smoothieaq.client.app.*;
 
-public class SmoothieAq implements EntryPoint {
+public class  SmoothieAq implements EntryPoint {
 
-	public static AppMessages appMessages = GWT.create(AppMessages.class);
+	public static AppMessages appMessages = GWT.create(AppMessages.class );
 
 	@Override
 	public void onModuleLoad() {

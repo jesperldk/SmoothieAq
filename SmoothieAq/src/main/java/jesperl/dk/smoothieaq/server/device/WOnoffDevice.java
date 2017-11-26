@@ -6,7 +6,7 @@ import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 
-public class WOnoffDevice extends WDevice<OnoffDriver> implements OnoffDevice {
+public class  WOnoffDevice extends WDevice<OnoffDriver> implements OnoffDevice {
 	
 	private boolean on;
 	

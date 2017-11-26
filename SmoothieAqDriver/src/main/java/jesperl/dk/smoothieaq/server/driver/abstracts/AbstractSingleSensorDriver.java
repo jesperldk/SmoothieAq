@@ -1,16 +1,16 @@
 package jesperl.dk.smoothieaq.server.driver.abstracts;
 
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 import java.util.logging.*;
 
 import jesperl.dk.smoothieaq.server.access.classes.*;
 
-public abstract class AbstractSingleSensorDriver<D extends DeviceAccess> extends AbstractSensorDriver<AbstractSingleSensorDriver.Storage,D> {
-	private final static Logger log = Logger.getLogger(AbstractSingleSensorDriver.class.getName());
+public abstract class  AbstractSingleSensorDriver<D extends DeviceAccess> extends AbstractSensorDriver<AbstractSingleSensorDriver.Storage,D> {
+	private final static Logger log = Logger.getLogger(AbstractSingleSensorDriver.class .getName());
 	
-	public static class Storage extends AbstractSensorDriver.Storage {
+	public static class  Storage extends AbstractSensorDriver.Storage {
 		public float measure;
 	}
 

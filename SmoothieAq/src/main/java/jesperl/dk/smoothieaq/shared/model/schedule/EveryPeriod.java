@@ -1,6 +1,6 @@
 package jesperl.dk.smoothieaq.shared.model.schedule;
 
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.nio.*;
 import java.time.*;
@@ -14,7 +14,7 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public abstract class EveryPeriod extends EveryNPoint {
+public abstract class  EveryPeriod extends EveryNPoint {
 	
 	@Override @GwtIncompatible
 	public Instant next(TaskContext context) {

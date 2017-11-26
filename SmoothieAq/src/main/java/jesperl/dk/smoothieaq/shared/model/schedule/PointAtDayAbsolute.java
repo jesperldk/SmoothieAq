@@ -11,7 +11,7 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class PointAtDayAbsolute extends PointAtDay {
+public class  PointAtDayAbsolute extends PointAtDay {
 	
 	public ScheduleTime atTime;
 	public boolean[] weekDays;
@@ -23,8 +23,8 @@ public class PointAtDayAbsolute extends PointAtDay {
 		pointAtDayAbsolute.weekDays = weekDays;
 		return pointAtDayAbsolute;
 	}
-
-	@Override @GwtIncompatible
+ 
+	@Override @GwtIncompatible 
 	public Instant next(TaskContext context) {
 		LocalDateTime now = context.localDateTime();
 		LocalDateTime next = now.with(atTime.asTime());

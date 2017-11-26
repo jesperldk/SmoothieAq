@@ -1,8 +1,8 @@
 package jesperl.dk.smoothieaq.server.driver.abstracts;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -10,24 +10,24 @@ import java.util.function.*;
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
 import jesperl.dk.smoothieaq.server.driver.classes.*;
-import jesperl.dk.smoothieaq.shared.error.*;
-import jesperl.dk.smoothieaq.shared.util.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 
-public abstract class AbstractDriver<S extends AbstractDriver.Storage, D extends DeviceAccess> implements Driver {
+public abstract class  AbstractDriver<S extends AbstractDriver.Storage, D extends DeviceAccess> implements Driver {
 	
-	public static class Storage {
+	public static class  Storage {
 		public float[] calibration;
 		public void initCalibration(int size) { calibration = new float[size]; }
 	}
 
-	public static class StepInfoField {
+	public static class  StepInfoField {
 		public Message fieldInfo;
 		public float defaultValue;
 		public StepInfoField(Message fieldInfo, float defaultValue) { 
 			this.fieldInfo = fieldInfo; this.defaultValue = defaultValue; 
 		}
 	}
-	public static class StepInfo {
+	public static class  StepInfo {
 		public int stepId;
 		public Message stepInfo;
 		public StepInfoField[] fields;

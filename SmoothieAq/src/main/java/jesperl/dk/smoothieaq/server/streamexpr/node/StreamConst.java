@@ -6,7 +6,7 @@ import jesperl.dk.smoothieaq.server.device.*;
 import rx.*;
 import rx.Observable;
 
-public class StreamConst extends StreamNode {
+public class  StreamConst extends StreamNode {
 	public float value;
 	public String token;
 	

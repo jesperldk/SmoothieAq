@@ -1,8 +1,6 @@
-package jesperl.dk.smoothieaq.shared.error;
+package jesperl.dk.smoothieaq.util.shared.error;
 
-import java.text.*;
-
-public class Message {
+public class  Message {
 	public int msgNo;
 	public String defaultMessage;
 	public Object[] args;
@@ -11,5 +9,5 @@ public class Message {
 		this.msgNo = msgNo; this.defaultMessage = defaultMessage; this.args = args;
 	}
 	
-	@Override public String toString() { return "("+msgNo+") "+ MessageFormat.format(defaultMessage, args); }
+	@Override public String toString() { return "("+msgNo+") "+defaultMessage+" - "+args; }
 }

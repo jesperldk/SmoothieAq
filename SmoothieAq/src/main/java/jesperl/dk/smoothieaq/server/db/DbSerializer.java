@@ -1,8 +1,8 @@
 package jesperl.dk.smoothieaq.server.db;
 
-public class DbSerializer {/*
+public class  DbSerializer {/*
 	
-	public static class Header {
+	public static class  Header {
 		public long stamp;
 		public int id;
 		public short type;
@@ -53,7 +53,7 @@ public class DbSerializer {/*
 	public interface AFieldOut {
 		public void out(ByteBuffer out, DbContext context, Object a, int idx) throws Exception;
 	}
-	public static class SerializeField {
+	public static class  SerializeField {
 		public final Field field;
 		public final FieldIn fieldIn;
 		public final FieldOut fieldOut;
@@ -71,25 +71,25 @@ public class DbSerializer {/*
 		DbSerializer serializer = new DbSerializer();
 		serializer.serializeFor = serializeFor;
 		Class<?> superCls = serializeFor.getSuperclass();
-		if (superCls.equals(DbWithId.class)) {
+		if (superCls.equals(DbWithId.class )) {
 			serializer.withId = true;
 			serializer.withStamp = true;
 			serializer.withVer = true;
-		} else if (superCls.equals(DbWithStamp.class)) {
+		} else if (superCls.equals(DbWithStamp.class )) {
 			serializer.withStamp = true;
 			serializer.withVer = true;
-		} else if (superCls.equals(DbObject.class)) {
+		} else if (superCls.equals(DbObject.class )) {
 			serializer.withVer = true;
-		} else if (!superCls.equals(Object.class)) {
+		} else if (!superCls.equals(Object.class )) {
 			serializer.parrent = context.getSerializer(superCls);
 			serializer.withStamp = serializer.parrent.withStamp;
 			serializer.withId = serializer.parrent.withId;
 		}
-		if (serializeFor.getAnnotation(JsonTypeInfo.class) != null) { 
+		if (serializeFor.getAnnotation(JsonTypeInfo.class ) != null) { 
 			serializer.withType = true;
 			serializer.type = context.state().getClassId(serializeFor);
 		}
-		serializer.ver = funcNotNull(serializeFor.getAnnotation(DbVersion.class),(byte)1,a -> (byte)a.value());
+		serializer.ver = funcNotNull(serializeFor.getAnnotation(DbVersion.class ),(byte)1,a -> (byte)a.value());
 		serializer.serializeFields = createSerializeFields(serializeFor, context);
 		return serializer;
 	}
@@ -115,25 +115,25 @@ public class DbSerializer {/*
 		final Class<?> ctype = type.getComponentType();
 		final AFieldIn fin;
 		final AFieldOut fout;
-		if (ctype == boolean.class) {
+		if (ctype == boolean.class ) {
 			fin = (in,c,a,i) -> Array.setBoolean(a, i, in.get() > 0);
 			fout = (out,c,a,i) -> out.put((byte)(Array.getBoolean(a,i) ? 1 : 0));
-		} else if (ctype == float.class) {
+		} else if (ctype == float.class ) {
 			fin = (in,c,a,i) -> Array.setFloat(a, i, in.getFloat());
 			fout = (out,c,a,i) -> out.putFloat(Array.getFloat(a,i));
-		} else if (ctype == int.class) {
+		} else if (ctype == int.class ) {
 			fin = (in,c,a,i) -> Array.setInt(a, i, in.getInt());
 			fout = (out,c,a,i) -> out.putInt(Array.getInt(a,i));
-		} else if (ctype == long.class) {
+		} else if (ctype == long.class ) {
 			fin = (in,c,a,i) -> Array.setLong(a, i, in.getLong());
 			fout = (out,c,a,i) -> out.putLong(Array.getLong(a,i));
-		} else if (ctype == short.class) {
+		} else if (ctype == short.class ) {
 			fin = (in,c,a,i) -> Array.setShort(a, i, in.getShort());
 			fout = (out,c,a,i) -> out.putShort(Array.getShort(a,i));
-		} else if (ctype == String.class) {
+		} else if (ctype == String.class ) {
 			fin = (in,c,a,i) -> Array.set(a, i, getString(in));
 			fout = (out,c,a,i) -> putString(out,(String) Array.get(a,i));
-		} else if (Object.class.isAssignableFrom(ctype)) {
+		} else if (Object.class .isAssignableFrom(ctype)) {
 			final DbSerializer s = context.getSerializer(ctype);
 			fin = (in,c,a,i) -> Array.set(a, i, getObject(s, in, c));
 			fout = (out,c,a,i) -> setObject(s, out, c, Array.get(a,i));
@@ -163,25 +163,25 @@ public class DbSerializer {/*
 	protected static SerializeField createSerializeSimpleField(Field field, DbContext context, Class<?> type) {
 		final FieldIn fin;
 		final FieldOut fout;
-		if (type == boolean.class) {
+		if (type == boolean.class ) {
 			fin = (in,c,o) -> field.setBoolean(o, in.get() > 0);
 			fout = (out,c,o) -> out.put((byte)(field.getBoolean(o) ? 1 : 0));
-		} else if (type == float.class) {
+		} else if (type == float.class ) {
 			fin = (in,c,o) -> field.setFloat(o, in.getFloat());
 			fout = (out,c,o) -> out.putFloat(field.getFloat(o));
-		} else if (type == int.class) {
+		} else if (type == int.class ) {
 			fin = (in,c,o) -> field.setInt(o, in.getInt());
 			fout = (out,c,o) -> out.putInt(field.getInt(o));
-		} else if (type == long.class) {
+		} else if (type == long.class ) {
 			fin = (in,c,o) -> field.setLong(o, in.getLong());
 			fout = (out,c,o) -> out.putLong(field.getLong(o));
-		} else if (type == short.class) {
+		} else if (type == short.class ) {
 			fin = (in,c,o) -> field.setShort(o, in.getShort());
 			fout = (out,c,o) -> out.putShort(field.getShort(o));
-		} else if (type == String.class) {
+		} else if (type == String.class ) {
 			fin = (in,c,o) -> field.set(o, getString(in));
 			fout = (out,c,o) -> putString(out, (String) field.get(o));
-		} else if (Object.class.isAssignableFrom(type)) {
+		} else if (Object.class .isAssignableFrom(type)) {
 			final DbSerializer s = context.getSerializer(type);
 			fin = (in,c,o) -> field.set(o, getObject(s, in, c));
 			fout = (out,c,o) -> setObject(s, out, c, field.get(o));

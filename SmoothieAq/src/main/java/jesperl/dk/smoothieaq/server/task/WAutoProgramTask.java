@@ -1,7 +1,7 @@
 package jesperl.dk.smoothieaq.server.task;
 
 import static java.time.temporal.ChronoUnit.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.concurrent.atomic.*;
 
@@ -11,7 +11,7 @@ import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.shared.model.schedule.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 
-public class WAutoProgramTask extends WAutoTask {
+public class  WAutoProgramTask extends WAutoTask {
 	
 	@Override protected void autoDo(State state) {}
 	@Override protected void autoStart(State state, Interval next) { 

@@ -1,8 +1,8 @@
 package jesperl.dk.smoothieaq.server.access;
 
-import static jesperl.dk.smoothieaq.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.shared.error.Severity.*;
-import static jesperl.dk.smoothieaq.shared.util.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.function.*;
 import java.util.logging.*;
@@ -13,10 +13,10 @@ import com.pi4j.io.gpio.event.*;
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
 
-public class PiDeviceAccess extends AbstractDeviceAccess implements GpioDeviceAccess {
-	private final static Logger log = Logger.getLogger(PiDeviceAccess.class.getName());
+public class  PiDeviceAccess extends AbstractDeviceAccess implements GpioDeviceAccess {
+	private final static Logger log = Logger.getLogger(PiDeviceAccess.class .getName());
 	
-	public static String bus = bus(PiDeviceAccess.class);
+	public static String bus = bus(PiDeviceAccess.class );
 	
 	private static GpioController controller;
 
@@ -35,7 +35,7 @@ public class PiDeviceAccess extends AbstractDeviceAccess implements GpioDeviceAc
 			pin = RaspiPin.getPinByAddress(pinNo);
 			mode = (url.deviceArgs.length > 0) ? intv(url.deviceArgs[0]) : 1;
 			resistor = (url.deviceArgs.length > 1) ? intv(url.deviceArgs[1]) : 0;
-			synchronized (PiDeviceAccess.class) { if (controller == null) controller = GpioFactory.getInstance(); }
+			synchronized (PiDeviceAccess.class ) { if (controller == null) controller = GpioFactory.getInstance(); }
 		}, e -> error(log,e,10500, major, "Malformed pi url: {0}",url.urlString));
 		return this;
 	}

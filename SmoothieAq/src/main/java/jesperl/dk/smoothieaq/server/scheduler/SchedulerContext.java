@@ -10,7 +10,7 @@ import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.shared.model.schedule.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 
-public class SchedulerContext {
+public class  SchedulerContext {
 	
 	private State state;
 	private DeviceContext dContext;

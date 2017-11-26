@@ -5,7 +5,7 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.nio.file.*;
 
-public class Do3 {
+public class  Do3 {
 
 	public static final int k = 1024;
 	public static final int m = k*k;

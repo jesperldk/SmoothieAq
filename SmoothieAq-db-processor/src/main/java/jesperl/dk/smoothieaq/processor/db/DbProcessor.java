@@ -14,7 +14,7 @@ import javax.lang.model.type.*;
 import javax.tools.*;
 import javax.tools.Diagnostic.*;
 
-public class DbProcessor extends AbstractProcessor { 
+public class  DbProcessor extends AbstractProcessor { 
 
 	@Override public Set<String> getSupportedOptions() { return singleton("debug"); }
     @Override public Set<String> getSupportedAnnotationTypes() { return Collections.singleton("jesperl.dk.smoothieaq.shared.model.db.DbVersion");}//"jesperl.dk.smoothieaq.shared.model.db.DbVersion"); }
@@ -54,7 +54,7 @@ public class DbProcessor extends AbstractProcessor {
     	private Type(String bufTyp) { this.bufTyp = bufTyp; }
     };
     
-    class Process {
+    class  Process {
     	Writer w;
     	Element t;
 		TypeElement superCls;
@@ -115,7 +115,7 @@ public class DbProcessor extends AbstractProcessor {
 	   
 	    void p() throws Exception {
 			
-	    	w(t.getEnclosingElement()+";\n");
+	    	w("package "+t.getEnclosingElement()+";\n");
 			w("\n");
 			w("import java.nio.*;\n");
 			w("\n");
@@ -195,7 +195,7 @@ public class DbProcessor extends AbstractProcessor {
 			if (type == Type.objectT) {
 				w("\t\t"+baseField+" = "+e.asType()+"_Db.deserialize(in,context);\n");
 			} else if (type == Type.enumT) {
-				w("\t\t"+baseField+" = context.getEnum("+getEnumType(e)+".class,in.get());\n");
+				w("\t\t"+baseField+" = context.getEnum("+getEnumType(e)+".class ,in.get());\n");
 			} else if (type == Type.stringT) {
 				w("\t\tint "+fieldName+"$len = in.getShort();\n");
 				w("\t\tif ("+fieldName+"$len == 0)\n\t\t\t"+baseField+" = null;\n");

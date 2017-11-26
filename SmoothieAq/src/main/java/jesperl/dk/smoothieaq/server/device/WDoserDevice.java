@@ -11,7 +11,7 @@ import rx.*;
 import rx.schedulers.*;
 import rx.subjects.*;
 
-public class WDoserDevice extends WDevice<DoserDriver> implements DoserDevice {
+public class  WDoserDevice extends WDevice<DoserDriver> implements DoserDevice {
 	
 	protected PublishSubject<Float> doseX = PublishSubject.create();
 	protected PublishSubject<Float> soFar = PublishSubject.create();
