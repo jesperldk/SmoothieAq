@@ -39,7 +39,7 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
     @Override public SourceVersion getSupportedSourceVersion() { return SourceVersion.latestSupported(); }
 
     @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-    	log("process, processingOver="+roundEnv.processingOver());
+    	log("1.1 process, processingOver="+roundEnv.processingOver());
         roundEnv.getElementsAnnotatedWith(JsType.class ).stream()
                 .filter(e -> e.getKind().isClass() && e instanceof TypeElement)//.map(e -> (TypeElement) e)
                 .forEach(jsType -> {
@@ -72,12 +72,10 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
 		if (jsTypeElm.getAnnotation(JsonTypeInfo.class ) != null) {
 			log("root "+jsType);
 			rootClasses.add(jsTypeElm);
-//			instanceOf.put(jsType.toString(), Collections.emptySet());
 		} else {
 			Set<String> superClasses = getSuperClassesIfJsonTypeInfo(jsType);
 			if (!superClasses.isEmpty()) {
 				instanceOf.put(jsType.toString(), superClasses);
-//				log("abstract? "+jsTypeElm.getModifiers()+" "+java.lang.reflect.Modifier.ABSTRACT);
 				if (jsTypeElm.getModifiers().contains(Modifier.ABSTRACT)) {
 					log("abstract "+jsType);
 					abstractCls.add(jsType.toString());
@@ -106,17 +104,8 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
 		return superClasses;
 	}
 
-//	private void buildMap(String superc, CodeBlock.Builder builder) {
-//		instanceOf.entrySet().stream().filter(e -> e.getValue().contains(superc)).forEach(e -> {
-//			builder.add("$class ($S",e.getKey());
-//			e.getValue().stream().forEach(s -> builder.add(",$S",s));
-//			builder.add("),\n");
-//		});
-//	}
-	
 	// Intellij and Eclipse hacks courtesy of ClassIndex
 	private FileObject readOldHelper(String helperPkg, String helperName) throws IOException {
-		@SuppressWarnings("resource")
 		Reader reader = null;
 		try {
 			log("trying to read old helper "+helperPkg+"."+helperName);
@@ -200,12 +189,47 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
 		writer.write("import static java.util.stream.Collectors.*;\n");
 		writer.write("\n");
 		writer.write("import java.util.*;\n");
+		writer.write("import java.util.function.*;\n");
 		writer.write("\n");
 		writer.write("import jsinterop.annotations.*;\n");
 		writer.write("\n");
 		writer.write("@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = \"Object\")\n");
 		writer.write("public interface "+helperName+" {\n");
 		writer.write("\n");
+		
+		writer.write("	@JsOverlay\n");
+		writer.write("	static Map<String,Function<"+rootType+","+rootType+">> $copy = $buildCopy(\n");
+
+		for (Map.Entry<String, Set<String>> e : ofType(root)) {
+			String cls = e.getKey();
+			if (!abstractCls.contains(cls)) writer.write("\t\t$copyFunc(\""+cls+"\",(s)->"+cls+"_Db.copy(new "+cls+"(),("+cls+")s)),\n");
+		}
+
+		writer.write("	null);\n");
+		writer.write("\n");
+		writer.write("	@JsOverlay\n");
+		writer.write("	static Object[] $copyFunc(String cls, Function<"+rootType+","+rootType+"> func) {\n");
+		writer.write("		Object[] obj = new Object[2];\n");
+		writer.write("		obj[0] = cls; obj[1] = func;\n");
+		writer.write("	return obj;\n");
+		writer.write("	}\n");
+		writer.write("\n");
+		writer.write("	@JsOverlay @SuppressWarnings(\"unchecked\")\n");
+		writer.write("	static Map<String,Function<"+rootType+","+rootType+">> $buildCopy(Object[]... $copyFuncs) {\n");
+		writer.write("		Map<String,Function<"+rootType+","+rootType+">> map = new HashMap<>();\n");
+		writer.write("		stream($copyFuncs).filter(c -> c != null).forEach($copyFunc -> {\n");
+		writer.write("			map.put($minimalClass((String) $copyFunc[0]), (Function<"+rootType+", "+rootType+">) $copyFunc[1]);\n");
+		writer.write("		});\n");
+		writer.write("		return map;\n");
+		writer.write("	}\n");
+		writer.write("\n");
+		writer.write("	@JsOverlay\n");
+		writer.write("	static "+rootType+" $copy("+rootType+" s) {\n");
+		writer.write("		if (s == null) return null;\n");
+		writer.write("		return $copy.get(s.$type).apply(s);\n");
+		writer.write("	}\n");
+		writer.write("\n");
+		
 		writer.write("	@JsOverlay\n");
 		writer.write("	static Map<String,Set<String>> $instanceOf = $buildMap(\n");
 		
@@ -281,38 +305,6 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
 		return String.join(", ", classes.stream().map(c -> "\""+c+"\"").collect(Collectors.toList()));
 	}
 
-//	private void writeIndexFile(Set<String> entries, String resourceName, FileObject overrideFile) throws IOException {
-//		FileObject file = overrideFile;
-//		if (file == null) {
-//			file = processingEnv.getFiler().createSourceFile(StandardLocation.CLASS_OUTPUT, "", resourceName);
-//		}
-//		try (Writer writer = file.openWriter()) {
-//			for (String entry : entries) {
-//				writer.write(entry);
-//				writer.write("\n");
-//			}
-//		}
-//	}
-//
-//	private void writeSimpleNameIndexFile(Set<String> elementList, String resourceName)
-//			throws IOException {
-//		FileObject file = readOldIndexFile(elementList, resourceName);
-//		if (file != null) {
-//			/**
-//			 * Ugly hack for Eclipse JDT incremental compilation.
-//			 * Eclipse JDT can't createResource() after successful getResource().
-//			 * But we can file.openWriter().
-//			 */
-//			try {
-//				writeIndexFile(elementList, resourceName, file);
-//				return;
-//			} catch (IllegalStateException e) {
-//				// Thrown by HotSpot Java Compiler
-//			}
-//		}
-//		writeIndexFile(elementList, resourceName, null);
-//	}
-
 	private void processRoot(TypeElement root) throws Exception {
         ClassName rootName = ClassName.get(root); 
         log("root class : " + root); 
@@ -323,84 +315,6 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
 
         FileObject file = readOldHelper(helperPkg, helperName);
         writeHelper(helperPkg, helperName, root, file);
-
-//        TypeSpec.Builder modelTypeBuilder = TypeSpec.interfaceBuilder(helperName.simpleName())
-//                .addOriginatingElement(root)
-//                .addModifiers(PUBLIC)
-////                .add
-//                .addJavadoc("Generated by $L",this.getClass().getName());
-//        	
-////        buildMap(root.toString(), modelTypeBuilder);
-//
-//        modelTypeBuilder.addMethod(MethodSpec.methodBuilder("tt")
-////                .addAnnotation(Inject.class )
-//                .addModifiers(PUBLIC,DEFAULT)
-//                .returns(TypeName.INT)
-////                .addParameter(TypeName.get(ResourceVisitor.Supplier.class ), "parent", FINAL)
-//                .addParameter(TypeName.INT, "i")
-////                .addStatement("super(new $T() { public $T get() { return $L.get().path($S); } })",
-////                        ResourceVisitor.Supplier.class , ResourceVisitor.class , "parent", rsPath)
-//                .addStatement("return 1")
-//                .build());
-
-//        List<ExecutableElement> methods = restService.getEnclosedElements().stream()
-//                .filter(e -> e.getKind() == ElementKind.METHOD && e instanceof ExecutableElement)
-//                .map(e -> (ExecutableElement) e)
-//                .filter(method -> !(method.getModifiers().contains(STATIC) || method.isDefault()))
-//                .collect(Collectors.toList());
-//
-//        Set<String> methodImports = new HashSet<>();
-//        for (ExecutableElement method : methods) {
-//            String methodName = method.getSimpleName().toString();
-//
-//            if (isIncompatible(method)) {
-//                modelTypeBuilder.addMethod(MethodSpec.overriding(method)
-//                        .addStatement("throw new $T(\"$L\")", UnsupportedOperationException.class , methodName)
-//                        .build());
-//                continue;
-//            }
-//
-//            CodeBlock.Builder builder = CodeBlock.builder().add("$[return ");
-//            {
-//                // method type
-//                builder.add("method($L)", methodImport(methodImports, method.getAnnotationMirrors().stream()
-//                        .map(a -> asElement(a.getAnnotationType()).getAnnotation(HttpMethod.class ))
-//                        .filter(a -> a != null).map(HttpMethod::value).findFirst().orElse(GET)));
-//                // resolve paths
-//                builder.add(".path($L)", Arrays
-//                        .stream(ofNullable(method.getAnnotation(Path.class )).map(Path::value).orElse("").split("/"))
-//                        .filter(s -> !s.isEmpty()).map(path -> !path.startsWith("{") ? "\"" + path + "\"" : method
-//                                .getParameters().stream()
-//                                .filter(a -> ofNullable(a.getAnnotation(PathParam.class )).map(PathParam::value)
-//                                        .map(v -> path.equals("{" + v + "}")).orElse(false))
-//                                .findFirst().map(VariableElement::getSimpleName).map(Object::toString)
-//                                .orElse("null /* path param " + path + " does not match any argument! */"))
-//                        .collect(Collectors.joining(", ")));
-//                // query params
-//                method.getParameters().stream().filter(p -> p.getAnnotation(QueryParam.class ) != null).forEach(p ->
-//                        builder.add(".param($S, $L)", p.getAnnotation(QueryParam.class ).value(), p.getSimpleName()));
-//                // header params
-//                method.getParameters().stream().filter(p -> p.getAnnotation(HeaderParam.class ) != null).forEach(p ->
-//                        builder.add(".header($S, $L)", p.getAnnotation(HeaderParam.class ).value(), p.getSimpleName()));
-//                // form params
-//                method.getParameters().stream().filter(p -> p.getAnnotation(FormParam.class ) != null).forEach(p ->
-//                        builder.add(".form($S, $L)", p.getAnnotation(FormParam.class ).value(), p.getSimpleName()));
-//                // data
-//                method.getParameters().stream().filter(this::isParam).findFirst()
-//                        .ifPresent(data -> builder.add(".data($L)", data.getSimpleName()));
-//            }
-//            builder.add(".as($T.class , $T.class );\n$]",
-//                    processingEnv.getTypeUtils().erasure(method.getReturnType()),
-//                    MoreTypes.asDeclared(method.getReturnType()).getTypeArguments().stream().findFirst()
-//                            .map(TypeName::get).orElse(TypeName.get(Void.class )));
-//
-//            modelTypeBuilder.addMethod(MethodSpec.overriding(method).addCode(builder.build()).build());
-//        }
-
-//        Filer filer = processingEnv.getFiler();
-//        JavaFile.Builder file = JavaFile.builder(rootName.packageName(), modelTypeBuilder.build());
-////        for (String methodImport : methodImports) file.addStaticImport(HttpMethod.class , methodImport);
-//        file.build().writeTo(filer);
     }
 
     private void log(String msg) {

@@ -27,6 +27,5 @@ public abstract class  EveryNPoint extends SchedulePoint {
 	
 	@GwtIncompatible abstract protected Adjuster getAdjuster();
 	
-	@Override @JsOverlay public abstract EveryNPoint copy();
 	@Override @JsOverlay @GwtIncompatible public abstract EveryNPoint deserialize(int ver, ByteBuffer in, DbContext context);
 }

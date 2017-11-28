@@ -22,7 +22,7 @@ public class  DbProcessor extends AbstractProcessor {
 
     @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
     	if (annotations == null || annotations.isEmpty()) return false;
-    	log("DB1 process, processingOver="+roundEnv.processingOver()+" "+annotations.iterator().next());
+    	log("DB1.3 process, processingOver="+roundEnv.processingOver()+" "+annotations.iterator().next());
 		try {
 			roundEnv.getElementsAnnotatedWith(annotations.iterator().next()).stream()
     		.filter(e -> e.getKind().isClass() && e instanceof TypeElement)
@@ -112,10 +112,11 @@ public class  DbProcessor extends AbstractProcessor {
 			if (!supert.getSimpleName().toString().equals("Object")) return getAnnotation(supert, annoName);
 			return null;
 		}
-	   
+		
 	    void p() throws Exception {
-			
-	    	w("package "+t.getEnclosingElement()+";\n");
+	    	String pckg = ((TypeElement)t).getQualifiedName().toString();
+	    	pckg = pckg.substring(0, pckg.lastIndexOf("."));
+			w("package "+pckg+";\n");
 			w("\n");
 			w("import java.nio.*;\n");
 			w("\n");
@@ -124,8 +125,8 @@ public class  DbProcessor extends AbstractProcessor {
 			w("import jesperl.dk.smoothieaq.server.db.*;\n");
 			w("import jesperl.dk.smoothieaq.shared.model.db.*;\n");
 			w("import jsinterop.annotations.*;\n");
-			w("\n");
-			w("public interface "+dbName+" {\n");
+			w("\n@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = \"Object\")\n");
+			w("public class "+dbName+" {\n");
 			w("	\n");
 	
 			copy();
@@ -169,7 +170,7 @@ public class  DbProcessor extends AbstractProcessor {
 		}
 		void outFields() {
 			w("	@JsOverlay @GwtIncompatible\n");
-			w("	static void serializeFields("+baseName+" "+baseVar+", ByteBuffer out, DbContext context) {\n");
+			w("	static public void serializeFields("+baseName+" "+baseVar+", ByteBuffer out, DbContext context) {\n");
 			if (!superEnd()) w("\t\t"+superCls+"_Db.serializeFields("+baseVar+",out,context);\n");
 			forEachField(w, t, baseName, baseVar, (e) -> 
 				outField(e, e.getSimpleName().toString(), getType(e.asType()))
@@ -179,10 +180,10 @@ public class  DbProcessor extends AbstractProcessor {
 		}
 		void out() {
 			w("	@JsOverlay @GwtIncompatible\n");
-			w("	static void serialize("+baseName+" "+baseVar+", ByteBuffer out, DbContext context) {\n");
+			w("	static public void serialize("+baseName+" "+baseVar+", ByteBuffer out, DbContext context) {\n");
 			
 			w("\t\tout.put((byte)"+getVer(t)+");\n");
-			if (getAnnotation(t, "JsonTypeInfo") != null) w("\t\tout.putShort(context.state().getClassId("+baseVar+".getClass()));");
+			if (getAnnotation(t, "JsonTypeInfo") != null) w("\t\tout.putShort(context.state().getClassId("+baseVar+".getClass()));\n");
 			w("\t\tserializeFields("+baseVar+",out,context);\n");
 			
 			w("	}\n");
@@ -221,7 +222,7 @@ public class  DbProcessor extends AbstractProcessor {
 		}
 		void in() {
 			w("\t@JsOverlay @GwtIncompatible\n");
-			w("\tstatic "+baseName+" deserialize(ByteBuffer in, DbContext context) {\n");
+			w("\tstatic public "+baseName+" deserialize(ByteBuffer in, DbContext context) {\n");
 			w("\t\tint $ver = in.get();\n");
 			w("\t\tif ($ver == 0) return null;\n");
 			if (getAnnotation(t, "JsonTypeInfo") != null) {
@@ -238,8 +239,8 @@ public class  DbProcessor extends AbstractProcessor {
 		}
 		void inFields() {
 			w("\t@JsOverlay @GwtIncompatible\n");
-			w("\tstatic "+baseName+" deserializeFields("+baseName+" "+baseVar+", ByteBuffer in, DbContext context) {\n");
-			if (!superEnd()) w("\t\t"+superCls+"_Db.deserializeFields("+baseVar+",in,context);");
+			w("\tstatic public "+baseName+" deserializeFields("+baseName+" "+baseVar+", ByteBuffer in, DbContext context) {\n");
+			if (!superEnd()) w("\t\t"+superCls+"_Db.deserializeFields("+baseVar+",in,context);\n");
 			forEachField(w, t, baseName, baseVar, (e) -> 
 				inField(e, e.getSimpleName().toString(), getType(e.asType()))
 			);
@@ -253,7 +254,7 @@ public class  DbProcessor extends AbstractProcessor {
 			String baseField = baseVar+"."+fieldName;
 			String thisField = thisName+"."+fieldName;
 			if (type == Type.objectT) {
-				copy(baseField,thisField+" == null ? null : "+thisField+".copy()");
+				copy(baseField,thisField+" == null ? null : ("+e.asType()+")"+thisField+".copy()");
 			} else if (type == Type.arrayT) {
 				TypeMirror arrayType = getArrayType(e);
 				w("\t\tif ("+thisField+" == null) "+baseField+" = null;\n");
@@ -268,7 +269,7 @@ public class  DbProcessor extends AbstractProcessor {
 		}
 		void copy() {
 			w("	@JsOverlay\n");
-			w("	static "+baseName+" copy("+baseName+" "+baseVar+", "+baseName+" "+thisName+") {\n");
+			w("	static public "+baseName+" copy("+baseName+" "+baseVar+", "+baseName+" "+thisName+") {\n");
 			
 			if (!superName.equals("DbObject")) w("\t\t"+superCls+"_Db.copy("+baseVar+","+thisName+");\n");
 			if (superName.equals("DbStamp")) w("\t\t"+baseVar+".stamp = System.currentTimeMillis();\n");

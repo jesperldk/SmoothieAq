@@ -26,7 +26,7 @@ public class  Measure extends DbWithStamp {
 		return measure;
 	}
 
-	@Override @JsOverlay public Measure copy() { return Measure_Db.copy(new Measure(),this); }
+	@JsOverlay public final Measure copy() { return Measure_Db.copy(new Measure(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { Measure_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public Measure deserialize(int ver, ByteBuffer in, DbContext context) { return Measure_Db.deserializeFields(this, in, context); }
 }

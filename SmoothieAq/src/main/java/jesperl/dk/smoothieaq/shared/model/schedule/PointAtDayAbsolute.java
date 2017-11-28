@@ -34,7 +34,6 @@ public class  PointAtDayAbsolute extends PointAtDay {
 		return next.atZone(ZoneId.systemDefault()).toInstant();
 	}
 
-	@Override @JsOverlay public PointAtDayAbsolute copy() { return PointAtDayAbsolute_Db.copy(new PointAtDayAbsolute(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { PointAtDayAbsolute_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public PointAtDayAbsolute deserialize(int ver, ByteBuffer in, DbContext context) { return PointAtDayAbsolute_Db.deserializeFields(this, in, context); }
 }

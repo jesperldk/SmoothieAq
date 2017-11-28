@@ -34,7 +34,6 @@ public class  PointRelative extends PointAtDay {
 		return null;
 	}
 
-	@Override @JsOverlay public PointRelative copy() { return PointRelative_Db.copy(new PointRelative(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { PointRelative_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public PointRelative deserialize(int ver, ByteBuffer in, DbContext context) { return PointRelative_Db.deserializeFields(this, in, context); }
 }

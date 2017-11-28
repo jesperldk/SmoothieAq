@@ -25,7 +25,6 @@ public class  ProgramTaskArg extends TaskArg {
 		return taskArg;
 	}
 
-	@Override @JsOverlay public ProgramTaskArg copy() { return ProgramTaskArg_Db.copy(new ProgramTaskArg(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { ProgramTaskArg_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public ProgramTaskArg deserialize(int ver, ByteBuffer in, DbContext context) { return ProgramTaskArg_Db.deserializeFields(this, in, context); }
 }

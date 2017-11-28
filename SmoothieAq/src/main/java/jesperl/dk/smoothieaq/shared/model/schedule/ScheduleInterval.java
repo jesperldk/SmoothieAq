@@ -18,7 +18,6 @@ public abstract class  ScheduleInterval extends Schedule {
 		return nextInterval(context).start();
 	}
 
-	@Override @JsOverlay public abstract ScheduleInterval copy();
 	@Override @JsOverlay @GwtIncompatible public abstract ScheduleInterval deserialize(int ver, ByteBuffer in, DbContext context);
 }
  

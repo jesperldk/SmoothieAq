@@ -29,7 +29,7 @@ public class  DeviceStatus extends DbWithParrentId {
 		return deviceStatus;
 	}
 
-	@Override @JsOverlay public DeviceStatus copy() { return DeviceStatus_Db.copy(new DeviceStatus(),this); }
+	@JsOverlay public final DeviceStatus copy() { return DeviceStatus_Db.copy(new DeviceStatus(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { DeviceStatus_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public DeviceStatus deserialize(int ver, ByteBuffer in, DbContext context) { return DeviceStatus_Db.deserializeFields(this, in, context); }
 }

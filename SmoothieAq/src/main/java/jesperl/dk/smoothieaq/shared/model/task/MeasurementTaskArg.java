@@ -27,7 +27,6 @@ public class  MeasurementTaskArg extends TaskArg {
 		return measurementTaskArg;
 	}
 
-	@Override @JsOverlay public MeasurementTaskArg copy() { return MeasurementTaskArg_Db.copy(new MeasurementTaskArg(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { MeasurementTaskArg_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public MeasurementTaskArg deserialize(int ver, ByteBuffer in, DbContext context) { return MeasurementTaskArg_Db.deserializeFields(this, in, context); }
 }

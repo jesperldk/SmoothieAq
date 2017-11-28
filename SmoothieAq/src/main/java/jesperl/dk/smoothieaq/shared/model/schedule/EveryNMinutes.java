@@ -32,7 +32,6 @@ public class  EveryNMinutes extends EveryDuration {
 		return adjuster;
 	}
 
-	@Override @JsOverlay public EveryNMinutes copy() { return EveryNMinutes_Db.copy(new EveryNMinutes(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { EveryNMinutes_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public EveryNMinutes deserialize(int ver, ByteBuffer in, DbContext context) { return EveryNMinutes_Db.deserializeFields(this, in, context); }
 }

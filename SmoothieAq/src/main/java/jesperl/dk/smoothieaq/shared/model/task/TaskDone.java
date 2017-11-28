@@ -32,7 +32,7 @@ public class  TaskDone extends DbWithParrentId {
 		return taskDone;
 	}
 
-	@Override @JsOverlay public TaskDone copy() { return TaskDone_Db.copy(new TaskDone(),this); }
+	@JsOverlay public final TaskDone copy() { return TaskDone_Db.copy(new TaskDone(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { TaskDone_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public TaskDone deserialize(int ver, ByteBuffer in, DbContext context) { return TaskDone_Db.deserializeFields(this, in, context); }
 }

@@ -37,7 +37,6 @@ public class  PointEqualToEnd extends SchedulePoint {
 //		} while (true);
 	}
 
-	@Override @JsOverlay public PointEqualToEnd copy() { return PointEqualToEnd_Db.copy(new PointEqualToEnd(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { PointEqualToEnd_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public PointEqualToEnd deserialize(int ver, ByteBuffer in, DbContext context) { return PointEqualToEnd_Db.deserializeFields(this, in, context); }
 }

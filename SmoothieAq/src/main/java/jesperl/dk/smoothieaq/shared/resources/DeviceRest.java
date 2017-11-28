@@ -14,7 +14,7 @@ import rx.*;
 @AutoRestGwt @Path("device") @Produces(MediaType.APPLICATION_JSON) @Consumes(MediaType.APPLICATION_JSON)
 public interface DeviceRest { 
 
-	@GET Single<Device> get(@QueryParam("id") int deviceId);  
+	@GET Single<Device> get(@QueryParam("id") int deviceId);   
 	@PUT Single<DeviceCompactView> create(Device device);
 	@POST Single<DeviceCompactView> update(Device device);
 	

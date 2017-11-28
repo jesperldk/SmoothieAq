@@ -28,7 +28,7 @@ public class  DeviceCalibration extends DbWithParrentId {
 		return deviceCalibration;
 	}
 
-	@Override @JsOverlay public DeviceCalibration copy() { return DeviceCalibration_Db.copy(new DeviceCalibration(),this); }
+	@JsOverlay public final DeviceCalibration copy() { return DeviceCalibration_Db.copy(new DeviceCalibration(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { DeviceCalibration_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public DeviceCalibration deserialize(int ver, ByteBuffer in, DbContext context) { return DeviceCalibration_Db.deserializeFields(this, in, context); }
 }

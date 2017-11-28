@@ -30,7 +30,6 @@ public class  ValueTaskArg extends TaskArg {
 		return valueTaskArg;
 	}
 
-	@Override @JsOverlay public ValueTaskArg copy() { return ValueTaskArg_Db.copy(new ValueTaskArg(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { ValueTaskArg_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public ValueTaskArg deserialize(int ver, ByteBuffer in, DbContext context) { return ValueTaskArg_Db.deserializeFields(this, in, context); }
 }

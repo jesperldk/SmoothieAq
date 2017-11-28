@@ -27,7 +27,6 @@ public class  IntervalEqualTo extends ScheduleInterval {
 		return null;
 	}
 
-	@Override @JsOverlay public IntervalEqualTo copy() { return IntervalEqualTo_Db.copy(new IntervalEqualTo(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { IntervalEqualTo_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public IntervalEqualTo deserialize(int ver, ByteBuffer in, DbContext context) { return IntervalEqualTo_Db.deserializeFields(this, in, context); }
 }

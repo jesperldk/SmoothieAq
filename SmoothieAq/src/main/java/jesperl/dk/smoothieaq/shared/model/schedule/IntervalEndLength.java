@@ -29,7 +29,6 @@ public class  IntervalEndLength extends ScheduleInterval {
 		return null;
 	}
 
-	@Override @JsOverlay public IntervalEndLength copy() { return IntervalEndLength_Db.copy(new IntervalEndLength(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { IntervalEndLength_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public IntervalEndLength deserialize(int ver, ByteBuffer in, DbContext context) { return IntervalEndLength_Db.deserializeFields(this, in, context); }
 }

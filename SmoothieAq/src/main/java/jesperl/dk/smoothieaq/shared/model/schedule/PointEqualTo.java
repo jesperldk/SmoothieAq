@@ -38,7 +38,6 @@ public class  PointEqualTo extends SchedulePoint {
 		} while (true);
 	}
 
-	@Override @JsOverlay public PointEqualTo copy() { return PointEqualTo_Db.copy(new PointEqualTo(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { PointEqualTo_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public PointEqualTo deserialize(int ver, ByteBuffer in, DbContext context) { return PointEqualTo_Db.deserializeFields(this, in, context); }
 }

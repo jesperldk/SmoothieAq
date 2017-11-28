@@ -15,6 +15,6 @@ public abstract class  TaskArg extends DbObject implements TaskArg_Helper {
 	@JsonIgnore public transient String $type; 
 
 
-	@Override @JsOverlay public abstract TaskArg copy();
+	@JsOverlay public final TaskArg copy() { return TaskArg_Helper.$copy( this ); }
 	@Override @JsOverlay @GwtIncompatible public abstract TaskArg deserialize(int ver, ByteBuffer in, DbContext context);
 }

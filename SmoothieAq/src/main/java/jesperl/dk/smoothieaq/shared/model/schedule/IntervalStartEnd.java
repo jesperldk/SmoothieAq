@@ -29,7 +29,6 @@ public class  IntervalStartEnd extends ScheduleInterval {
 		return null;
 	}
 
-	@Override @JsOverlay public IntervalStartEnd copy() { return IntervalStartEnd_Db.copy(new IntervalStartEnd(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { IntervalStartEnd_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public IntervalStartEnd deserialize(int ver, ByteBuffer in, DbContext context) { return IntervalStartEnd_Db.deserializeFields(this, in, context); }
 }

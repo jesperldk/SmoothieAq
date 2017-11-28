@@ -18,7 +18,6 @@ public class  IntervalInverseToSelf extends ScheduleInterval {
 		return null;
 	}
 
-	@Override @JsOverlay public IntervalInverseToSelf copy() { return IntervalInverseToSelf_Db.copy(new IntervalInverseToSelf(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { IntervalInverseToSelf_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public IntervalInverseToSelf deserialize(int ver, ByteBuffer in, DbContext context) { return IntervalInverseToSelf_Db.deserializeFields(this, in, context); }
 }

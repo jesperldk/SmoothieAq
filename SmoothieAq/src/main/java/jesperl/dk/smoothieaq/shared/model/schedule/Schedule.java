@@ -19,6 +19,6 @@ public abstract class  Schedule extends DbObject implements Schedule_Helper {
 	@GwtIncompatible public abstract Instant next(TaskContext context);
 	@GwtIncompatible public abstract Interval nextInterval(TaskContext context);
 
-	@Override @JsOverlay public abstract Schedule copy(); 
+	@JsOverlay public final Schedule copy() { return Schedule_Helper.$copy( this ); } 
 	@Override @JsOverlay @GwtIncompatible public abstract Schedule deserialize(int ver, ByteBuffer in, DbContext context);
 } 

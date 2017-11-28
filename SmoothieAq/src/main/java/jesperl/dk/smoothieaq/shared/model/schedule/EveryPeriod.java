@@ -47,6 +47,5 @@ public abstract class  EveryPeriod extends EveryNPoint {
 		return nextStart.atZone(ZoneId.systemDefault()).toInstant();
 	}
 	
-	@Override @JsOverlay public abstract EveryPeriod copy();
 	@Override @JsOverlay @GwtIncompatible public abstract EveryPeriod deserialize(int ver, ByteBuffer in, DbContext context);
 }

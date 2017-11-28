@@ -19,7 +19,6 @@ public abstract class  SchedulePoint extends Schedule {
 		return new Interval(next, next);
 	}
 
-	@Override @JsOverlay public abstract SchedulePoint copy();
 	@Override @JsOverlay @GwtIncompatible public abstract SchedulePoint deserialize(int ver, ByteBuffer in, DbContext context);
 }
  

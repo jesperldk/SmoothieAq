@@ -31,7 +31,6 @@ public class  IntervalStartLength extends ScheduleInterval {
 		return new Interval(next, next.plusSeconds(length.asTime().toSecondOfDay()));
 	}
 
-	@Override @JsOverlay public IntervalStartLength copy() { return IntervalStartLength_Db.copy(new IntervalStartLength(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { IntervalStartLength_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public IntervalStartLength deserialize(int ver, ByteBuffer in, DbContext context) { return IntervalStartLength_Db.deserializeFields(this, in, context); }
 }

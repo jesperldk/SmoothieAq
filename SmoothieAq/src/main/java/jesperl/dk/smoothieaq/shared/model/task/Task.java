@@ -59,7 +59,7 @@ public class  Task extends DbWithId {
 //				.min( (p1,p2) -> p1.b.start().compareTo(p2.b.start()) ).orElse(null);
 //	}
 
-	@Override @JsOverlay public Task copy() { return Task_Db.copy(new Task(),this); }
+	@JsOverlay public final Task copy() { return Task_Db.copy(new Task(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { Task_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public Task deserialize(int ver, ByteBuffer in, DbContext context) { return Task_Db.deserializeFields(this, in, context); }
 }

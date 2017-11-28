@@ -46,6 +46,5 @@ public abstract class  EveryDuration extends EveryNPoint {
 		return nextStart;
 	}
 
-	@Override @JsOverlay public abstract EveryDuration copy();
 	@Override @JsOverlay @GwtIncompatible public abstract EveryDuration deserialize(int ver, ByteBuffer in, DbContext context);
 }

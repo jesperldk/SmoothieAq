@@ -35,7 +35,6 @@ public class  EveryNWeeks extends EveryPeriod {
 		return adjuster;
 	}
 
-	@Override @JsOverlay public EveryNWeeks copy() { return EveryNWeeks_Db.copy(new EveryNWeeks(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { EveryNWeeks_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public EveryNWeeks deserialize(int ver, ByteBuffer in, DbContext context) { return EveryNWeeks_Db.deserializeFields(this, in, context); }
 }

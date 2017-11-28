@@ -124,8 +124,8 @@
     </dependency>
   	<dependency>
   		<groupId>jesperl.dk</groupId>
-  		<artifactId>gwtjasontype</artifactId>
-  		<version>0.0.1-SNAPSHOT.jar</version>
+  		<artifactId>gwt-jsontype-processor</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
   	<dependency>
   		<groupId>moxieapps.org</groupId>

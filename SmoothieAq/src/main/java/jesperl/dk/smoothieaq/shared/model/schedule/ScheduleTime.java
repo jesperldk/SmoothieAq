@@ -1,13 +1,12 @@
 package jesperl.dk.smoothieaq.shared.model.schedule;
 
-import java.nio.ByteBuffer;
+import java.nio.*;
 import java.time.*;
 
 import com.google.gwt.core.shared.*;
 
-import jesperl.dk.smoothieaq.server.db.DbContext;
-import jesperl.dk.smoothieaq.shared.model.db.DbObject;
-import jesperl.dk.smoothieaq.shared.model.db.DbVersion;
+import jesperl.dk.smoothieaq.server.db.*;
+import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
@@ -33,7 +32,7 @@ public class  ScheduleTime extends DbObject {
 		return time;
 	}
 	
-	@Override @JsOverlay public ScheduleTime copy() { return ScheduleTime_Db.copy(new ScheduleTime(),this); }
+	@JsOverlay public final ScheduleTime copy() { return ScheduleTime_Db.copy(new ScheduleTime(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { ScheduleTime_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public ScheduleTime deserialize(int ver, ByteBuffer in, DbContext context) { return ScheduleTime_Db.deserializeFields(this, in, context); }
 }

@@ -24,7 +24,7 @@ public class  Device extends DbWithId {
 	public float onLevel;
 	public float wattAt100pct;
 
-	@Override @JsOverlay public Device copy() { return Device_Db.copy(new Device(),this); }
+	@JsOverlay public final Device copy() { return Device_Db.copy(new Device(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { Device_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public Device deserialize(int ver, ByteBuffer in, DbContext context) { return Device_Db.deserializeFields(this, in, context); }
 }

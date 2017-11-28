@@ -19,7 +19,6 @@ public class  LevelTaskArg extends TaskArg {
 		return taskArg;
 	}
 
-	@Override @JsOverlay public LevelTaskArg copy() { return LevelTaskArg_Db.copy(new LevelTaskArg(),this); } 
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { LevelTaskArg_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public LevelTaskArg deserialize(int ver, ByteBuffer in, DbContext context) { return LevelTaskArg_Db.deserializeFields(this, in, context); }
 }

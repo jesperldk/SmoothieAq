@@ -31,7 +31,7 @@ public class  TaskStatus extends DbWithParrentId {
 		return taskStatus;
 	}
 
-	@Override @JsOverlay public TaskStatus copy() { return TaskStatus_Db.copy(new TaskStatus(),this); } 
+	@JsOverlay public final TaskStatus copy() { return TaskStatus_Db.copy(new TaskStatus(),this); } 
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { TaskStatus_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public TaskStatus deserialize(int ver, ByteBuffer in, DbContext context) { return TaskStatus_Db.deserializeFields(this, in, context); }
 }

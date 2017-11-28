@@ -26,7 +26,6 @@ public class  DescriptionTaskArg extends TaskArg {
 		return descriptionTaskArg;
 	}
 
-	@Override @JsOverlay public DescriptionTaskArg copy() { return DescriptionTaskArg_Db.copy(new DescriptionTaskArg(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { DescriptionTaskArg_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public DescriptionTaskArg deserialize(int ver, ByteBuffer in, DbContext context) { return DescriptionTaskArg_Db.deserializeFields(this, in, context); }
 }
