@@ -4,7 +4,6 @@ import static jesperl.dk.smoothieaq.shared.model.device.DeviceClass.*;
 
 public enum DeviceType { 
 	sensor(1,DeviceClass.sensor), 
-	other(2,null), 
 	light(3,level), 
 	flow(4,onoff), 
 	filter(5,onoff), 
@@ -15,12 +14,13 @@ public enum DeviceType {
 	air(10,onoff), 
 	uv(11,onoff), 
 	doser(12,DeviceClass.doser),
-	generic(13,null),
 	status(14,DeviceClass.status),
 	button(15,toggle),
 	waterLevel(16,toggle),
 	topUp(17,DeviceClass.doser),
 	tank(18,container),
+	other(98,null), 
+	generic(99,null),
 	;
 
 	private int id;

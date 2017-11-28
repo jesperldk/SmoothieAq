@@ -1,6 +1,7 @@
 package jesperl.dk.smoothieaq.server.resources.config;
 
 import java.lang.annotation.*;
+import java.util.logging.*;
 
 import javax.ws.rs.*;
 //import com.sun.jersey.api.core.DefaultResourceConfig;
@@ -16,8 +17,10 @@ import jesperl.dk.smoothieaq.server.util.*;
 
 @ApplicationPath("/smoothieaq/x")
 public class  SmoothieAqApp extends ResourceConfig {
+	private final static Logger log = Logger.getLogger(SmoothieAqApp.class .getName());
 	
     public SmoothieAqApp() throws Exception {
+    	log.info("**starting "+SmoothieAqApp.class);
     	registerClasses();
     	jesperl.dk.smoothieaq.server.state.State.state().init();
     	
@@ -26,7 +29,7 @@ public class  SmoothieAqApp extends ResourceConfig {
 
 	private void doTestStuff() {
 //		jesperl.dk.smoothieaq.server.state.State state = jesperl.dk.smoothieaq.server.state.State.state();
-		
+//		
 //		Device device = state.dContext.getAllDrivers().stream().findFirst().get();
 //		
 //		{
@@ -51,9 +54,11 @@ public class  SmoothieAqApp extends ResourceConfig {
 //		}
 	}
 
-	public void registerClasses() {
-		FindClass.create("jesperl.dk.smoothieaq.server.resources").filter(c -> isAnnotatedWith(c, Path.class ))
-    		.forEach(c -> registerClasses(c));
+	public void registerClasses() {System.out.println("**register ");
+		FindClass.create("jesperl.dk.smoothieaq.server.resources").filter(c -> isAnnotatedWith(c, Path.class )).forEach(c -> {
+			log.info("registering "+c);
+			registerClasses(c);
+		});
     	registerClasses(ObjectMapperContextResolver.class );
 	}
 

@@ -24,6 +24,7 @@ public class  FindClass {
 					URL url = resources.nextElement();
 					if (url == null) continue;
 					URLConnection connection = url.openConnection();
+					log.info("url="+url.getPath());
 					if (connection instanceof JarURLConnection) findInJar((JarURLConnection)connection,packageName,subscriber);
 					else findInDir(new File(URLDecoder.decode(url.getPath(),"UTF-8")),packageName,subscriber);
 //					String name = url.getFile();
@@ -43,7 +44,7 @@ public class  FindClass {
 	    	JarEntry jarEntry = entries.nextElement();
 	    	if (jarEntry == null) continue;
 	        String entryName = jarEntry.getName();
-	        if (entryName.endsWith(".class ") && !entryName.contains("$")) {
+	        if (entryName.endsWith(".class") && !entryName.contains("$")) {
 	            String name = entryName.substring(0, entryName.length() - 6).replace('/', '.');
 	            if (name.contains(packageName)) 
 		        	doNoException(() -> subscriber.onNext(Class.forName(name)));
@@ -57,7 +58,7 @@ public class  FindClass {
 	        String name = file.getName();
 			if (file.isDirectory())
 				findInDir(file, packageName + "." + name,subscriber);
-	        else if (name.endsWith(".class ") && !name.contains("$"))
+	        else if (name.endsWith(".class") && !name.contains("$"))
 	        	doNoException(() -> subscriber.onNext(Class.forName(packageName + '.' + name.substring(0, name.length() - 6))));
 	    }
 	}
