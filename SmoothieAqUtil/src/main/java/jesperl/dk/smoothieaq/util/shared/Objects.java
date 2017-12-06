@@ -19,6 +19,7 @@ public class  Objects {
 	
 	public static <T> void doNotNull(T valueOrNull, Consumer<T> doit) { if (isNotNull(valueOrNull)) doit.accept(valueOrNull); }
 
+	public static <T,U> U funcNotNull(T valueOrNull, Function<T,U> func) { return isNotNull(valueOrNull) ? func.apply(valueOrNull) : null; }
 	public static <T,U> U funcNotNull(T valueOrNull, U defaultValue, Function<T,U> func) { return isNotNull(valueOrNull) ? func.apply(valueOrNull) : defaultValue; }
 	public static <T,U> U funcOrNull(T valueOrNull, Function<T,U> func) { return isNotNull(valueOrNull) ? func.apply(valueOrNull) : null; }
 	public static <T,U> U funcNotNull(T valueOrNull, Supplier<U> nullFunc, Function<T,U> func) { return isNotNull(valueOrNull) ? func.apply(valueOrNull) : nullFunc.get(); }

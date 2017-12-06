@@ -2,7 +2,6 @@ package jesperl.dk.smoothieaq.client.components;
 
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
-import com.google.gwt.core.client.*;
 import com.google.gwt.user.client.ui.*;
 
 import gwt.material.design.addins.client.combobox.*;
@@ -34,21 +33,15 @@ public class GuiUtil {
 		MaterialComboBox<String> comboBox = new MaterialComboBox<String>() {
 			protected void onLoad() {
 				super.onLoad();
-				setValue(field.get().name());
+				setValue(funcNotNull(field.get(), e -> e.name()));
 				addValueChangeHandler(evt -> field.set(Enum.valueOf(field.getType(), getValue())));
 			}
 		};
-		T[] ec = field.getType().getEnumConstants();
-		for (int i = 0; i < ec.length; i++) GWT.log("ec:"+ec[i].name());
 		stream(field.getType().getEnumConstants()).forEach(e -> {
-			GWT.log("e1");
-			GWT.log("e2:"+e);
-			GWT.log("e3:"+e.name());
 			Option option = new Option();
 			option.setValue(e.name());
 			option.setText(e.name()+"?");
 			comboBox.add(option);
-			GWT.log("e4:"+e.name());
 		});
 		comboBox.setLabel(field.getKey());
 		return comboBox;
