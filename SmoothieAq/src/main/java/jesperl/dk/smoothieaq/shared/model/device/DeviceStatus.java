@@ -9,7 +9,7 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  DeviceStatus extends DbWithParrentId { 
+public class  DeviceStatus extends DbWithParrentId implements DeviceStatus_Helper { 
 	
 //	public short deviceId;
 	public DeviceStatusType statusType;

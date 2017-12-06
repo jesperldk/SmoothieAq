@@ -10,7 +10,7 @@ import jesperl.dk.smoothieaq.shared.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public abstract class  DbWithStamp extends DbObject { 
+public abstract class  DbWithStamp extends DbObject implements DbWithStamp_Helper { 
 	
 	public long stamp; 
 	@JsonIgnore transient private Date date;

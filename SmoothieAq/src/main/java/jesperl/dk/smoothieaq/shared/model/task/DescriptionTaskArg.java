@@ -9,19 +9,19 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  DescriptionTaskArg extends TaskArg { 
+public class  DescriptionTaskArg extends TaskArg implements DescriptionTaskArg_Helper { 
 
 	public String description;
 
 	@JsOverlay 
 	public static DescriptionTaskArg create() {
-		DescriptionTaskArg descriptionTaskArg = TaskArg_Helper.createDescriptionTaskArg();
+		DescriptionTaskArg descriptionTaskArg = TaskArg_HelperInheritace.createDescriptionTaskArg();
 		return descriptionTaskArg;
 	}
 
 	@JsOverlay 
 	public static DescriptionTaskArg create(String description) {
-		DescriptionTaskArg descriptionTaskArg = TaskArg_Helper.createDescriptionTaskArg(); 
+		DescriptionTaskArg descriptionTaskArg = TaskArg_HelperInheritace.createDescriptionTaskArg(); 
 		descriptionTaskArg.description = description;
 		return descriptionTaskArg;
 	}

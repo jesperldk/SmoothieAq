@@ -11,14 +11,14 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  IntervalStartLength extends ScheduleInterval {
+public class  IntervalStartLength extends ScheduleInterval implements IntervalStartLength_Helper {
 	
 	public SchedulePoint start;
 	public ScheduleTime length;
 	
 	@JsOverlay 
 	public static IntervalStartLength create(SchedulePoint start, ScheduleTime length) {
-		IntervalStartLength intervalStartLength = Schedule_Helper.createIntervalStartLength();
+		IntervalStartLength intervalStartLength = Schedule_HelperInheritace.createIntervalStartLength();
 		intervalStartLength.start = start;
 		intervalStartLength.length = length;
 		return intervalStartLength;

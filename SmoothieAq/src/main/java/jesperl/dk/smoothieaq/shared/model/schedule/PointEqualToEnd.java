@@ -11,13 +11,13 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  PointEqualToEnd extends SchedulePoint {
+public class  PointEqualToEnd extends SchedulePoint implements PointEqualTo_Helper {
 	
 	public int equalToDeviceId;
 
 	@JsOverlay 
 	public static PointEqualToEnd create(int deviceId) {
-		PointEqualToEnd pointEqualToEnd = Schedule_Helper.createPointEqualToEnd();
+		PointEqualToEnd pointEqualToEnd = Schedule_HelperInheritace.createPointEqualToEnd();
 		pointEqualToEnd.equalToDeviceId = deviceId;
 		return pointEqualToEnd;
 	}

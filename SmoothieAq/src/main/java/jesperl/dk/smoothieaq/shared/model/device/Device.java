@@ -10,7 +10,7 @@ import jesperl.dk.smoothieaq.shared.model.measure.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  Device extends DbWithId { 
+public class  Device extends DbWithId implements Device_Helper { 
 	
 	public DeviceType deviceType;
 	public DeviceClass deviceClass;
@@ -23,7 +23,7 @@ public class  Device extends DbWithId {
 	public float repeatabilityLevel;
 	public float onLevel;
 	public float wattAt100pct;
-
+	
 	@JsOverlay public final Device copy() { return Device_Db.copy(new Device(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { Device_Db.serialize(this, out, context); }
 	@Override @JsOverlay @GwtIncompatible public Device deserialize(int ver, ByteBuffer in, DbContext context) { return Device_Db.deserializeFields(this, in, context); }

@@ -10,7 +10,7 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  EveryNWeeks extends EveryPeriod {
+public class  EveryNWeeks extends EveryPeriod implements EveryNWeeks_Helper {
 	
 	public int weeks;
 	public boolean[] atWeekDays;
@@ -20,7 +20,7 @@ public class  EveryNWeeks extends EveryPeriod {
 
 	@JsOverlay 
 	public static EveryNWeeks create(boolean relativeToActual, int weeks, boolean[] atWeekDays, ScheduleTime atTime) {
-		EveryNWeeks everyNWeeks = Schedule_Helper.createEveryNWeeks();
+		EveryNWeeks everyNWeeks = Schedule_HelperInheritace.createEveryNWeeks();
 		everyNWeeks.relativeToActual = relativeToActual;
 		everyNWeeks.weeks = weeks;
 		everyNWeeks.atWeekDays = atWeekDays;

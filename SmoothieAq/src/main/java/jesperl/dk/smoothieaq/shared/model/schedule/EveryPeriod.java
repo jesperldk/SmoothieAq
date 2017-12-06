@@ -14,7 +14,7 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public abstract class  EveryPeriod extends EveryNPoint {
+public abstract class  EveryPeriod extends EveryNPoint implements EveryPeriod_Helper {
 	
 	@Override @GwtIncompatible
 	public Instant next(TaskContext context) {

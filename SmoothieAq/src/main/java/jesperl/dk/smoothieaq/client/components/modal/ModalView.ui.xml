@@ -1,0 +1,15 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:m="urn:import:gwt.material.design.client.ui">
+
+    <ui:with field="msg" type="jesperl.dk.smoothieaq.client.app.AppMessages"/>
+
+	<m:MaterialModal ui:field="modal" type="DEFAULT" inDuration="500" outDuration="500">
+		<m:MaterialModalContent ui:field="content">
+<!-- 			<m:MaterialTitle ui:field="title" title="Default Modal" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" /> -->
+	</m:MaterialModalContent>
+	<m:MaterialModalFooter>
+		<m:MaterialButton ui:field="cancel" text="Cancel" type="FLAT"/>
+		<m:MaterialButton ui:field="ok" text="OK" type="FLAT"/>
+	</m:MaterialModalFooter>
+ </m:MaterialModal></ui:UiBinder>

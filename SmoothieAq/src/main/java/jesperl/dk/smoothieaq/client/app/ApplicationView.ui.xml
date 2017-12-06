@@ -4,7 +4,7 @@
 
     <ui:with field="msg" type="jesperl.dk.smoothieaq.client.app.AppMessages"/>
 
-    <m:MaterialPanel>
+    <m:MaterialPanel height="100%">
         <m:MaterialHeader>
             <m:MaterialNavBar activates="sidenav">
                 <m:MaterialNavBrand paddingLeft="60" text="Smoothie Aq" />

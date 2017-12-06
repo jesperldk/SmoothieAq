@@ -17,14 +17,13 @@ public class  FindClass {
 	public static Observable<Class<?>> create(final String packageName) {
 		return Observable.create(subscriber -> {
 			subscriber.onStart();
-			log.fine("findClass("+packageName+")");
+			log.info("findClass("+packageName+")");
 			try {
 			    Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(packageName.replace('.', '/'));
 			    while (resources.hasMoreElements()) {
 					URL url = resources.nextElement();
 					if (url == null) continue;
 					URLConnection connection = url.openConnection();
-					log.info("url="+url.getPath());
 					if (connection instanceof JarURLConnection) findInJar((JarURLConnection)connection,packageName,subscriber);
 					else findInDir(new File(URLDecoder.decode(url.getPath(),"UTF-8")),packageName,subscriber);
 //					String name = url.getFile();

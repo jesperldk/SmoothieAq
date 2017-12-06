@@ -4,14 +4,14 @@
 
 @def nav_height 46px;
 
-nav {
-	height: nav_height;
-	line-height: nav_height;
-}
+/* nav { */
+/* 	height: nav_height; */
+/* 	line-height: nav_height; */
+/* } */
 
-nav .button-collapse {
-	height: nav_height;
-}
+/* nav .button-collapse { */
+/* 	height: nav_height; */
+/* } */
 
 .aqcard.horizontal.card-image img, .aqcard.horizontal.card {
 	height: initial !important;
@@ -45,3 +45,14 @@ nav .button-collapse {
 /* 	float: none;  */
 /* 	overflow: hidden; */
 } 
+
+.absoluteContainer {
+/* 	height: 100%; */
+/* 	position: relative; */
+}
+
+.bottomRight {
+	position: absolute;
+	bottom: 30px;
+	right: 30px;
+}

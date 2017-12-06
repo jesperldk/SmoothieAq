@@ -10,7 +10,7 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  EveryNMonths extends EveryPeriod {
+public class  EveryNMonths extends EveryPeriod implements EveryNMonths_Helper {
 	
 	public int months;
 	public ScheduleDayInMonth dayInMonth;
@@ -24,7 +24,7 @@ public class  EveryNMonths extends EveryPeriod {
 	public static EveryNMonths create(boolean relativeToActual, int months, ScheduleDayInMonth dayInMonth, int atSpecifiDay,
 			boolean[] atWeekDays, boolean first) {
 		assert dayInMonth != null ^ atSpecifiDay != 0 ^ atWeekDays != null;
-		EveryNMonths everyNMonths = Schedule_Helper.createEveryNMonths();
+		EveryNMonths everyNMonths = Schedule_HelperInheritace.createEveryNMonths();
 		everyNMonths.relativeToActual = relativeToActual;
 		everyNMonths.months = months;
 		everyNMonths.dayInMonth = dayInMonth;

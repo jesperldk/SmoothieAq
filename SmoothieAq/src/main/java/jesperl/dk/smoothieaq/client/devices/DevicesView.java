@@ -23,7 +23,10 @@ import static jesperl.dk.smoothieaq.client.css.SmoothieAqCss.*;
 
 import com.google.gwt.core.client.*;
 import com.google.gwt.resources.client.*;
+import com.google.gwt.uibinder.client.*;
 import com.google.gwt.user.client.ui.*;
+
+import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
 
 import gwt.material.design.client.constants.*;
 import gwt.material.design.client.ui.*;
@@ -32,18 +35,35 @@ import jesperl.dk.smoothieaq.client.devices.img.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
 
-public class  DevicesView extends MaterialRow {
+public class DevicesView extends Composite {
+    interface Binder extends UiBinder<Widget, DevicesView> {}
+	private static Binder binder = GWT.create(Binder.class );
+	
+	@UiField MaterialRow cardRow;
+	
+	@UiField MaterialButton addBtn;
 
-	@Override
-	protected void onLoad() {
-		super.onLoad();
-		
-		MaterialRow row = new MaterialRow();
-		add(row);
-		
-		Resources.device.devices().doOnError(e -> GWT.log("error getAll - "+e)).forEach(d -> row.add(deviceCol(d)));
-	}
+    public DevicesView() {
+        initWidget(binder.createAndBindUi(this));
+    }
+    
+    @Override
+    protected void onLoad() {
+    	super.onLoad();
+        addBtn.addClickHandler(evt -> createDeviceModal());
 
+        Resources.device.devices().doOnError(e -> GWT.log("error getAll - "+e)).forEach(d -> cardRow.add(deviceCol(d)));
+    }
+    
+    protected Widget createDeviceModal() {
+    	MaterialTitle title = new MaterialTitle("*New device", "***");
+    	MaterialPanel panel = new MaterialPanel();
+    	Device device = new Device();
+    	panel.add(wTextBox(device.name()));
+    	panel.add(wComboBox(device.deviceType()));
+    	return wModal(title,panel, () -> { GWT.log("call create device"); Resources.device.create(device).subscribe(e -> GWT.log("create device ok - "+e),e -> GWT.log("create device err - "+e));});
+    }
+    
 	protected Widget deviceCol(DeviceCompactView d) {
 		MaterialColumn column = new MaterialColumn(12, 6, 4);
 		column.add(deviceCard(d));

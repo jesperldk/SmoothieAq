@@ -10,19 +10,19 @@ import jesperl.dk.smoothieaq.shared.model.measure.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  MeasurementTaskArg extends TaskArg { 
+public class  MeasurementTaskArg extends TaskArg implements MeasurementTaskArg_Helper { 
 
 	public MeasurementType measurementType; 
 
 	@JsOverlay 
 	public static MeasurementTaskArg create() {
-		MeasurementTaskArg measurementTaskArg = TaskArg_Helper.createMeasurementTaskArg();
+		MeasurementTaskArg measurementTaskArg = TaskArg_HelperInheritace.createMeasurementTaskArg();
 		return measurementTaskArg;
 	}
 
 	@JsOverlay 
 	public static MeasurementTaskArg create(MeasurementType measurementType) {
-		MeasurementTaskArg measurementTaskArg = TaskArg_Helper.createMeasurementTaskArg();
+		MeasurementTaskArg measurementTaskArg = TaskArg_HelperInheritace.createMeasurementTaskArg();
 		measurementTaskArg.measurementType = measurementType;
 		return measurementTaskArg;
 	}

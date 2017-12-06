@@ -12,7 +12,7 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  EveryNDays extends EveryPeriod {
+public class  EveryNDays extends EveryPeriod implements EveryNDays_Helper {
 	
 	public short days;
 	public ScheduleTime atTime;
@@ -21,7 +21,7 @@ public class  EveryNDays extends EveryPeriod {
 	
 	@JsOverlay 
 	public static EveryNDays create(boolean relativeToActual, int days, ScheduleTime atTime) {
-		EveryNDays everyNDays = Schedule_Helper.createEveryNDays();
+		EveryNDays everyNDays = Schedule_HelperInheritace.createEveryNDays();
 		everyNDays.relativeToActual = relativeToActual;
 		everyNDays.days = (short) days;
 		everyNDays.atTime = atTime;

@@ -1,0 +1,12 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:m="urn:import:gwt.material.design.client.ui">
+
+    <ui:with field="msg" type="jesperl.dk.smoothieaq.client.app.AppMessages"/>
+
+    <m:MaterialPanel>
+        <m:MaterialRow ui:field="cardRow" />
+		<m:MaterialButton ui:field="addBtn" type="FLOATING" waves="LIGHT" size="LARGE" iconType="ADD"
+							float="RIGHT"  addStyleNames="bottomRight" />
+    </m:MaterialPanel> 
+</ui:UiBinder>

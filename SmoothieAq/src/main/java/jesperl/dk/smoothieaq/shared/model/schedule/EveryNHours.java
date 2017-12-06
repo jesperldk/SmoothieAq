@@ -12,7 +12,7 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  EveryNHours extends EveryDuration {
+public class  EveryNHours extends EveryDuration implements EveryNHours_Helper {
 	
 	public short hours;
 	public short atMinute;
@@ -21,7 +21,7 @@ public class  EveryNHours extends EveryDuration {
 	
 	@JsOverlay 
 	public static EveryNHours create(boolean relativeToActual, int hours, int atMinute) {
-		EveryNHours everyNHours = Schedule_Helper.createEveryNHours();
+		EveryNHours everyNHours = Schedule_HelperInheritace.createEveryNHours();
 		everyNHours.relativeToActual = relativeToActual;
 		everyNHours.hours = (short) hours;
 		everyNHours.atMinute = (short) atMinute;

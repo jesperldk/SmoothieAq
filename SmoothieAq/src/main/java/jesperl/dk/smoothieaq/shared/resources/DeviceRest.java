@@ -12,7 +12,7 @@ import jsinterop.annotations.*;
 import rx.*;
 
 @AutoRestGwt @Path("device") @Produces(MediaType.APPLICATION_JSON) @Consumes(MediaType.APPLICATION_JSON)
-public interface DeviceRest { 
+public interface DeviceRest {  
 
 	@GET Single<Device> get(@QueryParam("id") int deviceId);   
 	@PUT Single<DeviceCompactView> create(Device device);

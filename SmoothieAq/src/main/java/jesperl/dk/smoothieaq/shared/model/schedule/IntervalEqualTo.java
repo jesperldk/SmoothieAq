@@ -10,13 +10,13 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  IntervalEqualTo extends ScheduleInterval {
+public class  IntervalEqualTo extends ScheduleInterval implements IntervalEqualTo_Helper {
 	
 	public int equalToTaskId;
 	
 	@JsOverlay 
 	public static IntervalEqualTo create(int equalToTaskId) {
-		IntervalEqualTo intervalEqualTo = Schedule_Helper.createIntervalEqualTo();
+		IntervalEqualTo intervalEqualTo = Schedule_HelperInheritace.createIntervalEqualTo();
 		intervalEqualTo.equalToTaskId = equalToTaskId;
 		return intervalEqualTo;
 	}

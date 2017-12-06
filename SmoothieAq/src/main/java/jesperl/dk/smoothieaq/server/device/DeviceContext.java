@@ -131,7 +131,7 @@ public class  DeviceContext {
 
 	protected void loadDrivers(String pkg) {
 		FindClass.create(pkg)
-			.filter(c -> Driver.class .isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers()))
+			.filter(c -> Driver.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers()))
 			.forEach(c -> {
 				try {
 					addDriver((Driver) c.newInstance());
@@ -144,7 +144,11 @@ public class  DeviceContext {
 	public Driver addDriverForTest(Driver driver) { return addDriver(driver); }
 	
 	protected Driver addDriver(Driver driver) {
-		drivers.put((int) state.getClassId(driver.getClass()), withDeviceClass(driver));
+		int classId = (int) state.getClassId(driver.getClass());
+		if (drivers.containsKey(classId)) return null;
+		Pair<DeviceClass, Driver> withDeviceClass = withDeviceClass(driver);
+		log.info("Loading driver #"+classId+" "+withDeviceClass.a+" "+withDeviceClass.b.getClass().getName());
+		drivers.put(classId, withDeviceClass);
 		return driver;
 	}
 	

@@ -14,7 +14,7 @@ import jesperl.dk.smoothieaq.util.shared.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  Task extends DbWithId {
+public class  Task extends DbWithId implements Task_Helper {
 
 	public short deviceId;
 	public TaskType taskType; 

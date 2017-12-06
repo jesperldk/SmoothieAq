@@ -11,7 +11,7 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  PointRelative extends PointAtDay {
+public class  PointRelative extends PointAtDay implements PointRelative_Helper {
 	
 	public int relativeToDeviceId;
 	public boolean beginning; // true=beginning, false=end of the next schedule from the relative to task
@@ -20,7 +20,7 @@ public class  PointRelative extends PointAtDay {
 	
 	@JsOverlay 
 	public static PointRelative create(int relativeToDeviceId, boolean beginning, boolean earlier, ScheduleTime shiftTime) {
-		PointRelative pointRelative = Schedule_Helper.createPointRelative();
+		PointRelative pointRelative = Schedule_HelperInheritace.createPointRelative();
 		pointRelative.relativeToDeviceId = relativeToDeviceId;
 		pointRelative.beginning = beginning;
 		pointRelative.earlier = earlier;

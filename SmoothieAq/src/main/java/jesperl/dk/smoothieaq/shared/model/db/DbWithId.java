@@ -5,7 +5,7 @@ import com.google.gwt.core.shared.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object") 
-public abstract class  DbWithId extends DbWithStamp implements Idable {
+public abstract class  DbWithId extends DbWithStamp implements Idable, DbWithId_Helper {
 
 	public short id;
 

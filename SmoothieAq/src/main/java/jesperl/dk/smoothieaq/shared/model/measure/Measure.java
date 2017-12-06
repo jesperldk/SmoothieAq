@@ -10,7 +10,7 @@ import jesperl.dk.smoothieaq.shared.model.device.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  Measure extends DbWithStamp {
+public class  Measure extends DbWithStamp implements Measure_Helper {
 	
 	public short deviceId;
 	public DeviceStream stream;

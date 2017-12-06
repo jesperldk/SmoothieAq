@@ -10,14 +10,14 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jsinterop.annotations.*;
 
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class  IntervalStartEnd extends ScheduleInterval {
+public class  IntervalStartEnd extends ScheduleInterval implements IntervalStartEnd_Helper {
 	
 	public SchedulePoint start;
 	public SchedulePoint end;
 	
 	@JsOverlay 
 	public static IntervalStartEnd create(SchedulePoint start, SchedulePoint end) {
-		IntervalStartEnd intervalStartEnd = Schedule_Helper.createIntervalStartEnd();
+		IntervalStartEnd intervalStartEnd = Schedule_HelperInheritace.createIntervalStartEnd();
 		intervalStartEnd.start = start;
 		intervalStartEnd.end = end;
 		return intervalStartEnd;

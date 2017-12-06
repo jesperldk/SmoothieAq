@@ -1,10 +1,12 @@
 package jesperl.dk.gwtjsontypeprocessor;
 
 import static java.util.Collections.*;
+import static javax.lang.model.element.Modifier.*;
 
 import java.io.*;
 import java.util.*;
 import java.util.Map.*;
+import java.util.function.*;
 import java.util.regex.*;
 import java.util.stream.*;
 
@@ -41,10 +43,11 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
     @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
     	log("1.1 process, processingOver="+roundEnv.processingOver());
         roundEnv.getElementsAnnotatedWith(JsType.class ).stream()
-                .filter(e -> e.getKind().isClass() && e instanceof TypeElement)//.map(e -> (TypeElement) e)
+                .filter(e -> e.getKind().isClass() && !e.getKind().isInterface() && !e.getSimpleName().toString().endsWith("_Db") && e instanceof TypeElement)//.map(e -> (TypeElement) e)
                 .forEach(jsType -> {
                     try {
                         processElement(jsType.asType());
+                       	generateHelper(jsType);
                     } catch (Exception e) {
                         error("uncaught exception processing JsType " + jsType + ": " + e + "\n"
                                 + Throwables.getStackTraceAsString(e));
@@ -65,6 +68,31 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
 		
         return false;
     }
+
+	void generateHelper(Element jsType) throws Exception {
+		log("  Helper "+((TypeElement)jsType).getQualifiedName());
+		String clsName = jsType.getSimpleName().toString();
+		if (clsName.equals("DbObject")) return;
+		String helperName = clsName+"_Helper";
+		String pckg = pckg((TypeElement) jsType);
+		Element enclosingElement = jsType.getEnclosingElement();
+		if (enclosingElement.getKind().isClass() || enclosingElement.getKind().isInterface()) {
+			clsName = enclosingElement.getSimpleName().toString()+"."+clsName;
+			helperName = enclosingElement.getSimpleName().toString()+helperName;
+			pckg = pckg((TypeElement) enclosingElement);
+		}
+		JavaFileObject sf = processingEnv.getFiler().createSourceFile(pckg+"."+helperName);
+		try (Writer w = sf.openWriter()) {
+			new ProcessFields(w,jsType,pckg,clsName,helperName).p();
+			w.close();
+		}
+	}
+
+	private String pckg(TypeElement t) {
+		String pckg = t.getQualifiedName().toString();
+    	pckg = pckg.substring(0, pckg.lastIndexOf("."));
+		return pckg;
+	}
 
     private void processElement(TypeMirror jsType) {
 		log("looking at "+jsType);
@@ -310,14 +338,94 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
         log("root class : " + root); 
 
         String helperPkg = rootName.packageName();
-        String helperName = rootName.simpleName() + "_Helper";
+        String helperName = rootName.simpleName() + "_HelperInheritace"; 
         log("root helper: "+helperPkg+"."+helperName);
 
         FileObject file = readOldHelper(helperPkg, helperName);
         writeHelper(helperPkg, helperName, root, file);
     }
+	
+    enum Type { 
+    	booleanT(""), floatT("Float"), intT("Int"), longT("Long"), shortT("Short"), stringT(null), enumT(null), arrayT(null), objectT(null);
+    	String bufTyp;
+    	private Type(String bufTyp) { this.bufTyp = bufTyp; }
+    };
+    
+    class  ProcessFields {
+    	Writer w;
+    	TypeElement t;
+    	String pckg;
+    	String className;
+    	String helperName;
+    	
+    	ProcessFields(Writer w, Element t, String pckg, String className, String helperName) {
+	    	this.w = w;
+	    	this.t = (TypeElement) t;
+	    	this.pckg = pckg;
+	    	this.className = className;
+	    	this.helperName = helperName;
+	    }
+	
+	    void w(String s) { try { w.append(s); } catch (IOException e) { throw new RuntimeException(e); } }
+	    
+		TypeElement getTypeElement(TypeMirror tm) { return (TypeElement) ((DeclaredType)tm).asElement(); }
+		String getTypeStr(TypeMirror tm) {
+			TypeKind tk = tm.getKind();
+			if (tk == TypeKind.BOOLEAN) return "Boolean";
+	    	if (tk == TypeKind.FLOAT) return "Float";
+	    	if (tk == TypeKind.INT) return "Integer";
+	    	if (tk == TypeKind.LONG) return "Long";
+	    	if (tk == TypeKind.SHORT) return "Short";
+	    	if (tk == TypeKind.ARRAY) return "Object"; // TODO
+	    	if (tk == TypeKind.DECLARED) {
+	    		TypeElement typeElement = getTypeElement(tm);
+				if (typeElement.getSimpleName().toString().equals("String")) 
+					return "String";
+				else if (getTypeElement(typeElement.getSuperclass()).getSimpleName().toString().equals("Enum"))
+					return typeElement.getQualifiedName().toString();
+	    		else 
+					return typeElement.getQualifiedName().toString();
+	    	}
+	    	return null;
+		}
+		
+	    void p() throws Exception {
+			w("package "+pckg+";\n");
+			w("\n");
+			w("import java.util.*;\n");
+			w("\n");
+			w("import jesperl.dk.smoothieaq.shared.model.db.*;\n");
+			w("import jsinterop.annotations.*;\n");
+			w("\n");
+			w("\n@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = \"Object\")\n");
+			w("public interface "+helperName+" extends jesperl.dk.smoothieaq.shared.model.db.DbObject_Helper {\n\n");
+			w("\n");
+			
+			forEachField(w, t, (e) -> outField(e.getSimpleName().toString(), getTypeStr(e.asType())));
 
-    private void log(String msg) {
+			w("}\n");
+	    }
+
+	    private void outField(String fieldName, String fieldType) {
+	    	if (fieldType.equals("Object")) return;
+	    	String clsFieldName = className+"."+fieldName;
+			w("\t@SuppressWarnings(\"unchecked\")\n");
+			w("\t@JsOverlay default Field<"+fieldType+"> "+fieldName+"() {\n");
+			w("\t	Field<"+fieldType+"> field = (Field<"+fieldType+">) $fields().get(\""+clsFieldName+"\");\n");
+			w("\t	if (field == null)\n");
+			w("\t		$fields().put(\""+clsFieldName+"\", field = new Field<>(()->(("+className+")this)."+fieldName+", v->(("+className+")this)."+fieldName+" = v, \""+clsFieldName+"\", "+fieldType+".class));\n");
+			w("\t	return field; \n");
+			w("\t}\n\n");
+	    }
+
+	 	void forEachField(Writer w, Element t, Consumer<Element> doField) {
+			t.getEnclosedElements().stream()
+				.filter(e -> e.getKind().isField() && e.getModifiers().contains(PUBLIC) && !e.getModifiers().contains(TRANSIENT))
+				.forEach(e -> doField.accept(e));
+		}
+   }
+    
+   private void log(String msg) {
 //        if (processingEnv.getOptions().containsKey("debug")) {
             processingEnv.getMessager().printMessage(Kind.NOTE, msg);
 //        }

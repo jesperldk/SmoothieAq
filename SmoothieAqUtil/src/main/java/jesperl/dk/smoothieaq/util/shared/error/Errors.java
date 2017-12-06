@@ -10,7 +10,27 @@ import java.util.logging.*;
 public abstract class  Errors {
 	private final static Logger log = Logger.getLogger(Errors.class .getName());
 
-	public interface Doit { void doit() throws Exception; }
+	public interface Action {
+		void doit();
+		default Action noException() { return () -> doNoException(()->doit()); }
+		default Action guarded() { return () -> doGuarded(()->doit()); }
+		default Doit asDoit() { return () -> doit(); }
+		default Action and(Action andAction) { return () -> { doit(); andAction.doit(); }; }
+		default Action and(Doit andDoit) { return and(andDoit.asAction()); }
+		default Consumer<Object> consumer() { return o -> doit(); }
+	}
+	
+	public interface Doit { 
+		void doit() throws Exception; 
+		default Doit noException() { return () -> doNoException(this); }
+		default Doit guarded() { return () -> doGuarded(this); }
+		default Action asAction() { return () -> doGuarded(this); }
+		default Doit and(Action andAction) { return () -> { doit(); andAction.doit(); }; }
+		default Doit and(Doit andDoit) { return () -> { doit(); andDoit.doit(); }; }
+		default Consumer<Object> consumer() { return o -> doGuarded(this); }
+	}
+	
+	
 	public interface Supplyit<T> { T doit() throws Exception; }
 	public interface ErrorHandler extends Function<ErrorException,ErrorException> {}
 	public interface ErrorXHandler extends Function<Exception,ErrorException> {}
