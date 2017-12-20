@@ -70,7 +70,7 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 		
 		@Override synchronized public ITask add(State state, Task task) {
 			WTask.validate(task, WDevice.this);
-			assert !tasks.contains(task.id);
+			assert !tasks.contains(task.id); // OBS!!
 			state.save(task);
 			WTask wtask = createWTask(state.dContext, task);
 			state.wires.taskChanged.onNext(wtask);

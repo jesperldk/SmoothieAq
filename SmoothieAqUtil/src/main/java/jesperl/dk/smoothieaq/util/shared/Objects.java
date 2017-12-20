@@ -24,12 +24,31 @@ public class  Objects {
 	public static <T,U> U funcOrNull(T valueOrNull, Function<T,U> func) { return isNotNull(valueOrNull) ? func.apply(valueOrNull) : null; }
 	public static <T,U> U funcNotNull(T valueOrNull, Supplier<U> nullFunc, Function<T,U> func) { return isNotNull(valueOrNull) ? func.apply(valueOrNull) : nullFunc.get(); }
 
+	public static String notEmptyValue(String valueOrEmpty, String defaultValue) { return isNotEmpty(valueOrEmpty) ? valueOrEmpty : defaultValue; }
+	public static String notEmptyValue(String valueOrEmpty, Supplier<String> supplier) { return isNotEmpty(valueOrEmpty) ? valueOrEmpty : supplier.get(); }
+	
+	public static String notEmptyOp(String valueOrEmpty, UnaryOperator<String> op) { return isNotEmpty(valueOrEmpty) ? op.apply(valueOrEmpty) : null; }
+	
+	public static boolean isEmpty(String value) { return value == null || value.length() == 0; }
+
+	public static boolean isNotEmpty(String value) { return value != null && value.length() > 0; }
+	
+	public static void doNotEmpty(String valueOrEmpty, Consumer<String> doit) { if (isNotEmpty(valueOrEmpty)) doit.accept(valueOrEmpty); }
+
+	public static <U> U funcNotEmpty(String valueOrEmpty, Function<String,U> func) { return isNotEmpty(valueOrEmpty) ? func.apply(valueOrEmpty) : null; }
+	public static <U> U funcNotEmpty(String valueOrEmpty, U defaultValue, Function<String,U> func) { return isNotEmpty(valueOrEmpty) ? func.apply(valueOrEmpty) : defaultValue; }
+	public static <U> U funcOrEmpty(String valueOrEmpty, Function<String,U> func) { return isNotEmpty(valueOrEmpty) ? func.apply(valueOrEmpty) : null; }
+	public static <U> U funcNotEmpty(String valueOrEmpty, Supplier<U> nullFunc, Function<String,U> func) { return isNotEmpty(valueOrEmpty) ? func.apply(valueOrEmpty) : nullFunc.get(); }
+
 	static public <S,T> Pair<S,T> pair(S a, T b) { return new Pair<>(a,b); }
 	static public <S> Pair<S,Integer> pair(S a, int b) { return new Pair<>(a,b); }
 	static public Pair<Integer,Integer> pair(int a, int b) { return new Pair<>(a,b); }
 	static public <S> Pair<S,Float> pair(S a, float b) { return new Pair<>(a,b); }
 	static public Pair<Float,Float> pair(float a, float b) { return new Pair<>(a,b); }
 	static public <S,T,U> Triple<S,T,U> triple(S a, T b, U c) { return new Triple<>(a,b,c); }
+	
+	static public <S,T,U> Function<Pair<S,T>,U> with(BiFunction<S, T, U> func) { return p -> func.apply(p.a, p.b); }
+	static public <S,T> Consumer<Pair<S,T>> with(BiConsumer<S, T> consumer) { return p -> consumer.accept(p.a, p.b); }
 	
 	@SafeVarargs static public <O> O[] array(O... os) { return os; }
 	static public float[] array(float... fs) { return fs; }

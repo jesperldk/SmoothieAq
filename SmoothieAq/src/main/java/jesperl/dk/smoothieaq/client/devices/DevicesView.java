@@ -31,9 +31,11 @@ import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
 import gwt.material.design.client.constants.*;
 import gwt.material.design.client.ui.*;
 import jesperl.dk.smoothieaq.client.*;
+import jesperl.dk.smoothieaq.client.context.*;
 import jesperl.dk.smoothieaq.client.devices.img.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
+import rx.*;
 
 public class DevicesView extends Composite {
     interface Binder extends UiBinder<Widget, DevicesView> {}
@@ -59,10 +61,25 @@ public class DevicesView extends Composite {
     	MaterialTitle title = new MaterialTitle("*New device", "***");
     	MaterialPanel panel = new MaterialPanel();
     	Device device = new Device();
+    	panel.add(wListBox(device.deviceType()));
+    	panel.add(wListBox(device.deviceClass()));
+    	panel.add(wListBox(device.deviceCategory()));
+//    	panel.add(wShortBox(device.driverId()));
+    	panel.add(wListBox(device.driverId(),ClientContext.ctx.driversCtx.getOptions()));
+    	panel.add(wTextBox(device.deviceUrl()));
     	panel.add(wTextBox(device.name()));
-    	panel.add(wComboBox(device.deviceType()));
-    	return wModal(title,panel, () -> { GWT.log("call create device"); Resources.device.create(device).subscribe(e -> GWT.log("create device ok - "+e),e -> GWT.log("create device err - "+e));});
+    	panel.add(wTextBox(device.description()));
+    	panel.add(wListBox(device.measurementType()));
+    	panel.add(wFloatBox(device.repeatabilityLevel()));
+    	panel.add(wFloatBox(device.onLevel()));
+    	panel.add(wFloatBox(device.wattAt100pct()));
+//    	panel.add(wComboBox(device.deviceType()));
+    	return wModal(title,panel, () -> { GWT.log("call create device"); t(device);});
     }
+
+	Subscription t(Device device) {
+		return Resources.device.create(device.copy()).subscribe(e -> GWT.log("create device ok - "+e),e -> GWT.log("create device err - "+e));
+	}
     
 	protected Widget deviceCol(DeviceCompactView d) {
 		MaterialColumn column = new MaterialColumn(12, 6, 4);
@@ -72,7 +89,7 @@ public class DevicesView extends Composite {
 
 	private Widget deviceCard(DeviceCompactView d) {
 		MaterialCard card = new MaterialCard();
-		card.setAxis(Axis.HORIZONTAL);
+		card.setOrientation(Orientation.LANDSCAPE);
 		card.addStyleName(css.aqcard());
 		
 		MaterialCardImage cardImage = new MaterialCardImage();

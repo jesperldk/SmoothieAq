@@ -21,7 +21,7 @@ public class  ApplicationView  extends Composite {
 	
 	@UiField AppMessages msg = SmoothieAq.appMessages;
 	
-	@UiField MaterialSideNav sidenav;
+	@UiField MaterialSideNavDrawer sidenav;
 
 	@UiField MaterialContainer main;
 	

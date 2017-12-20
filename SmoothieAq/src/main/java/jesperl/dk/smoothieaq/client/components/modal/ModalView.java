@@ -29,6 +29,7 @@ public class ModalView extends Composite {
         if (okAction != null) ok.addClickHandler(evt -> okAction.noException().and(close).doit());
         
         parrent.add(this);
+        modal.setFullscreen(true);
         modal.open();
     }
     

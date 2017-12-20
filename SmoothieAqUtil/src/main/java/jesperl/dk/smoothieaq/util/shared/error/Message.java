@@ -1,12 +1,5 @@
 package jesperl.dk.smoothieaq.util.shared.error;
 
-import static jesperl.dk.smoothieaq.util.shared.Objects.*;
-
-import java.text.*;
-import java.util.stream.*;
-
-import com.google.gwt.core.shared.*;
-
 public class  Message {
 	public int msgNo;
 	public String defaultMessage;
@@ -16,7 +9,18 @@ public class  Message {
 		this.msgNo = msgNo; this.defaultMessage = defaultMessage; this.args = args;
 	}
 	
-	@Override public String toString() { return "("+msgNo+") "+defaultMessage+" - "+list(args).stream().map(Object::toString).collect(Collectors.joining(",")); }
+	@Override public String toString() { return format(); } //"("+msgNo+") "+defaultMessage+" - "+list(args).stream().map(Object::toString).collect(Collectors.joining(",")); }
 
-	@GwtIncompatible public String format() { return "("+msgNo+") "+ MessageFormat.format(defaultMessage, args); }
+	public String format() { return "("+msgNo+") "+ format(defaultMessage, args); }
+	
+	public static String format(String pattern, Object... arguments) {
+        String msg = pattern;
+        if (arguments != null) {
+            for (int index = 0; index < arguments.length; index++) {
+                msg = msg.replaceAll("\\{" + (index + 1) + "\\}", String.valueOf(arguments[index]));
+            }
+        }
+        return msg;
+    }
+
 }
