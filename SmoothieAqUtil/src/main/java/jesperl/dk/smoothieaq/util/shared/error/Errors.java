@@ -76,15 +76,15 @@ public abstract class  Errors {
 		} 
 	}
 	
-	public static Message msg(int msgNo, String defaultMessage, Object... args) { return new Message(msgNo, defaultMessage, args); }
+	public static Message msg(int msgNo, String defaultMessage, Object... args) { return Message.create(msgNo, defaultMessage, args); }
 	public static List<Message> msgs(Message... messages) { return list(messages); }
-	public static List<Message> msgs(int msgNo, String defaultMessage, Object... args) { return msgs(new Message(msgNo, defaultMessage, args)); }
+	public static List<Message> msgs(int msgNo, String defaultMessage, Object... args) { return msgs(Message.create(msgNo, defaultMessage, args)); }
 	
 	public static ErrorException error(Logger log, int errorNo, Severity severity, String defaultMessage, Object... args) {
 		return error(log, null, errorNo, severity, defaultMessage, args);
 	}
 	public static ErrorException error(Logger log, Exception e, int errorNo, Severity severity, String defaultMessage, Object... args) {
-		Error error = new Error(errorNo, severity, defaultMessage, args);
+		Error error = Error.create(errorNo, severity, defaultMessage, args);
 		if (log != null) { switch (severity) {
 			case fatal: log.severe(error.toString()); break; 
 			case major: log.warning(error.toString()); break; 

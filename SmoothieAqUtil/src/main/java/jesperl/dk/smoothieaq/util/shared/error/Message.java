@@ -1,19 +1,26 @@
 package jesperl.dk.smoothieaq.util.shared.error;
 
+import com.google.gwt.core.shared.*;
+
+import jsinterop.annotations.*;
+
+@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 public class  Message {
 	public int msgNo;
 	public String defaultMessage;
 	public Object[] args;
 	
-	public Message(int msgNo, String defaultMessage, Object... args) {
-		this.msgNo = msgNo; this.defaultMessage = defaultMessage; this.args = args;
+	@JsOverlay public static Message create(int msgNo, String defaultMessage, Object... args) { return init(new Message(),msgNo,defaultMessage,args); }
+	@JsOverlay protected static <MSG extends Message> MSG init(MSG msg, int msgNo, String defaultMessage, Object... args) {
+		msg.msgNo = msgNo; msg.defaultMessage = defaultMessage; msg.args = args;
+		return msg;
 	}
 	
-	@Override public String toString() { return format(); } //"("+msgNo+") "+defaultMessage+" - "+list(args).stream().map(Object::toString).collect(Collectors.joining(",")); }
+	@Override @GwtIncompatible public String toString() { return format(); } //"("+msgNo+") "+defaultMessage+" - "+list(args).stream().map(Object::toString).collect(Collectors.joining(",")); }
 
-	public String format() { return "("+msgNo+") "+ format(defaultMessage, args); }
+	@JsOverlay public final String format() { return "("+msgNo+") "+ format(defaultMessage, args); }
 	
-	public static String format(String pattern, Object... arguments) {
+	@JsOverlay public static String format(String pattern, Object... arguments) {
         String msg = pattern;
         if (arguments != null) {
             for (int index = 0; index < arguments.length; index++) {

@@ -23,7 +23,9 @@ public class DriversClientContext {
 	}
 	
 	public WOptions<Short> getOptions() {
-		if (options == null) options = new WOptions<Short>(getDrivers().map(d -> pair(new Short(d.driverId), d.toString())).toList().toBlocking().single().stream());
+		if (options == null) options = new WOptions<Short>(stream(getDrivers().map(d -> {
+			return pair(new Short(d.driverId), d.name.format());
+		})));
 		return options;
 	}
 

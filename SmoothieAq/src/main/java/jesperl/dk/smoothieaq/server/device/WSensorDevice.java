@@ -60,7 +60,7 @@ public class  WSensorDevice extends WDevice<SensorDriver> implements SensorDevic
 
 	@Override protected void setupStreams() {
 		super.setupStreams();
-		driver().listen(f -> calibrationX.onNext(f)); // TODO only when calibrating
+//		driver().listen(f -> calibrationX.onNext(f)); // TODO only when calibrating
 		addDefaultStream(DeviceStream.level,device.measurementType,() -> baseStream());
 		addStream(DeviceStream.levelX,device.measurementType,() -> stream);
 		addStream(DeviceStream.onoff,MeasurementType.onoff,() -> Observable.just(disabled ? 0f : 1f).concatWith(startstopX));

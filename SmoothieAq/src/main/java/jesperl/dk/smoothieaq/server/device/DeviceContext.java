@@ -96,7 +96,7 @@ public class  DeviceContext {
 			state.save(device);
 			WDevice<?> wdevice = createWDevice(device);
 			wdevice.internalSet(state, DeviceStatusType.disabled);
-			wdevice.getready(this);
+//			wdevice.getready(this);
 			return wdevice;
 		}, e -> error(log,e,100104,major,"Could not create device id={0} - {1}",device.id,e.getMessage()));
 	}

@@ -27,6 +27,8 @@
 
 	<inherits name="org.moxieapps.gwt.highcharts.Highcharts"/>
 
+	<inherits name='elemental.Elemental'/>
+
 	<entry-point class='jesperl.dk.smoothieaq.client.SmoothieAq'/>
   
 	<source path='client'/>

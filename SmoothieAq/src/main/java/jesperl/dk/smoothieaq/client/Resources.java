@@ -9,5 +9,5 @@ public abstract class  Resources {
 
 	public static DeviceRest device = new DeviceRest_RestServiceModel(()->osm());
 
-	static ResourceVisitor osm() { return new RequestResourceBuilder().path(GWT.getModuleBaseURL()+"x/"); }
+	static ResourceVisitor osm() { return new RequestResourceBuilderX().path(GWT.getModuleBaseURL()+"x/"); }
 }
