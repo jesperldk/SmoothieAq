@@ -24,7 +24,7 @@ public class  Message {
         String msg = pattern;
         if (arguments != null) {
             for (int index = 0; index < arguments.length; index++) {
-                msg = msg.replaceAll("\\{" + (index + 1) + "\\}", String.valueOf(arguments[index]));
+                msg = msg.replaceAll("\\{" + index + "\\}", String.valueOf(arguments[index]));
             }
         }
         return msg;

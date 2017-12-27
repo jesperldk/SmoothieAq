@@ -1,5 +1,7 @@
 package jesperl.dk.smoothieaq.server.db;
 
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
+
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -33,8 +35,7 @@ public class  DbContext {
 	}
 	
 	public void init() {
-		String root = System.getProperty("smoothieAq.db.dir");
-		if (root != null && !root.isEmpty()) dbRoot = root;
+		doNotEmpty(System.getProperty("smoothieAq.db.dir"), root -> dbRoot = root);
 		log.info("dbRoot="+dbRoot);
 		
 		dbDevice = DbFile.create(Device.class , false, this);

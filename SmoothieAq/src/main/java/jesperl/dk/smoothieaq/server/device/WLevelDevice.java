@@ -82,7 +82,7 @@ public class  WLevelDevice extends WDevice<LevelDriver> implements LevelDevice {
 		addDefaultStream(DeviceStream.level,device.measurementType,() -> baseStream());
 		addStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream().map(v -> v == 0f ? 0f : 1f));
 		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> startstopX);
-		addStream(DeviceStream.pct,MeasurementType.change, () -> baseStream().map(v -> v/driver().getMaxLevel()));
+		addStream(DeviceStream.pctlevel,MeasurementType.change, () -> baseStream().map(v -> v/driver().getMaxLevel()));
 		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> baseStream().map(v -> v/driver().getMaxLevel()*device.wattAt100pct));
 	}
 	

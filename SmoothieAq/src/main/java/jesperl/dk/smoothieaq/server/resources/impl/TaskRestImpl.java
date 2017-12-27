@@ -1,4 +1,4 @@
-package jesperl.dk.smoothieaq.server.resources;
+package jesperl.dk.smoothieaq.server.resources.impl;
 
 import java.util.*;
 import java.util.function.*;
@@ -78,7 +78,7 @@ public class  TaskRestImpl extends RestImpl implements TaskRest {
 		sv.nextStart = Date.from(task.next().start()).getTime();
 		sv.on = task.on();
 		sv.nextEnd = Date.from(task.last().end()).getTime();
-		sv.manualWaitingFron = status.manualWaitingFrom;
+		sv.manualWaitingFrom = status.manualWaitingFrom;
 		sv.manualPostponedTo = status.manualPostponedTo;
 		return sv;
 	}

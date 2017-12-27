@@ -16,18 +16,18 @@ public interface TaskRest {
 	@PUT Single<TaskView> create(Task task);
 	@POST Single<TaskView> update(Task task);
 	
-	@GET @Path("status") Single<TaskScheduleView> getSchedule(@QueryParam("id") int taskId);
+	@GET @Path("schedule") Single<TaskScheduleView> getSchedule(@QueryParam("id") int taskId);
 	@PUT @Path("status") Single<TaskView> statusChange(@QueryParam("id") int taskId, TaskStatusType statusChange);
 
 	@GET @Path("view") Single<TaskView> getView(@QueryParam("id") int taskId);
 	
-	@GET @Path("devices") Observable<TaskView> tasks();
+	@GET @Path("tasks") Observable<TaskView> tasks();
 
 	@POST @Path("done") Single<TaskView> done(@QueryParam("id") int taskId, TaskArg arg, @QueryParam("description") String description);
 	@POST @Path("skip") Single<TaskView> skip(@QueryParam("id") int taskId);
 	@POST @Path("postpone") Single<TaskView> postpone(@QueryParam("id") int taskId, long postponeTo);
 	
-	@GET @Path("validatestreamexpr") Single<String> validateStreamExpr(String streamExpr);
+	@POST @Path("validatestreamexpr") Single<String> validateStreamExpr(String streamExpr);
 
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 	public static class  TaskView {
@@ -43,7 +43,7 @@ public interface TaskRest {
 		public long nextStart;
 		public boolean on;
 		public long nextEnd;
-		public long manualWaitingFron;
+		public long manualWaitingFrom;
 		public long manualPostponedTo;
 	}
 	

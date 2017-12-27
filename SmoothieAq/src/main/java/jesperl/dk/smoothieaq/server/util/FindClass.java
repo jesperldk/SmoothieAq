@@ -17,7 +17,7 @@ public class  FindClass {
 	public static Observable<Class<?>> create(final String packageName) {
 		return Observable.create(subscriber -> {
 			subscriber.onStart();
-			log.info("findClass("+packageName+")");
+			log.fine("findClass("+packageName+")");
 			try {
 			    Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(packageName.replace('.', '/'));
 			    while (resources.hasMoreElements()) {

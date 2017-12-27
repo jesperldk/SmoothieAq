@@ -6,3 +6,9 @@ server.db
 
 server.stream
 1201.00
+
+server.resources
+1301.00
+
+server.state
+1401.00

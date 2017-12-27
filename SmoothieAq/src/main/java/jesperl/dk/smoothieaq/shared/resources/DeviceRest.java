@@ -3,11 +3,13 @@ package jesperl.dk.smoothieaq.shared.resources;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import com.google.gwt.core.shared.*;
 import com.intendia.gwt.autorest.client.*;
 
-import jesperl.dk.smoothieaq.util.shared.error.*;
+import jesperl.dk.smoothieaq.server.device.classes.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
 import jsinterop.annotations.*;
 import rx.*;
 
@@ -60,5 +62,27 @@ public interface DeviceRest {
 		public Message name;
 		public Message description;
 		public String[] defaultUrls;
+	}
+
+	@GwtIncompatible public static DeviceCompactView compactView(IDevice idev) {
+		DeviceCompactView view = new DeviceCompactView();
+		Device device = idev.model().getDevice();
+		view.deviceId = device.id;
+		view.deviceClass = device.deviceType;
+		view.deviceType = device.deviceClass;
+		view.description = device.description;
+		view.name = device.name;
+		view.statusType = idev.model().getStatus().statusType;
+//		view.on = false;
+		return view;
+	}
+
+	@GwtIncompatible public static DeviceView view(IDevice idev) {
+		DeviceView view = new DeviceView();
+		view.device = idev.model().getDevice();
+		view.tasks = (Task[])idev.model().getTasks().toArray();
+		view.statusType = idev.model().getStatus().statusType;
+//		view.on = false;
+		return view;
 	}
 }

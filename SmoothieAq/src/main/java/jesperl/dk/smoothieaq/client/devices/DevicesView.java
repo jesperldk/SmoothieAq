@@ -19,6 +19,7 @@
  */
 package jesperl.dk.smoothieaq.client.devices;
 
+import static jesperl.dk.smoothieaq.client.context.ClientContext.*;
 import static jesperl.dk.smoothieaq.client.css.SmoothieAqCss.*;
 
 import com.google.gwt.core.client.*;
@@ -31,7 +32,6 @@ import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
 import gwt.material.design.client.constants.*;
 import gwt.material.design.client.ui.*;
 import jesperl.dk.smoothieaq.client.*;
-import jesperl.dk.smoothieaq.client.context.*;
 import jesperl.dk.smoothieaq.client.devices.img.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
@@ -44,6 +44,8 @@ public class DevicesView extends Composite {
 	@UiField MaterialRow cardRow;
 	
 	@UiField MaterialButton addBtn;
+	
+	private Subscription devicesSubscription;
 
     public DevicesView() {
         initWidget(binder.createAndBindUi(this));
@@ -54,7 +56,13 @@ public class DevicesView extends Composite {
     	super.onLoad();
         addBtn.addClickHandler(evt -> createDeviceModal());
 
-        Resources.device.devices().doOnError(e -> GWT.log("error getAll - "+e)).forEach(d -> cardRow.add(deviceCol(d)));
+        devicesSubscription = ctx.cDevices.devices().flatMap(cd -> cd.compactView).subscribe(d -> cardRow.add(deviceCol(d)));
+    }
+    
+    @Override
+    protected void onUnload() {
+    	devicesSubscription.unsubscribe();
+    	super.onUnload();
     }
     
     protected Widget createDeviceModal() {
@@ -65,7 +73,7 @@ public class DevicesView extends Composite {
     	panel.add(wListBox(device.deviceClass()));
     	panel.add(wListBox(device.deviceCategory()));
 //    	panel.add(wShortBox(device.driverId()));
-    	panel.add(wListBox(device.driverId(),ClientContext.ctx.driversCtx.getOptions()));
+    	panel.add(wListBox(device.driverId(),ctx.cDrivers.options()));
     	panel.add(wTextBox(device.deviceUrl()));
     	panel.add(wTextBox(device.name()));
     	panel.add(wTextBox(device.description()));
@@ -73,7 +81,6 @@ public class DevicesView extends Composite {
     	panel.add(wFloatBox(device.repeatabilityLevel()));
     	panel.add(wFloatBox(device.onLevel()));
     	panel.add(wFloatBox(device.wattAt100pct()));
-//    	panel.add(wComboBox(device.deviceType()));
     	return wModal(title,panel, () -> { GWT.log("call create device"); t(device);});
     }
 
@@ -101,7 +108,9 @@ public class DevicesView extends Composite {
 		title.setText(d.name);
 		content.add(title);
 		content.add(new MaterialLabel(d.description));
+		content.add(new DeviceStatusView(d));
 		card.add(content);
+		
 		
 		MaterialCardAction action = new MaterialCardAction();
 		action.add(new MaterialLink("Edit"));

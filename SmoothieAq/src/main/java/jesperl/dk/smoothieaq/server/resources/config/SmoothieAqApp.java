@@ -55,7 +55,7 @@ public class  SmoothieAqApp extends ResourceConfig {
 	}
 
 	public void registerClasses() {System.out.println("**register ");
-		FindClass.create("jesperl.dk.smoothieaq.server.resources").filter(c -> isAnnotatedWith(c, Path.class )).forEach(c -> {
+		FindClass.create("jesperl.dk.smoothieaq.server.resources.impl").filter(c -> isAnnotatedWith(c, Path.class )).forEach(c -> {
 			log.info("registering "+c);
 			registerClasses(c);
 		});

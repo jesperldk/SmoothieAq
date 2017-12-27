@@ -41,7 +41,7 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
     @Override public SourceVersion getSupportedSourceVersion() { return SourceVersion.latestSupported(); }
 
     @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-    	log("1.1 process, processingOver="+roundEnv.processingOver());
+    	log("1.2.1 process JsonType, processingOver="+roundEnv.processingOver());
         roundEnv.getElementsAnnotatedWith(JsType.class ).stream()
                 .filter(e -> e.getKind().isClass() && !e.getKind().isInterface() && !e.getSimpleName().toString().endsWith("_Db") && e instanceof TypeElement)//.map(e -> (TypeElement) e)
                 .forEach(jsType -> {
@@ -224,40 +224,42 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
 		writer.write("@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = \"Object\")\n");
 		writer.write("public interface "+helperName+" {\n");
 		writer.write("\n");
-		
-		writer.write("	@JsOverlay\n");
-		writer.write("	static Map<String,Function<"+rootType+","+rootType+">> $copy = $buildCopy(\n");
 
-		for (Map.Entry<String, Set<String>> e : ofType(root)) {
-			String cls = e.getKey();
-			if (!abstractCls.contains(cls)) writer.write("\t\t$copyFunc(\""+cls+"\",(s)->"+cls+"_Db.copy(new "+cls+"(),("+cls+")s)),\n");
+		if (root.getAnnotationMirrors().stream().anyMatch(am -> am.getAnnotationType().asElement().getSimpleName().contentEquals("DbVersion"))) {
+			writer.write("	@JsOverlay\n");
+			writer.write("	static Map<String,Function<"+rootType+","+rootType+">> $copy = $buildCopy(\n");
+	
+			for (Map.Entry<String, Set<String>> e : ofType(root)) {
+				String cls = e.getKey();
+				if (!abstractCls.contains(cls)) writer.write("\t\t$copyFunc(\""+cls+"\",(s)->"+cls+"_Db.copy(new "+cls+"(),("+cls+")s)),\n");
+			}
+	
+			writer.write("	null);\n");
+			writer.write("\n");
+			writer.write("	@JsOverlay\n");
+			writer.write("	static Object[] $copyFunc(String cls, Function<"+rootType+","+rootType+"> func) {\n");
+			writer.write("		Object[] obj = new Object[2];\n");
+			writer.write("		obj[0] = cls; obj[1] = func;\n");
+			writer.write("	return obj;\n");
+			writer.write("	}\n");
+			writer.write("\n");
+			writer.write("	@JsOverlay @SuppressWarnings(\"unchecked\")\n");
+			writer.write("	static Map<String,Function<"+rootType+","+rootType+">> $buildCopy(Object[]... $copyFuncs) {\n");
+			writer.write("		Map<String,Function<"+rootType+","+rootType+">> map = new HashMap<>();\n");
+			writer.write("		stream($copyFuncs).filter(c -> c != null).forEach($copyFunc -> {\n");
+			writer.write("			map.put($minimalClass((String) $copyFunc[0]), (Function<"+rootType+", "+rootType+">) $copyFunc[1]);\n");
+			writer.write("		});\n");
+			writer.write("		return map;\n");
+			writer.write("	}\n");
+			writer.write("\n");
+			writer.write("	@JsOverlay\n");
+			writer.write("	static "+rootType+" $copy("+rootType+" s) {\n");
+			writer.write("		if (s == null) return null;\n");
+			writer.write("		return $copy.get(s.$type).apply(s);\n");
+			writer.write("	}\n");
+			writer.write("\n");
 		}
-
-		writer.write("	null);\n");
-		writer.write("\n");
-		writer.write("	@JsOverlay\n");
-		writer.write("	static Object[] $copyFunc(String cls, Function<"+rootType+","+rootType+"> func) {\n");
-		writer.write("		Object[] obj = new Object[2];\n");
-		writer.write("		obj[0] = cls; obj[1] = func;\n");
-		writer.write("	return obj;\n");
-		writer.write("	}\n");
-		writer.write("\n");
-		writer.write("	@JsOverlay @SuppressWarnings(\"unchecked\")\n");
-		writer.write("	static Map<String,Function<"+rootType+","+rootType+">> $buildCopy(Object[]... $copyFuncs) {\n");
-		writer.write("		Map<String,Function<"+rootType+","+rootType+">> map = new HashMap<>();\n");
-		writer.write("		stream($copyFuncs).filter(c -> c != null).forEach($copyFunc -> {\n");
-		writer.write("			map.put($minimalClass((String) $copyFunc[0]), (Function<"+rootType+", "+rootType+">) $copyFunc[1]);\n");
-		writer.write("		});\n");
-		writer.write("		return map;\n");
-		writer.write("	}\n");
-		writer.write("\n");
-		writer.write("	@JsOverlay\n");
-		writer.write("	static "+rootType+" $copy("+rootType+" s) {\n");
-		writer.write("		if (s == null) return null;\n");
-		writer.write("		return $copy.get(s.$type).apply(s);\n");
-		writer.write("	}\n");
-		writer.write("\n");
-		
+			
 		writer.write("	@JsOverlay\n");
 		writer.write("	static Map<String,Set<String>> $instanceOf = $buildMap(\n");
 		
@@ -387,6 +389,13 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
 					return typeElement.getQualifiedName().toString();
 	    	}
 	    	return null;
+		}
+		
+		String getFieldType(TypeMirror tm) {
+			if (tm.getKind() != TypeKind.DECLARED) return "Field";
+    		TypeElement typeElement = getTypeElement(tm);
+			if (!getTypeElement(typeElement.getSuperclass()).getSimpleName().toString().equals("Enum")) return "Field";
+			return "EnumField";
 		}
 		
 	    void p() throws Exception {

@@ -3,10 +3,10 @@ package jesperl.dk.smoothieaq.shared.model.db;
 import java.util.function.*;
 
 public class Field<T> {
-	private Supplier<T> get;
-	private Consumer<T> set;
-	String key;
-	private Class<T> type;
+	protected Supplier<T> get;
+	protected Consumer<T> set;
+	protected String key;
+	protected Class<T> type;
 
 	public Field(Supplier<T> get, Consumer<T> set, String key, Class<T> type) {
 		this.get = get; this.set = set; this.key = key; this.type = type;

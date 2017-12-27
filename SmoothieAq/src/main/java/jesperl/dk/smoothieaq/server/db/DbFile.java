@@ -43,7 +43,7 @@ public class  DbFile<DBO extends DbObject> {
 	}
 	
 	public Observable<DBO> stream() {
-		return Observable.create(s -> {
+		return Observable.unsafeCreate(s -> { // TODO new create - handle backpressure
 			try ( 
 				FileChannel	channel = FileChannel.open(path ,StandardOpenOption.READ);
 			) {
@@ -64,6 +64,7 @@ public class  DbFile<DBO extends DbObject> {
 							((DbWithParrentId)dbo).id = map.getShort();
 					}
 					dbo.deserialize(map.get(), map, context);
+					log.fine("desialized "+cls.getSimpleName());
 					s.onNext(dbo);
 				}
 				s.onCompleted();
@@ -101,6 +102,7 @@ public class  DbFile<DBO extends DbObject> {
 							buf.putShort(((DbWithParrentId)dbo).id);
 					}
 					dbo.serialize(buf, context);
+					log.fine("serialized "+dbo.getClass().getSimpleName());
 					buf.putShort((short) (buf.position()-p));
 					if (fixedDboSize && dboSize == 0) dboSize = buf.position()-p;
 				});

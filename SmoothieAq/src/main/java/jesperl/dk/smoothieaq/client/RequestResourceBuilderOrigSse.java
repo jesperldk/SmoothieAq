@@ -13,6 +13,7 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 
+import com.google.gwt.core.client.*;
 import com.intendia.gwt.autorest.client.CollectorResourceVisitor;
 import elemental2.dom.EventListener;
 import elemental2.dom.EventSource;
@@ -36,8 +37,8 @@ import rx.internal.producers.SingleDelayedProducer;
 import rx.subscriptions.Subscriptions;
 
 @Experimental @SuppressWarnings("GwtInconsistentSerializableClass")
-public class RequestResourceBuilderX extends CollectorResourceVisitor {
-    private static final Logger log = Logger.getLogger(RequestResourceBuilderX.class.getName());
+public class RequestResourceBuilderOrigSse extends CollectorResourceVisitor {
+    private static final Logger log = Logger.getLogger(RequestResourceBuilderOrigSse.class.getName());
 
     @Override @SuppressWarnings("unchecked") public <T> T as(Class<? super T> container, Class<?> type) {
         if (Single.class.equals(container)) return (T) single();
@@ -46,7 +47,7 @@ public class RequestResourceBuilderX extends CollectorResourceVisitor {
     }
 
     public <T> Observable<T> observe() {
-        if (Stream.of(produces).anyMatch("text/event-stream"::equals)) {
+        if (Stream.of(produces).anyMatch("text/event-stream"::equals) || uri().endsWith("event")) {
             //noinspection Convert2MethodRef,unchecked
             return (Observable) Observable.<String>create(s -> eventSourceSubscription(s));
         } else {
@@ -95,8 +96,11 @@ public class RequestResourceBuilderX extends CollectorResourceVisitor {
         final String uri = uri();
         xhr.open(method, uri);
         xhr.setRequestHeader(ACCEPT, stream(produces).collect(joining(", ")));
-        xhr.setRequestHeader(CONTENT_TYPE, stream(consumes).collect(joining(", ")));
-        for (Param h : headerParams) xhr.setRequestHeader(h.k, Objects.toString(h.v));
+        String contentType = stream(consumes).collect(joining(", ")); GWT.log("1 "+contentType);
+		xhr.setRequestHeader(CONTENT_TYPE, contentType);
+        for (Param h : headerParams) { GWT.log("2 "+h.k+" "+h.v);
+        	xhr.setRequestHeader(h.k, Objects.toString(h.v));
+        }
 
         SingleDelayedProducer<T> producer = new SingleDelayedProducer<>(s);
         try {

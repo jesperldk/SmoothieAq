@@ -31,7 +31,7 @@ public class  WDoserDevice extends WDevice<DoserDriver> implements DoserDevice {
 
 	@Override protected void getready(DeviceContext dContext) { super.getready(dContext); deviceOff(); }
 	@Override protected void start(State state) {
-		subscribeMeasure(state,DeviceStream.doseX);
+		subscribeMeasure(state,DeviceStream.amountX);
 		subscribeMeasure(state,DeviceStream.watt);
 		subscribeOnoffX(state,DeviceStream.startstopX);
 	}
@@ -84,10 +84,10 @@ public class  WDoserDevice extends WDevice<DoserDriver> implements DoserDevice {
 
 	@Override protected void setupStreams() {
 		super.setupStreams();
-		addDefaultStream(DeviceStream.doseX,device.measurementType,() -> doseX);
+		addDefaultStream(DeviceStream.measureX,device.measurementType,() -> doseX);
 		addStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream());
 		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> stream);
-		addStream(DeviceStream.soFar,device.measurementType, () -> Observable.just(0f).concatWith(soFar));
+		addStream(DeviceStream.sofar,device.measurementType, () -> Observable.just(0f).concatWith(soFar));
 		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> baseStream().map(v -> v*device.wattAt100pct));
 	}
 }

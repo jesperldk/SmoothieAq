@@ -63,8 +63,9 @@ public class  State extends SimpleState {
 
 	protected <DBO extends DbObject> void loadIdeable(Observable<DBO> stream, Action1<? super DBO> load) {
 		IdFirstFilter<DBO> filter = new IdFirstFilter<>();
-		stream.filter(filter).subscribe(load);
-		if (filter.getMax() > nextId.get()) nextId.set(filter.getMax()+1);
+		stream.filter(filter)
+			.doOnTerminate(() -> { if (filter.getMax() >= nextId.get()) nextId.set(filter.getMax()+1); })
+			.subscribe(load);
 	}
 
 	protected void loadClasses() {
@@ -79,21 +80,21 @@ public class  State extends SimpleState {
 
 	@Override public Date now() { return now.date(); }
 	
-//	@SuppressWarnings("unchecked")
-//	public <T extends DbWithId> T get(Class<T> cls, int id) {
-//		return (T) objects.get(id);
-//	}
-	
 	public <T extends DbWithId> T save(T object) {
+		return saveWithId(setNewId(object));
+	}
+	
+	public <T extends DbWithId> T setNewId(T object) {
 		object.setId((short) getNextId());
-//		objects.put((int) object.getId(), object);
+		return object;
+	}
+
+	public <T extends DbWithId> T saveWithId(T object) {
 		wires.save(object);
 		return object;
 	}
 	
 	public <T extends DbWithId> T replace(T object) {
-//		assert objects.get(object.getId()) != null;
-//		objects.put((int) object.getId(), object);
 		wires.save(object);
 		return object;
 	}

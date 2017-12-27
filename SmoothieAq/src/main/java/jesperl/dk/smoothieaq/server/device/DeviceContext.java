@@ -43,7 +43,7 @@ public class  DeviceContext {
 	}
 	
 	public void getready() {
-		devices.values().forEach(d -> d.getready(this));
+		devices.values().stream().filter(d -> d.isEnabled()).forEach(d -> d.getready(this));
 		init = false;
 		scheduleChanged();
 	}
@@ -61,7 +61,7 @@ public class  DeviceContext {
 			wdevice.init(calibration);
 			tasks.forEach(t -> wdevice.init(this,t));
 			return wdevice;
-		}, e -> error(log,e,100103,major,"Could not load device id={0} - {1}",device.id,e.getMessage()));
+		}, e -> error(log,e,100103,major,"Could not load device id={0} - {1}",device.id,e.toString()));
 	}
 	public IDevice load(Device device) {
 		return funcGuardedX(() -> {
@@ -70,7 +70,7 @@ public class  DeviceContext {
 //			wdevice.init(calibration);
 //			tasks.forEach(t -> wdevice.init(this,t));
 			return wdevice;
-		}, e -> error(log,e,100103,major,"Could not load device id={0} - {1}",device.id,e.getMessage()));
+		}, e -> error(log,e,100103,major,"Could not load device id={0} - {1}",device.id,e.toString()));
 	}
 
 	protected WDevice<?> createWDevice(Device device) throws Exception {
@@ -87,18 +87,18 @@ public class  DeviceContext {
 		}
 		wdevice.init(this, device, driver);
 		devices.put((int) wdevice.getId(), wdevice);
-		state.wires.deviceChanged.onNext(wdevice);
 		return wdevice;
 	}
 	
 	public IDevice create(Device device) {
 		return funcGuardedX(() -> {
-			state.save(device);
+			state.setNewId(device);
 			WDevice<?> wdevice = createWDevice(device);
+			state.saveWithId(device);
 			wdevice.internalSet(state, DeviceStatusType.disabled);
 //			wdevice.getready(this);
 			return wdevice;
-		}, e -> error(log,e,100104,major,"Could not create device id={0} - {1}",device.id,e.getMessage()));
+		}, e -> error(log,e,100104,major,"Could not create device id={0} - {1}",device.id,e.toString()));
 	}
 	
 	public IDevice getDevice(int id) { return getWDevice(id); }
@@ -162,9 +162,9 @@ public class  DeviceContext {
 	}
 
 	public Driver getDriver(int id) {
-		Driver driver = drivers.get(id).b;
-		if (driver == null) throw error(log,100102,minor,"No driver with id={0}",id);
-		return driver;
+		Pair<DeviceClass, Driver> pair = drivers.get(id);
+		if (pair == null) throw error(log,100102,minor,"No driver with id={0}",id);
+		return pair.b;
 	}
 	
 	public Observable<Triple<Integer,DeviceClass,Driver>> drivers() {

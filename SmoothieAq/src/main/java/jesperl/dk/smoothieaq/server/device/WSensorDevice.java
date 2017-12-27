@@ -35,8 +35,8 @@ public class  WSensorDevice extends WDevice<SensorDriver> implements SensorDevic
 		subscribeMeasure(state,DeviceStream.level);
 		startstopX.onNext(1f); 
 		subscription(state.wires.pulse.onBackpressureDrop()
-				.delay(getId()%10, TimeUnit.SECONDS) // don't hit the device busses at the same time
 				.observeOn(Schedulers.io()) // some measures can take seconds
+				.delay((getId()%10)*100, TimeUnit.MILLISECONDS) // don't hit the device busses at the same time
 				.subscribe(v -> deviceMeasure())); // for the side effect
 	}
 	@Override protected void stop(State state) { 
@@ -62,7 +62,7 @@ public class  WSensorDevice extends WDevice<SensorDriver> implements SensorDevic
 		super.setupStreams();
 //		driver().listen(f -> calibrationX.onNext(f)); // TODO only when calibrating
 		addDefaultStream(DeviceStream.level,device.measurementType,() -> baseStream());
-		addStream(DeviceStream.levelX,device.measurementType,() -> stream);
+		addStream(DeviceStream.measureX,device.measurementType,() -> stream);
 		addStream(DeviceStream.onoff,MeasurementType.onoff,() -> Observable.just(disabled ? 0f : 1f).concatWith(startstopX));
 		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> startstopX);
 		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> only(0f));

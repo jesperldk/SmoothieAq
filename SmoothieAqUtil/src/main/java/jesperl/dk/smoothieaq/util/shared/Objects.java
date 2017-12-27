@@ -66,6 +66,16 @@ public class  Objects {
 	@SafeVarargs static public <O> Set<O> set(O... os) { return new HashSet<>(list(os)); }
 	static public Set<Integer> set(int... is) { return new HashSet<>(listb(is)); }
 	
+	@SuppressWarnings("unchecked")
+	static public <K,V> Map<K,V> map(Map<K,V> map, Object... os) {
+		for (int i = 0; i < os.length; i += 2) {
+			K k = (K)os[i];
+			V v = (V)os[i+1];
+			map.put(k, v);
+		}
+		return map;
+	}
+	
 	@SafeVarargs public static <O> O[] concat(O[]... oas) {
 		int l = 0; for (O[] oa: oas) if (isNotNull(oa)) l += oa.length;
 		O[] oar = null;

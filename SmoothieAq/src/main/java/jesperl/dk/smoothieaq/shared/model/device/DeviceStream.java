@@ -1,24 +1,25 @@
 package jesperl.dk.smoothieaq.shared.model.device;
 
 public enum DeviceStream { 
-	onoff(1,true), 
-	startstopX(2,false), 
-	level(3,true),
-	levelX(4,false),
-	pct(5,true),
-	doseX(6,false),
-	soFar(7,true),
-	watt(8,true),
+	startstopX(1), 
+	onoff(2), 
+	level(3),
+	watt(4),
+	pctlevel(4),
+	pgmX(5),
+	sofar(6),
+	amountX(7),
+	capacity(8),
+	measureX(9),
+	error(100),
+	alarm(101),
+	duetask(102)
 	;
 
 	private int id;
-	private boolean behavior;
 	
-	private DeviceStream(int id, boolean behavior) {
-		this.id = id;
-		this.behavior = behavior;
-	}
+	private DeviceStream(int id) { this.id = id; }
 	
 	public int getId() { return id; }
-	public boolean isBehavior() { return behavior; }
+	public DeviceStreamType getType() { return DeviceStreamUtil.toType.get(this); }
 }

@@ -8,13 +8,17 @@ import java.util.stream.*;
 import com.google.gwt.user.client.ui.*;
 
 import gwt.material.design.addins.client.combobox.*;
+import gwt.material.design.client.constants.*;
 import gwt.material.design.client.ui.*;
 import jesperl.dk.smoothieaq.client.components.modal.*;
 import jesperl.dk.smoothieaq.shared.model.db.*;
 import jesperl.dk.smoothieaq.util.shared.*;
 import jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import rx.*;
 
 public class GuiUtil {
+	
+	public static MaterialIcon wIcon(IconType iconType) { return new MaterialIcon(iconType); }
 	
 	public static Widget wModal(Widget title, Widget body, Action okAction) {
 		return new ModalView(title, body, okAction);
@@ -112,6 +116,20 @@ public class GuiUtil {
 			}
 		};
 		options.options.forEach(o -> listBox.addItem(o.key, o.text));
+		listBox.setPlaceholder(field.getKey());
+		return listBox;
+	}
+	public static <T> MaterialListValueBox<String> wListBox(Field<T> field, Single<WOptions<T>> options) {
+		MaterialListValueBox<String> listBox = new MaterialListValueBox<String>() {
+			protected void onLoad() {
+				super.onLoad();
+				options.subscribe(os -> {
+					setValue(os.key(field.get()));
+					addValueChangeHandler(evt -> field.set(os.value(getValue())));
+					os.options.forEach(o -> addItem(o.key, o.text));
+				});
+			}
+		};
 		listBox.setPlaceholder(field.getKey());
 		return listBox;
 	}

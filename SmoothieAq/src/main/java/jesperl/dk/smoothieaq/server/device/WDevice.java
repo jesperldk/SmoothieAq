@@ -53,7 +53,7 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 			validate(state, device);
 			init(state.dContext);
 			state.replace(device);
-			state.wires.deviceChanged.onNext(WDevice.this);
+			state.wires.devicesChanged.onNext(WDevice.this);
 			return WDevice.this;
 		}
 		
@@ -64,7 +64,7 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 			calibration.getDate();
 			WDevice.this.calibration = calibration;
 			state.save(calibration);
-			state.wires.deviceChanged.onNext(WDevice.this);
+			state.wires.devicesChanged.onNext(WDevice.this);
 			return WDevice.this;
 		}
 		
@@ -73,7 +73,7 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 			assert !tasks.contains(task.id); // OBS!!
 			state.save(task);
 			WTask wtask = createWTask(state.dContext, task);
-			state.wires.taskChanged.onNext(wtask);
+			state.wires.tasksChanged.onNext(wtask);
 			WDevice.this.scheduleChanged(state);
 			return wtask;
 		}
@@ -137,7 +137,7 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	protected void internalSet(State state, DeviceStatus status) {
 		this.status = status;
 		state.save(status);
-		state.wires.deviceChanged.onNext(this);
+		state.wires.devicesChanged.onNext(this);
 		scheduleChanged(state);
 	}
 	
@@ -218,9 +218,11 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 		return this;
 	}
 	
+	private static final EnumSet<DeviceStatusType> enabledStatus = EnumSet.of(DeviceStatusType.enabled, DeviceStatusType.paused);
+	
 	@Override
 	public boolean isEnabled() {
-		return status.statusType == enabled;
+		return enabledStatus.contains(status.statusType);
 	}
 	
 	@Override public Error inError() { return error; }

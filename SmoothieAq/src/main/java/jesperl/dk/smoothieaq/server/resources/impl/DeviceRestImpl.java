@@ -1,10 +1,9 @@
-package jesperl.dk.smoothieaq.server.resources;
+package jesperl.dk.smoothieaq.server.resources.impl;
 
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import jesperl.dk.smoothieaq.server.device.classes.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
-import jesperl.dk.smoothieaq.shared.model.task.*;
 import jesperl.dk.smoothieaq.shared.resources.*;
 import rx.*;
 
@@ -14,8 +13,8 @@ public class  DeviceRestImpl extends RestImpl implements DeviceRest {
 		return Single.just(idev(id).model().getDevice()); 
 	}
 
-	@Override public Single<DeviceCompactView> create(Device device) {
-		return compactSingle(context().create(device));
+	@Override public Single<DeviceCompactView> create(Device device) { 
+		return funcGuarded(() -> compactSingle(context().create(device)));
 	}
 
 	@Override public Single<DeviceCompactView> update(Device device) {
@@ -36,11 +35,11 @@ public class  DeviceRestImpl extends RestImpl implements DeviceRest {
 //	}
 
 	@Override public Single<DeviceView> getView(int deviceId) {
-		return Single.just(view(idev(deviceId)));
+		return Single.just(DeviceRest.view(idev(deviceId)));
 	}
 
 	@Override public Observable<DeviceCompactView> devices() {
-		return context().devices().map(DeviceRestImpl::compactView);
+		return context().devices().map(DeviceRest::compactView);
 	}
 
 	@Override public Observable<DriverView> drivers() {
@@ -63,28 +62,7 @@ public class  DeviceRestImpl extends RestImpl implements DeviceRest {
 	}
 	
 	protected static Single<DeviceCompactView> compactSingle(IDevice wrapper) {
-		return Single.just(compactView(wrapper));
+		return Single.just(DeviceRest.compactView(wrapper));
 	}
 
-	protected static DeviceCompactView compactView(IDevice idev) {
-		DeviceCompactView view = new DeviceCompactView();
-		Device device = idev.model().getDevice();
-		view.deviceId = device.id;
-		view.deviceClass = device.deviceType;
-		view.deviceType = device.deviceClass;
-		view.description = device.description;
-		view.name = device.name;
-		view.statusType = idev.model().getStatus().statusType;
-//		view.on = false;
-		return view;
-	}
-
-	protected static DeviceView view(IDevice idev) {
-		DeviceView view = new DeviceView();
-		view.device = idev.model().getDevice();
-		view.tasks = (Task[])idev.model().getTasks().toArray();
-		view.statusType = idev.model().getStatus().statusType;
-//		view.on = false;
-		return view;
-	}
 }

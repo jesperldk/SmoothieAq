@@ -32,7 +32,7 @@ public abstract class  WTask extends IdableType implements ITask {
 			assert task.taskType == WTask.this.task.taskType;
 			validate(task,device);
 			state.replace(task);
-			state.wires.taskChanged.onNext(WTask.this);
+			state.wires.tasksChanged.onNext(WTask.this);
 			initInternal(state);
 			return WTask.this;
 		}
@@ -92,19 +92,19 @@ public abstract class  WTask extends IdableType implements ITask {
 		next = null;
 		on = false;
 		state.save(done);
-		state.wires.taskDone.onNext(done);
+		state.wires.tasksDone.onNext(done);
 		return done;
 	}
 	
 	protected void internalSet(State state, TaskStatus status) {
 		state.save(status);
 		this.status = status;
-		state.wires.taskChanged.onNext(this);
+		state.wires.tasksChanged.onNext(this);
 		scheduleChanged(state);
 	}
 	
 	protected void scheduleChanged(State state) { device.scheduleChanged(state); }
-	protected void notifyScheduled(State state) { state.wires.taskScheduled.onNext(this); }
+	protected void notifyScheduled(State state) { state.wires.tasksScheduled.onNext(this); }
 
 	@Override public IDevice getDevice() { return device; }
 
