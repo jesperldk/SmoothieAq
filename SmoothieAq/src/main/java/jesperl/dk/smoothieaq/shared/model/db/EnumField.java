@@ -10,5 +10,8 @@ public class EnumField<T extends Enum<T>> extends Field<T> {
 
 	@Override public T get() { return fixup(type,get.get()); }
 	
-	public static <T extends Enum<T>> T fixup(Class<T> type, T value) { return (((Object)value) instanceof String) ? value = Enum.valueOf(type, (String)(Object)value) : value; } 
+	@SuppressWarnings("unchecked")
+	public static <T extends Enum<T>> T fixup(Class<T> type, Object value) { 
+		return (value instanceof String) ? Enum.valueOf(type, (String)value) : (T) value; 
+	} 
 }

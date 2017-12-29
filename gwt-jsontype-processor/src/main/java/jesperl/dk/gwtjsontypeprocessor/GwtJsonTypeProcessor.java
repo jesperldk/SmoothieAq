@@ -391,7 +391,7 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
 	    	return null;
 		}
 		
-		String getFieldType(TypeMirror tm) {
+		String getFieldClass(TypeMirror tm) {
 			if (tm.getKind() != TypeKind.DECLARED) return "Field";
     		TypeElement typeElement = getTypeElement(tm);
 			if (!getTypeElement(typeElement.getSuperclass()).getSimpleName().toString().equals("Enum")) return "Field";
@@ -410,19 +410,19 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
 			w("public interface "+helperName+" extends jesperl.dk.smoothieaq.shared.model.db.DbObject_Helper {\n\n");
 			w("\n");
 			
-			forEachField(w, t, (e) -> outField(e.getSimpleName().toString(), getTypeStr(e.asType())));
+			forEachField(w, t, (e) -> outField(e.getSimpleName().toString(), getTypeStr(e.asType()),getFieldClass(e.asType())));
 
 			w("}\n");
 	    }
 
-	    private void outField(String fieldName, String fieldType) {
+	    private void outField(String fieldName, String fieldType, String fieldClass) {
 	    	if (fieldType.equals("Object")) return;
 	    	String clsFieldName = className+"."+fieldName;
 			w("\t@SuppressWarnings(\"unchecked\")\n");
 			w("\t@JsOverlay default Field<"+fieldType+"> "+fieldName+"() {\n");
 			w("\t	Field<"+fieldType+"> field = (Field<"+fieldType+">) $fields().get(\""+clsFieldName+"\");\n");
 			w("\t	if (field == null)\n");
-			w("\t		$fields().put(\""+clsFieldName+"\", field = new Field<>(()->(("+className+")this)."+fieldName+", v->(("+className+")this)."+fieldName+" = v, \""+clsFieldName+"\", "+fieldType+".class));\n");
+			w("\t		$fields().put(\""+clsFieldName+"\", field = new "+fieldClass+"<>(()->(("+className+")this)."+fieldName+", v->(("+className+")this)."+fieldName+" = v, \""+clsFieldName+"\", "+fieldType+".class));\n");
 			w("\t	return field; \n");
 			w("\t}\n\n");
 	    }

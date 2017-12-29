@@ -26,7 +26,7 @@ public class  Wires {
 	private final static Logger log = Logger.getLogger(Wires.class.getName());
 	
 	public final Subject<Measure,Measure> devMeasures = new SerializedSubject<>(PublishSubject.create());
-	public final Subject<Measure,Measure> devOnoffXs = new SerializedSubject<>(PublishSubject.create());
+	public final Subject<Measure,Measure> devOtherMeasures = new SerializedSubject<>(PublishSubject.create());
 	public final Subject<ITask,ITask> tasksScheduled = new SerializedSubject<>(PublishSubject.create());
 	public final Subject<TaskDone,TaskDone> tasksDone = new SerializedSubject<>(PublishSubject.create());
 	public final Subject<IDevice,IDevice> devicesChanged = new SerializedSubject<>(PublishSubject.create());
@@ -40,7 +40,7 @@ public class  Wires {
 	public final Observable<Event> events = Observable.merge(
 				errors.map(ErrorEvent::create),
 				messages.map(MessageEvent::create),
-				devMeasures.map(ME::create),
+				Observable.merge(devMeasures,devOtherMeasures).map(ME::create),
 				devicesChanged.map(DeviceChangeEvent::create)
 			)
 			.onBackpressureBuffer(1, ()->error(log, 140101, Severity.major, "Wires.events are being used by someone applying backpressure, that is no good"), BackpressureOverflow.ON_OVERFLOW_DROP_LATEST)
@@ -54,8 +54,8 @@ public class  Wires {
 	public Subscription devMeasureObserve(IDevice idevice, DeviceStream dstream, Observable<Float> stream) {
 		return stream.map(f -> Measure.create(idevice.getId(), dstream, f)).subscribe(devMeasures);
 	}
-	public Subscription devOnoffxObserve(IDevice idevice, DeviceStream dstream, Observable<Float> stream) {
-		return stream.map(f -> Measure.create(idevice.getId(), dstream, f)).subscribe(devMeasures);
+	public Subscription devOtherMeasuerObserve(IDevice idevice, DeviceStream dstream, Observable<Float> stream) {
+		return stream.map(f -> Measure.create(idevice.getId(), dstream, f)).subscribe(devOtherMeasures);
 	}
 	
 	public Wires(State state) {

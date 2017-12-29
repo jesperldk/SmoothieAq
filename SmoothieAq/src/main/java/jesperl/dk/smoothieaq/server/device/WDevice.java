@@ -157,32 +157,47 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	
 	public DRIVER driver() { return driver; }
 
-	protected synchronized void internalStart(State state, DeviceStatusType newStatus) {
-		if (newStatus == enabled) start(state);
-		internalSet(state, newStatus);
+	protected void getReady(State state) { // should only be called from DeviceContext when a device is loaded from disk
+		if (isPaused()) { connect(state); stop(state); pause(state); }
+		else if (isEnabled()) { enable(state); }
 	}
-	
-	protected synchronized void internalStop(State state, DeviceStatusType newStatus, DeviceStatusType newDependentType) {
-		if (status.statusType == enabled) stop(state);
-		internalSet(state, newStatus);
+	protected void enable(State state) {
+		connect(state);
+		stop(state);
+		setupStreams(state);
 	}
-	
-	protected void getready(DeviceContext dContext) {
-		doErrorGuarded(() -> { driver().init(dContext.daContext(), device.deviceUrl, funcOrNull(calibration, c -> c.values)); });
-		setupStreams();
+	protected void setupStreams(State state) {}
+	protected void connect(State state) {
+		doErrorGuarded(() -> { driver().init(state.daContext, device.deviceUrl, funcOrNull(calibration, c -> c.values)); });
 	}
-	protected abstract void start(State state);
-	protected void subscription(Subscription s) { startSubscriptions.add(s); }
-	protected void subscribeMeasure(State state, DeviceStream ds) { 
-		subscription(state.wires.devMeasureObserve(this, ds, stream(ds))); 
+	protected void disable(State state) {
+		stop(state);
+		disconnect();
+		teardownStreams();
 	}
-	protected void subscribeOnoffX(State state, DeviceStream ds) { 
-		subscription(state.wires.devOnoffxObserve(this, ds, stream(ds))); 
-	}
-	protected void stop(State state) {
+	protected void teardownStreams() {
 		startSubscriptions.forEach(s -> s.unsubscribe());
 		startSubscriptions.clear();
 	}
+	protected void disconnect() {
+		driver().release();
+	}
+	protected void pause(State state) {
+		stop(state);
+		teardownStreams();
+		setupPauseStreams(state);
+	}
+	protected void setupPauseStreams(State state) {}
+	protected void unpause(State state) {
+		stop(state);
+		teardownStreams();
+		setupStreams(state);
+	}
+	protected void stop(State state) {}
+	
+	protected void subscription(Subscription s) { startSubscriptions.add(s); }
+	protected void subscribeMeasure(State state, DeviceStream ds) { subscription(state.wires.devMeasureObserve(this, ds, stream(ds))); }
+	protected void subscribeOtherMeasure(State state, DeviceStream ds) { subscription(state.wires.devOtherMeasuerObserve(this, ds, stream(ds))); }
 
 	@Override public synchronized DeviceStatusChange[] legalCommands() {
 		return (DeviceStatusChange[]) internalLegalCommands().toArray();
@@ -198,7 +213,7 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 			types.add(enable);
 		} else {
 			types.add(disable);
-			if (statusType == enabled)
+			if (statusType == DeviceStatusType.enabled)
 				types.add(pause);
 			else if (statusType == paused)
 				types.add(unpause);
@@ -209,21 +224,19 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	@Override public synchronized IDevice changeStatus(State state, DeviceStatusChange change) {
 		assert internalLegalCommands().contains(change);
 		switch(change) {
-			case enable: internalStart(state, DeviceStatusType.enabled); break;
-			case disable: internalStop(state, DeviceStatusType.disabled, DeviceStatusType.stopped); break;
-			case unpause: internalStart(state, DeviceStatusType.enabled); break;
-			case pause: internalStop(state, DeviceStatusType.paused, DeviceStatusType.stopped); break;
-			case delete: internalStop(state, DeviceStatusType.deleted, DeviceStatusType.deleted); break; // TODO also delete tasks
+			case enable: enable(state); internalSet(state, enabled); break;
+			case disable: disable(state); internalSet(state, disabled); break;
+			case unpause: unpause(state); internalSet(state, enabled); break;
+			case pause: pause(state); internalSet(state, paused); break;
+			case delete: disable(state); internalSet(state, deleted); break; // TODO also delete tasks
 		}
 		return this;
 	}
 	
-	private static final EnumSet<DeviceStatusType> enabledStatus = EnumSet.of(DeviceStatusType.enabled, DeviceStatusType.paused);
-	
-	@Override
-	public boolean isEnabled() {
-		return enabledStatus.contains(status.statusType);
-	}
+	private static final EnumSet<DeviceStatusType> enabledStatus = EnumSet.of(enabled, paused);
+	@Override public boolean isEnabled() { return isEnabled(status.statusType); }
+	public boolean isEnabled(DeviceStatusType statusType) { return enabledStatus.contains(statusType); }
+	public boolean isPaused() { return status.statusType == paused; } 
 	
 	@Override public Error inError() { return error; }
 	@Override public void clearError() { error = null; }
@@ -247,10 +260,6 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	protected Observable<Float> baseStream() { return Observable.just(getValue()).concatWith(stream); }
 	protected void addDefaultStream(DeviceStream streamId, MeasurementType type, Supplier<Observable<Float>> streamG) { defaultStreamG = streamG; streamsG.put(streamId, pair(type,streamG)); }
 	protected void addStream(DeviceStream streamId, MeasurementType type, Supplier<Observable<Float>> streamG) { streamsG.put(streamId, pair(type,streamG)); }
-	protected void setupStreams() {
-//		Subject<Void,Void> s = PublishSubject.create();
-//		pulse = s.toSerialized();
-	}
 
 	@Override public String toString() { return device.name+"#"+getId(); }
 }

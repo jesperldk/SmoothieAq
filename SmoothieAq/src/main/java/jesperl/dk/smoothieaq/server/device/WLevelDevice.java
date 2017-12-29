@@ -29,14 +29,31 @@ public class  WLevelDevice extends WDevice<LevelDriver> implements LevelDevice {
 	@Override public boolean isOn() { return getLevel() > 0; }
 	@Override public float getLevel() {	return nnv(level,() -> programLevel()); }
 
-	@Override protected void getready(DeviceContext dContext) { super.getready(dContext); off(); }
-	@Override protected void start(State state) { 
+	@Override protected void stop(State state) {
+		off();
+		super.stop(state);
+	}
+	@Override protected void setupStreams(State state) {
+		super.setupStreams(state);
+		addDefaultStream(DeviceStream.level,device.measurementType,() -> baseStream());
+		addStream(DeviceStream.pctlevel,MeasurementType.change, () -> baseStream().map(v -> v/driver().getMaxLevel()));
+		addStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream().map(v -> v == 0f ? 0f : 1f));
 		subscribeMeasure(state,DeviceStream.level);
+		setupBaseStreams(state);
+	}
+	@Override protected void setupPauseStreams(State state) {
+		super.setupPauseStreams(state);
+		addDefaultStream(DeviceStream.pauseX,device.measurementType,() -> baseStream());
+		subscribeOtherMeasure(state,DeviceStream.pauseX);
+		setupBaseStreams(state);
+	}
+	protected void setupBaseStreams(State state) {
+		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> startstopX);
+		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> baseStream().map(v -> v/driver().getMaxLevel()*device.wattAt100pct));
 		subscribeMeasure(state,DeviceStream.watt);
-		subscribeOnoffX(state,DeviceStream.startstopX);
+		subscribeOtherMeasure(state,DeviceStream.startstopX);
 		subscription(state.wires.pulse.onBackpressureDrop().subscribe(v -> programLevel())); // for the side effect 
-	} 
-	@Override protected void stop(State state) { off(); super.stop(state); }
+	}
 
 	synchronized protected void deviceLevel(float level) {
 		doErrorGuarded(() -> {
@@ -74,16 +91,6 @@ public class  WLevelDevice extends WDevice<LevelDriver> implements LevelDevice {
 			prevLevel = nextLevel;
 		}
 		return nextLevel;
-	}
-
-	@Override protected void setupStreams() {
-		super.setupStreams();
-		 // TODO reset at calibration
-		addDefaultStream(DeviceStream.level,device.measurementType,() -> baseStream());
-		addStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream().map(v -> v == 0f ? 0f : 1f));
-		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> startstopX);
-		addStream(DeviceStream.pctlevel,MeasurementType.change, () -> baseStream().map(v -> v/driver().getMaxLevel()));
-		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> baseStream().map(v -> v/driver().getMaxLevel()*device.wattAt100pct));
 	}
 	
 }

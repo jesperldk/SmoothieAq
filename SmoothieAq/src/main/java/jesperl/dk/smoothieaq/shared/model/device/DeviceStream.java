@@ -11,6 +11,7 @@ public enum DeviceStream {
 	amountX(7),
 	capacity(8),
 	measureX(9),
+	pauseX(10),
 	error(100),
 	alarm(101),
 	duetask(102)

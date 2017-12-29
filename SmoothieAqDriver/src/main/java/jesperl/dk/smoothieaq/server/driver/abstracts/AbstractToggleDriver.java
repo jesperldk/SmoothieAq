@@ -34,9 +34,11 @@ public abstract class  AbstractToggleDriver<S extends AbstractToggleDriver.Stora
 	protected abstract Object addListener(Consumer<Boolean> listener);
 	protected abstract void removeListener(Object listenerKey, Consumer<Boolean> listener);
 	
-	@Override public void listen(Consumer<Float> listener) { listenOn(on -> listener.accept(on?1f:0f)); }
-	@Override
-	public void listenOn(Consumer<Boolean> listener) {
+	@Override public void listen(Consumer<Float> listener) {
+		if (listener == null) removeListeners();
+		else listenOn(on -> listener.accept(on?1f:0f)); 
+	}
+	@Override public void listenOn(Consumer<Boolean> listener) {
 		Consumer<Boolean> logListener = on -> { 
 			log.info("Triggered "+(on?"on":"off")+" on "+getUrl()); 
 			listener.accept(on); 
@@ -45,11 +47,15 @@ public abstract class  AbstractToggleDriver<S extends AbstractToggleDriver.Stora
 	}
 	
 	@Override public void release() {
+		removeListeners();
+		super.release();
+	}
+
+	protected void removeListeners() {
 		useStorage(s -> {
 			for (Map.Entry<Object, Consumer<Boolean>> e: s.onListeners.entrySet()) removeListener(e.getKey(), e.getValue());
 			s.onListeners.clear();
 		});
-		super.release();
 	}
 
 }

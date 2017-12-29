@@ -20,26 +20,55 @@ public class  WToggleDevice extends WDevice<ToggleDriver> implements ToggleDevic
 
 	@Override public boolean isOn() { return on; }
 
-	@Override protected void getready(DeviceContext dContext) { super.getready(dContext); }
-	@Override protected void start(State state) { 
+	@Override protected void enable(State state) {  
 		disabled = false; 
-		on = false;
-		subscribeMeasure(state,DeviceStream.onoff);
-		stream.onNext(0f); 
+		super.enable(state);
+		deviceIsOn();
+		stream.onNext(getValue()); 
 	}
-	@Override protected void stop(State state) { disabled = true; stream.onNext(disabledLevel); super.stop(state); }
+	@Override protected void disable(State state) { 
+		disabled = true; 
+		stream.onNext(disabledLevel); 
+		super.disable(state); 
+	}
+	@Override protected void pause(State state) {  
+		disabled = false; 
+		stream.onNext(disabledLevel); 
+		super.enable(state);
+		deviceIsOn();
+		stream.onNext(getValue()); 
+	}
+	@Override protected void unpause(State state) { 
+		disabled = true; 
+		super.disable(state); 
+		stream.onNext(getValue()); 
+	}
+	@Override protected void setupStreams(State state) {
+		super.setupStreams(state);
+		addDefaultStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream());
+		addStream(DeviceStream.level,MeasurementType.onoff,() -> baseStream());
+		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> stream);
+		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> only(0f));
+		subscribeMeasure(state,DeviceStream.onoff);
+		setupBaseMeasure(); 
+	}
+	@Override protected void setupPauseStreams(State state) {
+		super.setupStreams(state);
+		addStream(DeviceStream.pauseX,MeasurementType.onoff,() -> baseStream());
+		subscribeOtherMeasure(state,DeviceStream.pauseX);
+		setupBaseMeasure(); 
+	}
+	protected void setupBaseMeasure() {
+		driver().listenOn(b -> { if (!disabled) { on = b; stream.onNext(on ? 1f : 0f); }});
+	}
+	@Override protected void teardownStreams() {
+		super.teardownStreams();
+		driver().listenOn(null); 
+	}
 
 	protected boolean deviceIsOn() {
 		doErrorGuarded(() -> { on = driver().isOn(); });
 		return on;
 	}
 
-	@Override protected void setupStreams() {
-		super.setupStreams();
-		driver().listenOn(b -> { if (!disabled) { on = b; stream.onNext(on ? 1f : 0f); }}); 
-		addDefaultStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream());
-		addStream(DeviceStream.level,MeasurementType.onoff,() -> baseStream());
-		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> stream);
-		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> only(0f));
-	}
 }

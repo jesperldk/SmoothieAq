@@ -21,11 +21,24 @@ public class  WStatusDevice extends WDevice<StatusDriver> implements StatusDevic
 	@Override public boolean isOn() { return getBlink() > 0; }
 	@Override public int getBlink() { return blinkGrade; }
 
-	@Override protected void getready(DeviceContext dContext) { super.getready(dContext); deviceBlink(0); }
-	@Override protected void start(State state) {
+	@Override protected void stop(State state) {
+		deviceBlink(0);
+		super.stop(state);
+	}
+	@Override protected void setupStreams(State state) {
+		super.setupStreams(state);
+		addDefaultStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream());
+		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> stream);
+		addStream(DeviceStream.level,MeasurementType.status, () -> baseStream());
+		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> only(0f));
 		subscribeMeasure(state,DeviceStream.level);
 	}
-	@Override protected void stop(State state) { off(); super.stop(state); }
+	@Override
+	protected void setupPauseStreams(State state) {
+		super.setupPauseStreams(state);
+		addStream(DeviceStream.pauseX,MeasurementType.onoff,() -> baseStream());
+		subscribeOtherMeasure(state,DeviceStream.pauseX);
+	}
 
 	protected void deviceBlink(int grade) {
 		doErrorGuarded(() -> {
@@ -36,11 +49,4 @@ public class  WStatusDevice extends WDevice<StatusDriver> implements StatusDevic
 		});
 	}
 
-	@Override protected void setupStreams() {
-		super.setupStreams();
-		addDefaultStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream());
-		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> stream);
-		addStream(DeviceStream.level,MeasurementType.status, () -> baseStream());
-		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> only(0f));
-	}
 }

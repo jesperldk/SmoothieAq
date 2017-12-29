@@ -19,8 +19,8 @@ public class  WSensorDevice extends WDevice<SensorDriver> implements SensorDevic
 	public static final float disabledLevel = -999999;
 	
 	protected PublishSubject<Float> startstopX = PublishSubject.create();
-	protected PublishSubject<Float> calibrationX = PublishSubject.create();
-	private boolean disabled = true; 
+//	protected PublishSubject<Float> calibrationX = PublishSubject.create();
+	private boolean enabled = false;
 	private float prevLevel = disabledLevel;
 	private float nextLevel = disabledLevel;
 
@@ -29,25 +29,48 @@ public class  WSensorDevice extends WDevice<SensorDriver> implements SensorDevic
 
 	@Override public float measure() { return deviceMeasure(); }
 
-	@Override protected void getready(DeviceContext dContext) { super.getready(dContext); }
-	@Override protected void start(State state) { 
-		disabled = false; 
-		subscribeMeasure(state,DeviceStream.level);
+	@Override protected void enable(State state) { 
+		enabled = true;
+		super.enable(state); 
 		startstopX.onNext(1f); 
+	}
+	@Override protected void disable(State state) { 
+		enabled = false;
+		startstopX.onNext(0f); 
+		stream.onNext(disabledLevel); 
+		super.disable(state);
+	}
+	@Override protected void pause(State state) {
+		enabled = true;
+		super.pause(state);
+		startstopX.onNext(1f); 
+	}
+	@Override protected void setupStreams(State state) {
+		super.setupStreams(state);
+		addDefaultStream(DeviceStream.level,device.measurementType,() -> baseStream());
+		addStream(DeviceStream.measureX,device.measurementType,() -> stream);
+		addStream(DeviceStream.onoff,MeasurementType.onoff,() -> Observable.just(enabled ? 1f : 0f).concatWith(startstopX));
+		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> startstopX);
+		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> only(0f));
+		subscribeMeasure(state,DeviceStream.level);
+		setupBaseStreams(state);
+	}
+	@Override protected void setupPauseStreams(State state) {
+		super.setupPauseStreams(state);
+//		driver().listen(f -> calibrationX.onNext(f)); // TODO only when calibrating
+		addStream(DeviceStream.pauseX,device.measurementType,() -> baseStream());
+		subscribeOtherMeasure(state,DeviceStream.pauseX);
+		setupBaseStreams(state);
+	}
+	protected void setupBaseStreams(State state) {
 		subscription(state.wires.pulse.onBackpressureDrop()
 				.observeOn(Schedulers.io()) // some measures can take seconds
 				.delay((getId()%10)*100, TimeUnit.MILLISECONDS) // don't hit the device busses at the same time
 				.subscribe(v -> deviceMeasure())); // for the side effect
 	}
-	@Override protected void stop(State state) { 
-		disabled = true; 
-		startstopX.onNext(0f); 
-		stream.onNext(disabledLevel); 
-		super.stop(state);
-	}
 
 	protected float deviceMeasure() {
-		if (disabled) return disabledLevel;
+		if (!enabled) return disabledLevel;
 		doErrorGuarded(() -> { 
 			nextLevel = driver().measure(); 
 			if (abs(prevLevel-nextLevel) > device.repeatabilityLevel) {
@@ -58,13 +81,4 @@ public class  WSensorDevice extends WDevice<SensorDriver> implements SensorDevic
 		return nextLevel;
 	}
 
-	@Override protected void setupStreams() {
-		super.setupStreams();
-//		driver().listen(f -> calibrationX.onNext(f)); // TODO only when calibrating
-		addDefaultStream(DeviceStream.level,device.measurementType,() -> baseStream());
-		addStream(DeviceStream.measureX,device.measurementType,() -> stream);
-		addStream(DeviceStream.onoff,MeasurementType.onoff,() -> Observable.just(disabled ? 0f : 1f).concatWith(startstopX));
-		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> startstopX);
-		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> only(0f));
-	}
 }

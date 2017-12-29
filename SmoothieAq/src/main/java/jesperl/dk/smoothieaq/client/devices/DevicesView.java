@@ -56,7 +56,26 @@ public class DevicesView extends Composite {
     	super.onLoad();
         addBtn.addClickHandler(evt -> createDeviceModal());
 
-        devicesSubscription = ctx.cDevices.devices().flatMap(cd -> cd.compactView).subscribe(d -> cardRow.add(deviceCol(d)));
+//        devicesSubscription = ctx.cDevices.devices().flatMap(cd -> cd.compactView).subscribe(d -> cardRow.add(deviceCol(d)));
+        devicesSubscription = ctx.cDevices.devices()
+        	.map(cd -> cd.compactView.map(this::deviceCard).map(this::deviceCol))
+        	.map(WSingle::new).subscribe(cardRow::add);
+    }
+    
+    public static class WSingle extends MaterialContainer {
+    	private Observable<Widget> observable;
+    	private Subscription subscription;
+    	
+    	public WSingle(Observable<Widget> observable) { this.observable = observable; }
+    	
+    	@Override protected void onLoad() {
+    		super.onLoad();
+    		subscription = observable.subscribe(w -> { clear(); add(w); });
+    	}
+    	@Override protected void onUnload() {
+    		if (subscription != null) subscription.unsubscribe();
+    		super.onUnload();
+    	}
     }
     
     @Override
@@ -91,6 +110,12 @@ public class DevicesView extends Composite {
 	protected Widget deviceCol(DeviceCompactView d) {
 		MaterialColumn column = new MaterialColumn(12, 6, 4);
 		column.add(deviceCard(d));
+		return column;
+	}
+
+	protected Widget deviceCol(Widget w) {
+		MaterialColumn column = new MaterialColumn(12, 6, 4);
+		column.add(w);
 		return column;
 	}
 

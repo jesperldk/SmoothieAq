@@ -41,6 +41,7 @@ public class  Objects {
 	public static <U> U funcNotEmpty(String valueOrEmpty, Supplier<U> nullFunc, Function<String,U> func) { return isNotEmpty(valueOrEmpty) ? func.apply(valueOrEmpty) : nullFunc.get(); }
 
 	static public <S,T> Pair<S,T> pair(S a, T b) { return new Pair<>(a,b); }
+	static public <S,T> Pair<S,T> p(S a, T b) { return new Pair<>(a,b); }
 	static public <S> Pair<S,Integer> pair(S a, int b) { return new Pair<>(a,b); }
 	static public Pair<Integer,Integer> pair(int a, int b) { return new Pair<>(a,b); }
 	static public <S> Pair<S,Float> pair(S a, float b) { return new Pair<>(a,b); }
@@ -73,6 +74,12 @@ public class  Objects {
 			V v = (V)os[i+1];
 			map.put(k, v);
 		}
+		return map;
+	}
+	@SafeVarargs
+	static public <K,V> Map<K,V> map(Pair<K,V>... ps) {
+		Map<K,V> map = new HashMap<>();
+		forEach(ps, p -> map.put(p.a,p.b));
 		return map;
 	}
 	

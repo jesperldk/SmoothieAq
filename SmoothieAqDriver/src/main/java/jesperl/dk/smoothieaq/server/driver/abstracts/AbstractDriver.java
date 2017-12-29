@@ -87,7 +87,7 @@ public abstract class  AbstractDriver<S extends AbstractDriver.Storage, D extend
 	
 	protected boolean isSimulate() { return simulate; }
 	
-	@Override public void release() { da.release(); }
+	@Override public void release() { da.release(); da = null; }
 	
 	@Override public StepInfo[] calibrationInfo() { return null; }
 	@Override public int daysBetweenCalibration() { return -1; }

@@ -35,6 +35,7 @@ public class  DeviceContext {
 	public DeviceContext(State state, DeviceAccessContext daContext) {
 		this.state = state;
 		this.daContext = daContext;
+		daContext.setSimulate(true); // !!!!!!!!
 		init = true;
 	}
 	
@@ -43,7 +44,7 @@ public class  DeviceContext {
 	}
 	
 	public void getready() {
-		devices.values().stream().filter(d -> d.isEnabled()).forEach(d -> d.getready(this));
+		devices.values().stream().filter(WDevice::isEnabled).forEach(d -> d.enable(state));
 		init = false;
 		scheduleChanged();
 	}
@@ -74,7 +75,6 @@ public class  DeviceContext {
 	}
 
 	protected WDevice<?> createWDevice(Device device) throws Exception {
-		WDevice.validate(state, device);
 		Driver driver = getDriver(device.driverId).getClass().newInstance();
 		WDevice<?> wdevice;
 		switch(device.deviceClass) {
@@ -92,11 +92,11 @@ public class  DeviceContext {
 	
 	public IDevice create(Device device) {
 		return funcGuardedX(() -> {
+			WDevice.validate(state, device);
 			state.setNewId(device);
 			WDevice<?> wdevice = createWDevice(device);
 			state.saveWithId(device);
 			wdevice.internalSet(state, DeviceStatusType.disabled);
-//			wdevice.getready(this);
 			return wdevice;
 		}, e -> error(log,e,100104,major,"Could not create device id={0} - {1}",device.id,e.toString()));
 	}

@@ -5,12 +5,14 @@ import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 import java.util.*;
 import java.util.stream.*;
 
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.ui.*;
 
 import gwt.material.design.addins.client.combobox.*;
 import gwt.material.design.client.constants.*;
 import gwt.material.design.client.ui.*;
 import jesperl.dk.smoothieaq.client.components.modal.*;
+import jesperl.dk.smoothieaq.client.enums.*;
 import jesperl.dk.smoothieaq.shared.model.db.*;
 import jesperl.dk.smoothieaq.util.shared.*;
 import jesperl.dk.smoothieaq.util.shared.error.Errors.*;
@@ -22,6 +24,23 @@ public class GuiUtil {
 	
 	public static Widget wModal(Widget title, Widget body, Action okAction) {
 		return new ModalView(title, body, okAction);
+	}
+
+	public static MaterialAnchorButton wFloatButton(EnumInfo enumInfo, Action doOnClick) {
+		return wFloatButton(enumInfo.icon, enumInfo.bgColor, enumInfo.hoverTxt, doOnClick);
+	}
+	public static MaterialAnchorButton wFloatButton(IconType iconType, Color bgColor, String hoverTxt, Action doOnClick) {
+		MaterialAnchorButton btn = new MaterialAnchorButton(ButtonType.FLOATING) {
+			@Override protected void onLoad() {
+				super.onLoad();
+				if (doOnClick != null) addClickHandler(e -> doOnClick.doit());
+			}
+		};
+		btn.setIconType(iconType);
+		btn.setBackgroundColor(bgColor);
+		if (hoverTxt != null)  btn.setTitle(hoverTxt);
+		if (doOnClick != null) btn.setWaves(WavesType.DEFAULT);
+		return btn;
 	}
 
 	public static MaterialTextBox wTextBox(Field<String> field) {

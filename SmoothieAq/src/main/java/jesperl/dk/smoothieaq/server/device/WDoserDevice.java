@@ -1,11 +1,12 @@
 package jesperl.dk.smoothieaq.server.device;
 
+import static jesperl.dk.smoothieaq.shared.model.device.DeviceStream.*;
+
 import java.util.concurrent.*;
 
 import jesperl.dk.smoothieaq.server.device.classes.*;
 import jesperl.dk.smoothieaq.server.driver.classes.*;
 import jesperl.dk.smoothieaq.server.state.*;
-import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 import rx.*;
 import rx.schedulers.*;
@@ -29,13 +30,34 @@ public class  WDoserDevice extends WDevice<DoserDriver> implements DoserDevice {
 	@Override public boolean isOn() { return soFar() > 0; }
 	@Override public float soFar() { return deviceSoFar(); }
 
-	@Override protected void getready(DeviceContext dContext) { super.getready(dContext); deviceOff(); }
-	@Override protected void start(State state) {
-		subscribeMeasure(state,DeviceStream.amountX);
-		subscribeMeasure(state,DeviceStream.watt);
-		subscribeOnoffX(state,DeviceStream.startstopX);
+	@Override protected void stop(State state) {
+		super.stop(state);
+		deviceOff();
 	}
-	@Override protected void stop(State state) { off(); super.stop(state); }
+	@Override protected void setupStreams(State state) {
+		super.setupStreams(state);
+		addDefaultStream(amountX,device.measurementType,() -> doseX);
+		subscribeMeasure(state,amountX);
+		setupBaseStreams(state);
+	}
+	@Override protected void setupPauseStreams(State state) {
+		super.setupPauseStreams(state);
+		setupBaseStreams(state);
+		addStream(pauseX,device.measurementType,() -> doseX);
+		subscribeOtherMeasure(state,pauseX);
+	}
+	protected void setupBaseStreams(State state) {
+		addStream(startstopX,MeasurementType.onoff, () -> stream);
+		addStream(sofar,device.measurementType, () -> Observable.just(0f).concatWith(soFar));
+		addStream(watt,MeasurementType.energyConsumption, () -> baseStream().map(v -> v*device.wattAt100pct));
+		subscribeMeasure(state,watt);
+		subscribeOtherMeasure(state,startstopX);
+		subscribeOtherMeasure(state,sofar);
+	}
+	@Override protected void teardownStreams() {
+		if (pulseSubscr != null) pulseSubscr.unsubscribe();
+		super.teardownStreams();
+	}
 
 	protected void deviceOn() {
 		doErrorGuarded(() -> {
@@ -82,12 +104,4 @@ public class  WDoserDevice extends WDevice<DoserDriver> implements DoserDevice {
 				.subscribe(l -> { if (deviceSoFar() == 0) pulseSubscr.unsubscribe(); }); // we call deviceSoFar for the side effect
 	}
 
-	@Override protected void setupStreams() {
-		super.setupStreams();
-		addDefaultStream(DeviceStream.measureX,device.measurementType,() -> doseX);
-		addStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream());
-		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> stream);
-		addStream(DeviceStream.sofar,device.measurementType, () -> Observable.just(0f).concatWith(soFar));
-		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> baseStream().map(v -> v*device.wattAt100pct));
-	}
 }

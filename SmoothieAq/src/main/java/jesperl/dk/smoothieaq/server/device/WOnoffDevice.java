@@ -18,13 +18,29 @@ public class  WOnoffDevice extends WDevice<OnoffDriver> implements OnoffDevice {
 
 	@Override public boolean isOn() { return on; }
 
-	@Override protected void getready(DeviceContext dContext) { super.getready(dContext); onoff(false); }
-	@Override protected void start(State state) { 
-		subscribeMeasure(state,DeviceStream.level);
-		subscribeMeasure(state,DeviceStream.watt);
-		subscribeOnoffX(state,DeviceStream.startstopX);
+	@Override protected void stop(State state) {
+		onoff(false);
+		super.stop(state);
 	}
-	@Override protected void stop(State state) { off(); super.stop(state); }
+	@Override protected void setupStreams(State state) {
+		super.setupStreams(state);
+		addDefaultStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream());
+		addStream(DeviceStream.level,device.measurementType, () -> baseStream().map(v -> v*device.onLevel));
+		subscribeMeasure(state,DeviceStream.level);
+		setupBaseStreams(state);
+	}
+	@Override protected void setupPauseStreams(State state) {
+		super.setupPauseStreams(state);
+		addStream(DeviceStream.pauseX,device.measurementType, () -> baseStream().map(v -> v*device.onLevel));
+		subscribeOtherMeasure(state,DeviceStream.level);
+		setupBaseStreams(state);
+	}
+	protected void setupBaseStreams(State state) {
+		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> stream);
+		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> baseStream().map(v -> v*device.wattAt100pct));
+		subscribeMeasure(state,DeviceStream.watt);
+		subscribeOtherMeasure(state,DeviceStream.startstopX);
+	}
 
 	protected void onoff(boolean on) {
 		doErrorGuarded(() -> {
@@ -34,11 +50,4 @@ public class  WOnoffDevice extends WDevice<OnoffDriver> implements OnoffDevice {
 		});
 	}
 	
-	@Override protected void setupStreams() {
-		super.setupStreams();
-		addDefaultStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream());
-		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> stream);
-		addStream(DeviceStream.level,device.measurementType, () -> baseStream().map(v -> v*device.onLevel));
-		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> baseStream().map(v -> v*device.wattAt100pct));
-	}
 }
