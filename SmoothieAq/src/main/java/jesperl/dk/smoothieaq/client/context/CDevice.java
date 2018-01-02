@@ -8,7 +8,7 @@ public class CDevice {
 	
 	public final short id;
 	
-	/*friend*/  Subject<DeviceCompactView, DeviceCompactView> compactViewSubject = new SerializedSubject<>(PublishSubject.create());
+	/*friend*/  Subject<DeviceCompactView, DeviceCompactView> compactViewSubject = PublishSubject.create();
 	
 	public  Observable<DeviceCompactView> compactView = compactViewSubject.replay(1).autoConnect();
 

@@ -17,8 +17,11 @@ public class  Objects {
 
 	public static boolean isNotNull(Object value) { return value != null; }
 	
+	public static <T> void with(T value, Consumer<T> doit) { doit.accept(value); }
+	public static <T> void doit(T value, Consumer<T> doit) { doit.accept(value); }
 	public static <T> void doNotNull(T valueOrNull, Consumer<T> doit) { if (isNotNull(valueOrNull)) doit.accept(valueOrNull); }
 
+	public static <T,U> U func(T value, Function<T,U> func) { return func.apply(value); }
 	public static <T,U> U funcNotNull(T valueOrNull, Function<T,U> func) { return isNotNull(valueOrNull) ? func.apply(valueOrNull) : null; }
 	public static <T,U> U funcNotNull(T valueOrNull, U defaultValue, Function<T,U> func) { return isNotNull(valueOrNull) ? func.apply(valueOrNull) : defaultValue; }
 	public static <T,U> U funcOrNull(T valueOrNull, Function<T,U> func) { return isNotNull(valueOrNull) ? func.apply(valueOrNull) : null; }
@@ -48,7 +51,11 @@ public class  Objects {
 	static public Pair<Float,Float> pair(float a, float b) { return new Pair<>(a,b); }
 	static public <S,T,U> Triple<S,T,U> triple(S a, T b, U c) { return new Triple<>(a,b,c); }
 	
-	static public <S,T,U> Function<Pair<S,T>,U> with(BiFunction<S, T, U> func) { return p -> func.apply(p.a, p.b); }
+	static public <S,T> void with( Pair<S,T> p, BiConsumer<S, T> consumer) { consumer.accept(p.a, p.b); }
+	static public <S,T,U> U with( Pair<S,T> p, BiFunction<S, T, U> func) { return func.apply(p.a, p.b); }
+	static public <S,T> Pair<T,T> map( Pair<S,S> p, Function<S, T> func) { return pair(func.apply(p.a), func.apply(p.b)); }
+	
+	static public <S,T,U> Function<Pair<S,T>,U> withFunc(BiFunction<S, T, U> func) { return p -> func.apply(p.a, p.b); }
 	static public <S,T> Consumer<Pair<S,T>> with(BiConsumer<S, T> consumer) { return p -> consumer.accept(p.a, p.b); }
 	
 	@SafeVarargs static public <O> O[] array(O... os) { return os; }

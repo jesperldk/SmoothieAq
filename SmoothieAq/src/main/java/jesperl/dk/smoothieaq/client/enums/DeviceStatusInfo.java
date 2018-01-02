@@ -28,7 +28,7 @@ public class DeviceStatusInfo extends EnumInfo {
 		return p(type, new DeviceStatusInfo(icon, bgColor, type.toString(), legalChanges)); 
 	}
 
-	public static Func1<DeviceStatusType, DeviceStatusInfo> func = func(DeviceStatusType.class,
+	public static Func1<DeviceStatusType, DeviceStatusInfo> dsinfo = func(DeviceStatusType.class,
 			dsi(enabled,	PLAY_ARROW,	GREEN_ACCENT_3,	list(pause,disable,delete)),
 			dsi(paused,		PAUSE,		TEAL_ACCENT_3,	list(unpause,disable,delete)),
 			dsi(disabled,	CLOSE,		RED_ACCENT_3,	list(enable,delete)),

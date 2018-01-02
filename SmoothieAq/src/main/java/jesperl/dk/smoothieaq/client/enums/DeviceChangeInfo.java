@@ -27,7 +27,7 @@ public class DeviceChangeInfo extends EnumInfo {
 		return p(change, new DeviceChangeInfo(icon, bgColor, change.toString(), deviceId -> Resources.device.statusChange(deviceId, change).subscribe())); 
 	}
 
-	public static Func1<DeviceStatusChange, DeviceChangeInfo> func = func(DeviceStatusChange.class,
+	public static Func1<DeviceStatusChange, DeviceChangeInfo> dcinfo = func(DeviceStatusChange.class,
 			dci(enable,		PLAY_ARROW,	GREEN_ACCENT_2),
 			dci(unpause,	PLAY_ARROW,	GREEN_ACCENT_2),
 			dci(pause,		PAUSE,		TEAL_ACCENT_2),

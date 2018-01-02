@@ -29,8 +29,10 @@ import com.google.gwt.user.client.ui.*;
 
 import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
 
+import gwt.material.design.client.base.*;
 import gwt.material.design.client.constants.*;
 import gwt.material.design.client.ui.*;
+import gwt.material.design.client.ui.html.*;
 import jesperl.dk.smoothieaq.client.*;
 import jesperl.dk.smoothieaq.client.devices.img.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
@@ -62,7 +64,7 @@ public class DevicesView extends Composite {
         	.map(WSingle::new).subscribe(cardRow::add);
     }
     
-    public static class WSingle extends MaterialContainer {
+    public static class WSingle extends Div {
     	private Observable<Widget> observable;
     	private Subscription subscription;
     	

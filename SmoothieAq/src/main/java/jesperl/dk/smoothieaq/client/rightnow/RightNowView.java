@@ -26,7 +26,7 @@ import com.google.gwt.uibinder.client.*;
 import com.google.gwt.user.client.ui.*;
 
 import gwt.material.design.client.ui.*;
-import jesperl.dk.smoothieaq.client.*;
+import jesperl.dk.smoothieaq.client.components.tstable.*;
 
 public class  RightNowView  extends Composite {
     interface Binder extends UiBinder<Widget, RightNowView> {}
@@ -41,12 +41,18 @@ public class  RightNowView  extends Composite {
     
     @Override
     protected void onLoad() {
-        chart();
-		Resources.device.get(1).subscribe(d -> panel.add(new Label("device: "+d.description)));
+//        chart();
+        table();
+//		Resources.device.get(1).subscribe(d -> panel.add(new Label("device: "+d.description)));
     }
 
-    public void chart()
-    {
+    protected void table() {
+    	TsView table = new TsView(new TsTest(1000).map(TsElementRowData::new));
+    	table.setTableHeight("300px");
+		panel.add(table);
+    }
+    
+    protected void chart() {
     	Chart chart = new Chart()
     	    .setType(Series.Type.SPLINE)
     	    .setChartTitleText("Nice Chart")

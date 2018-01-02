@@ -5,8 +5,9 @@ import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 import java.util.*;
 import java.util.stream.*;
 
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.i18n.client.*;
 import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.datepicker.client.*;
 
 import gwt.material.design.addins.client.combobox.*;
 import gwt.material.design.client.constants.*;
@@ -38,8 +39,22 @@ public class GuiUtil {
 		};
 		btn.setIconType(iconType);
 		btn.setBackgroundColor(bgColor);
-		if (hoverTxt != null)  btn.setTitle(hoverTxt);
+		if (hoverTxt != null)  btn.setTooltip(hoverTxt);
 		if (doOnClick != null) btn.setWaves(WavesType.DEFAULT);
+		return btn;
+	}
+	public static MaterialButton wButton(IconType iconType, boolean primary, String text, String hoverTxt, Action doOnClick) {
+		MaterialButton btn = new MaterialButton() {
+			@Override protected void onLoad() {
+				super.onLoad();
+				if (doOnClick != null) addClickHandler(e -> doOnClick.doit());
+			}
+		};
+		btn.setText(text);
+		if (iconType != null) btn.setIconType(iconType);
+		if (!primary) { btn.setBackgroundColor(Color.WHITE); btn.setTextColor(Color.BLACK); }
+		if (hoverTxt != null)  btn.setTooltip(hoverTxt);
+		if (doOnClick != null) btn.setWaves(WavesType.LIGHT);
 		return btn;
 	}
 
@@ -151,6 +166,26 @@ public class GuiUtil {
 		};
 		listBox.setPlaceholder(field.getKey());
 		return listBox;
+	}
+	
+	private static final DateTimeFormat weekdayFmt = DateTimeFormat.getFormat("EEE");
+	private static final DateTimeFormat dateFmt = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_SHORT);
+	private static final DateTimeFormat timeFmt = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.TIME_MEDIUM);
+	public static String formatStamp(long stamp) {
+		StringBuilder buf = new StringBuilder();
+		Date nowDate = new Date();
+		Date stampDate = new Date(stamp);
+		
+		int daysBetween = CalendarUtil.getDaysBetween(stampDate, nowDate);
+		if (daysBetween == 0) buf.append("today ");
+		else if (daysBetween == 1) buf.append("yesterday");
+		else if (daysBetween < 7) buf.append(weekdayFmt.format(stampDate)).append("&nbsp;").append(dateFmt.format(stampDate));
+		else buf.append(dateFmt.format(stampDate));
+		
+		Date stampReset = new Date(stamp); CalendarUtil.resetTime(stampReset);
+		if (stampReset.getTime() != stamp) buf.append(" ").append(timeFmt.format(stampDate));
+		
+		return buf.toString();
 	}
 }
 	

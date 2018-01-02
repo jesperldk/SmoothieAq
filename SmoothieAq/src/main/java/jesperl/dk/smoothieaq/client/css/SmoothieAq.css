@@ -56,3 +56,30 @@
 	bottom: 30px;
 	right: 30px;
 }
+
+.TsTable {
+	display: table;
+	width: 100%;
+/* 	overflow: hidden;	 */
+}
+.TsRow {
+	display: table-row;
+}
+.TsIcon {
+	display: table-cell;
+	max-width: 2m;
+	width: 2m;
+}
+.TsStamp {
+	display: table-cell;
+	min-width: 10m;
+	width: 20%;
+}
+.TsId {
+	display: table-cell;
+	width: 15%;
+}
+.TsText {
+	display: table-cell;
+/* 	width: 100%; */
+}
