@@ -168,6 +168,10 @@ public class GuiUtil {
 		return listBox;
 	}
 	
+	public static void toast(String str) { MaterialToast.fireToast(str); }
+	public static void toastWarn(String str) { MaterialToast.fireToast(str); }
+	public static void toastError(String str) { MaterialToast.fireToast(str); }
+	
 	private static final DateTimeFormat weekdayFmt = DateTimeFormat.getFormat("EEE");
 	private static final DateTimeFormat dateFmt = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_SHORT);
 	private static final DateTimeFormat timeFmt = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.TIME_MEDIUM);

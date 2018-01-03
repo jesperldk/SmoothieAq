@@ -1,7 +1,7 @@
 package jesperl.dk.smoothieaq.client.app;
 
 import static gwt.material.design.jquery.client.api.JQuery.*;
-import static jesperl.dk.smoothieaq.client.context.ClientContext.*;
+import static jesperl.dk.smoothieaq.client.context.CContext.*;
 
 import java.util.function.*;
 
@@ -15,8 +15,6 @@ import jesperl.dk.smoothieaq.client.*;
 import jesperl.dk.smoothieaq.client.css.*;
 import jesperl.dk.smoothieaq.client.devices.*;
 import jesperl.dk.smoothieaq.client.rightnow.*;
-import jesperl.dk.smoothieaq.shared.model.event.*;
-import rx.*;
 
 public class  ApplicationView  extends Composite {
     interface Binder extends UiBinder<Widget, ApplicationView> {}
@@ -41,12 +39,7 @@ public class  ApplicationView  extends Composite {
     @Override
     protected void onLoad() {
     	super.onLoad();
-    	try {
-    		Observable<Event> events = Resources.event.events().share();
-			events.filter(Event::instanceOfErrorEvent).map(Event::asErrorEvent).doOnNext(e -> GWT.log("ErrorEvent: "+e.error.defaultMessage)).subscribe(e -> MaterialToast.fireToast(e.error.format()));
-			events.filter(Event::instanceOfMessageEvent).map(Event::asMessageEvent).subscribe(e -> MaterialToast.fireToast(e.message.format()));
-			events.filter(Event::instanceOfDeviceChangeEvent).map(Event::asDeviceChangeEvent).subscribe(e -> ctx.cDevices.deviceChanged(e.compactView));
-    	} catch (Exception e) {}
+    	ctx.init();
     }
     
     protected void menuItem(String text, IconType iconType, Supplier<Widget> target) {

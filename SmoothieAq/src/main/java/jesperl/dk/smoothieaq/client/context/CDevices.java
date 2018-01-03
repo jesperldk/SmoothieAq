@@ -18,7 +18,7 @@ public class CDevices {
 			.doOnNext(d -> deviceChanged(d))
 			.count().cache().toCompletable();
 
-	private final Subject<CDevice, CDevice> devicesSubject = new SerializedSubject<>(PublishSubject.create());
+	private final Subject<CDevice, CDevice> devicesSubject = PublishSubject.create();
 	
 	public Single<CDevice> device(short id) {
 		return ready.toSingle(() -> idToDevice.get(id));

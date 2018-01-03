@@ -70,7 +70,7 @@ public class TsTable extends Div {
 		if (unloadedStamp == 0) toTop();
 		else { atBeginningFlag = false; toStamp(unloadedStamp); }
 		
-		listenSubscription = source.newElements().subscribe(rd -> {
+		listenSubscription = source.newElements(null).subscribe(rd -> {
 			if (!atBeginningFlag) return;
 			if (atHead()) {
 				move(pLast,pCurr,true);
@@ -96,13 +96,13 @@ public class TsTable extends Div {
 	public void toTop() { GWT.log("~~toTop");
 		reset();
 		atBeginning.onNext(atBeginningFlag = true);
-		read(source.elementsFrom(0,0,allocateBelow),0,allocateAbove,allocateBelow,null);
+		read(source.elementsFrom(0,0,allocateBelow,null),0,allocateAbove,allocateBelow,null);
 	}
 	
 	public void toStamp(long stamp) { GWT.log("~~toStamp");
 		reset();
 		atBeginning.onNext(atBeginningFlag = false);
-		read(source.elementsFrom(stamp,allocateAbove,allocateBelow),0,0,size,null);
+		read(source.elementsFrom(stamp,allocateAbove,allocateBelow,null),0,0,size,null);
 	}
 	
 	public void down() { GWT.log("~~down");
@@ -146,7 +146,7 @@ public class TsTable extends Div {
 		if (size-pBot >= window) {
 			long stamp = stamps[pBot];
 			int skip = 1; while (stamps[pBot-skip] == stamp) skip++;
-			read(source.elementsFrom(stamps[pBot-skip],0,pLast-pBot+skip),0,pBot-skip+1,pLast-pBot+skip, () -> queuedFillBottom = false);
+			read(source.elementsFrom(stamps[pBot-skip],0,pLast-pBot+skip,null),0,pBot-skip+1,pLast-pBot+skip, () -> queuedFillBottom = false);
 		} else {
 			queuedFillBottom = false; nextAction();
 		}
@@ -164,7 +164,7 @@ public class TsTable extends Div {
 		if (pTop >= window) {
 			long stamp = stamps[pTop];
 			int skip = 1; while (stamps[pTop+skip] == stamp) skip++;
-			read(source.elementsFrom(stamps[pTop+skip],pTop+skip+1,0),0,0,pTop+skip, () -> queuedFillTop = false);
+			read(source.elementsFrom(stamps[pTop+skip],pTop+skip+1,0,null),0,0,pTop+skip+1, () -> queuedFillTop = false);
 		} else {
 			queuedFillTop = true; nextAction();
 		}

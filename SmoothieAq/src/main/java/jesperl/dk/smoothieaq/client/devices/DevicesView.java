@@ -19,7 +19,7 @@
  */
 package jesperl.dk.smoothieaq.client.devices;
 
-import static jesperl.dk.smoothieaq.client.context.ClientContext.*;
+import static jesperl.dk.smoothieaq.client.context.CContext.*;
 import static jesperl.dk.smoothieaq.client.css.SmoothieAqCss.*;
 
 import com.google.gwt.core.client.*;
