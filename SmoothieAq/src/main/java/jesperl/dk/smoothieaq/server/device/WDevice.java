@@ -4,12 +4,14 @@ import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
 import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceStatusChange.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceStatusType.*;
+import static jesperl.dk.smoothieaq.shared.model.device.DeviceStream.*;
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 
+import jesperl.dk.smoothieaq.client.timeseries.*;
 import jesperl.dk.smoothieaq.server.device.classes.*;
 import jesperl.dk.smoothieaq.server.driver.classes.*;
 import jesperl.dk.smoothieaq.server.state.*;
@@ -17,6 +19,7 @@ import jesperl.dk.smoothieaq.server.task.*;
 import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.util.shared.error.Error;
 import jesperl.dk.smoothieaq.shared.model.device.*;
+import jesperl.dk.smoothieaq.shared.model.event.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 import jesperl.dk.smoothieaq.util.shared.*;
@@ -35,8 +38,9 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	private DRIVER driver;
 	
 	protected PublishSubject<Float> stream = PublishSubject.create();
+	protected PublishSubject<Float> pauseStream = PublishSubject.create();
 //	protected Subject<Void,Void> pulse;
-	protected Supplier<Observable<Float>> defaultStreamG;
+//	protected Supplier<Observable<Float>> defaultStreamG;
 	protected Map<DeviceStream, Pair<MeasurementType,Supplier<Observable<Float>>>> streamsG = new HashMap<>();
 	
 	private List<Subscription> startSubscriptions = new ArrayList<>();
@@ -157,41 +161,44 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	
 	public DRIVER driver() { return driver; }
 
-	protected void getReady(State state) { // should only be called from DeviceContext when a device is loaded from disk
+	/*friend*/ void getReady(State state) { // should only be called from DeviceContext when a device is loaded from disk
 		if (isPaused()) { connect(state); stop(state); pause(state); }
 		else if (isEnabled()) { enable(state); }
+		setupStreams(state);
 	}
 	protected void enable(State state) {
 		connect(state);
 		stop(state);
-		setupStreams(state);
-	}
-	protected void setupStreams(State state) {}
-	protected void connect(State state) {
-		doErrorGuarded(() -> { driver().init(state.daContext, device.deviceUrl, funcOrNull(calibration, c -> c.values)); });
 	}
 	protected void disable(State state) {
 		stop(state);
 		disconnect();
+	}
+	protected void pause(State state) {
+		stop(state);
+	}
+	protected void unpause(State state) {
+		stop(state);
+	}
+	protected void delete(State state) {
+		stop(state);
+		disconnect();
 		teardownStreams();
+	}
+
+	protected void setupStreams(State state) {
+		
 	}
 	protected void teardownStreams() {
 		startSubscriptions.forEach(s -> s.unsubscribe());
 		startSubscriptions.clear();
+		streamsG.clear();
+	}
+	protected void connect(State state) {
+		doErrorGuarded(() -> { driver().init(state.daContext, device.deviceUrl, funcOrNull(calibration, c -> c.values)); });
 	}
 	protected void disconnect() {
 		driver().release();
-	}
-	protected void pause(State state) {
-		stop(state);
-		teardownStreams();
-		setupPauseStreams(state);
-	}
-	protected void setupPauseStreams(State state) {}
-	protected void unpause(State state) {
-		stop(state);
-		teardownStreams();
-		setupStreams(state);
 	}
 	protected void stop(State state) {}
 	
@@ -228,7 +235,7 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 			case disable: disable(state); internalSet(state, disabled); break;
 			case unpause: unpause(state); internalSet(state, enabled); break;
 			case pause: pause(state); internalSet(state, paused); break;
-			case delete: disable(state); internalSet(state, deleted); break; // TODO also delete tasks
+			case delete: delete(state); internalSet(state, deleted); break; // TODO also delete tasks
 		}
 		return this;
 	}
@@ -254,12 +261,22 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 		};
 	}
 //	@Override public Observer<Void> pulse() { return pulse; }
-	@Override public Observable<Float> stream() { return defaultStreamG.get(); }
+	@Override public Observable<Float> stream() { return stream(DeviceUtil.toDefaultStream.get(device.deviceClass)); }
 	@Override public Observable<Float> stream(DeviceStream streamId) { return streamsG.get(streamId).b.get(); }
 	@Override public Observable<Pair<DeviceStream,MeasurementType>> streams() { return Observable.from(streamsG.entrySet()).map(e -> pair(e.getKey(),e.getValue().a)); }
 	protected Observable<Float> baseStream() { return Observable.just(getValue()).concatWith(stream); }
-	protected void addDefaultStream(DeviceStream streamId, MeasurementType type, Supplier<Observable<Float>> streamG) { defaultStreamG = streamG; streamsG.put(streamId, pair(type,streamG)); }
-	protected void addStream(DeviceStream streamId, MeasurementType type, Supplier<Observable<Float>> streamG) { streamsG.put(streamId, pair(type,streamG)); }
+	
+	protected void addStream(State state, DeviceStream streamId, MeasurementType type, Supplier<Observable<Float>> streamG) {
+		DeviceStream typeStream = streamId == DeviceStream.pauseX ? DeviceUtil.toPauseShadowStream.get(device.deviceClass) : streamId;
+		if (DeviceStreamUtil.toType.get(typeStream) == DeviceStreamType.continousStream) {
+			Observable<Float> stream = streamG.get().replay(1).autoConnect();
+			subscription( stream.subscribe() ); // gets it running hot...
+			streamG = () -> stream;
+		}
+		streamsG.put(streamId, pair(type,streamG)); 
+		if (DeviceUtil.toSaveStreams.get(device.deviceClass).contains(streamId)) subscribeMeasure(state, streamId);
+		else if (DeviceUtil.toClientStreams.get(device.deviceClass).contains(streamId)) subscribeOtherMeasure(state, streamId);
+	}
 
 	@Override public String toString() { return device.name+"#"+getId(); }
 }

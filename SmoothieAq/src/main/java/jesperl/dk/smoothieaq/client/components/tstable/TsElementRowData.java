@@ -8,7 +8,7 @@ import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
 
 import jesperl.dk.smoothieaq.client.timeseries.*;
 
-public class TsElementRowData implements TsRowData {
+public abstract class TsElementRowData implements TsRowData {
 	
 	private TsElement element;
 	private String stampText;
@@ -24,6 +24,5 @@ public class TsElementRowData implements TsRowData {
 	@Override public Widget icon() { return new HTML("*"); }
 	@Override public String stampTxt() { return stampText; }
 	@Override public String id() { return id; }
-	@Override public String text() { return ((Integer)element.data).toString(); }
 	@Override public String style() { return null; }
 }

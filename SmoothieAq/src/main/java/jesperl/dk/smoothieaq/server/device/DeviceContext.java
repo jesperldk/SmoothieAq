@@ -44,7 +44,7 @@ public class  DeviceContext {
 	}
 	
 	public void getready() {
-		devices.values().stream().filter(WDevice::isEnabled).forEach(d -> d.enable(state));
+		devices.values().stream().forEach(d -> d.getReady(state));
 		init = false;
 		scheduleChanged();
 	}

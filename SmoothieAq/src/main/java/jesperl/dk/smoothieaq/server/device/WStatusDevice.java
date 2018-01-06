@@ -7,6 +7,7 @@ import jesperl.dk.smoothieaq.server.driver.classes.*;
 import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
+import rx.*;
 
 public class  WStatusDevice extends WDevice<StatusDriver> implements StatusDevice {
 	
@@ -26,26 +27,21 @@ public class  WStatusDevice extends WDevice<StatusDriver> implements StatusDevic
 		super.stop(state);
 	}
 	@Override protected void setupStreams(State state) {
+		addStream(state, DeviceStream.onoff,MeasurementType.onoff,() -> baseStream());
+		addStream(state, DeviceStream.startstopX,MeasurementType.onoff, () -> stream);
+		addStream(state, DeviceStream.level,MeasurementType.status, () -> baseStream());
+		addStream(state, DeviceStream.watt,MeasurementType.energyConsumption, () -> only(0f));
+		addStream(state, DeviceStream.pauseX,MeasurementType.status,() -> Observable.just(0f).concatWith(pauseStream));
 		super.setupStreams(state);
-		addDefaultStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream());
-		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> stream);
-		addStream(DeviceStream.level,MeasurementType.status, () -> baseStream());
-		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> only(0f));
-		subscribeMeasure(state,DeviceStream.level);
 	}
-	@Override
-	protected void setupPauseStreams(State state) {
-		super.setupPauseStreams(state);
-		addStream(DeviceStream.pauseX,MeasurementType.onoff,() -> baseStream());
-		subscribeOtherMeasure(state,DeviceStream.pauseX);
-	}
+	private Observer<Float> level() { return isPaused() ? pauseStream : stream; }
 
 	protected void deviceBlink(int grade) {
 		doErrorGuarded(() -> {
 			if (grade == 0) driver().off();
 			else driver().blink(grade);
 			blinkGrade = grade;
-			stream.onNext((float) grade);
+			level().onNext((float) grade);
 		});
 	}
 

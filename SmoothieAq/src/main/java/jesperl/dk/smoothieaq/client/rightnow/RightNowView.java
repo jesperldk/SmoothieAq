@@ -47,7 +47,7 @@ public class  RightNowView  extends Composite {
     }
 
     protected void table() {
-    	TsView table = new TsView(new TsTest(1000).map(TsElementRowData::new));
+    	TsView table = new TsView(new TsTest(1000).map(TsMeasurementRowData::new));
     	table.setTableHeight("300px");
 		panel.add(table);
     }

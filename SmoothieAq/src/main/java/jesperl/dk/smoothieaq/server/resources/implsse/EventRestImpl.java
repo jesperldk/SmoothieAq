@@ -14,7 +14,7 @@ public class EventRestImpl extends RestImpl implements EventRest {
 	private final static Logger log = Logger.getLogger(EventRestImpl.class.getName());
 
 	@Override public Observable<Event> events() { 
-		return wires().events.onBackpressureBuffer(500, ()->error(log, 130101, Severity.info, "Dropping events"), BackpressureOverflow.ON_OVERFLOW_DROP_OLDEST); 
+		return wires().eventsMux.onBackpressureBuffer(500, ()->error(log, 130101, Severity.info, "Dropping events"), BackpressureOverflow.ON_OVERFLOW_DROP_OLDEST); 
 	}
 
 }

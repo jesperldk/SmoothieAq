@@ -35,28 +35,17 @@ public class  WDoserDevice extends WDevice<DoserDriver> implements DoserDevice {
 		deviceOff();
 	}
 	@Override protected void setupStreams(State state) {
+		addStream(state, amountX,device.measurementType,() -> doseX);
+		addStream(state, startstopX,MeasurementType.onoff, () -> stream);
+		addStream(state, sofar,device.measurementType, () -> Observable.just(0f).concatWith(soFar));
+		addStream(state, watt,MeasurementType.energyConsumption, () -> baseStream().map(v -> v*device.wattAt100pct));
+		addStream(state, pauseX,device.measurementType,() -> Observable.just(0f).concatWith(pauseStream));
 		super.setupStreams(state);
-		addDefaultStream(amountX,device.measurementType,() -> doseX);
-		subscribeMeasure(state,amountX);
-		setupBaseStreams(state);
 	}
-	@Override protected void setupPauseStreams(State state) {
-		super.setupPauseStreams(state);
-		setupBaseStreams(state);
-		addStream(pauseX,device.measurementType,() -> doseX);
-		subscribeOtherMeasure(state,pauseX);
-	}
-	protected void setupBaseStreams(State state) {
-		addStream(startstopX,MeasurementType.onoff, () -> stream);
-		addStream(sofar,device.measurementType, () -> Observable.just(0f).concatWith(soFar));
-		addStream(watt,MeasurementType.energyConsumption, () -> baseStream().map(v -> v*device.wattAt100pct));
-		subscribeMeasure(state,watt);
-		subscribeOtherMeasure(state,startstopX);
-		subscribeOtherMeasure(state,sofar);
-	}
+	private Observer<Float> sofar() { return isPaused() ? pauseStream : soFar; }
 	@Override protected void teardownStreams() {
-		if (pulseSubscr != null) pulseSubscr.unsubscribe();
 		super.teardownStreams();
+		if (pulseSubscr != null) pulseSubscr.unsubscribe();
 	}
 
 	protected void deviceOn() {
@@ -69,12 +58,14 @@ public class  WDoserDevice extends WDevice<DoserDriver> implements DoserDevice {
 		});
 	}
 	protected void deviceOff() {
+		if (start == 0) return;
 		doErrorGuarded(() -> {
 			long end = System.currentTimeMillis();
 			driver().onoff(false);
-			doseX.onNext((end-start)/1000f*driver().getAmountPerSec());
-			start = 0;
 			stream.onNext(0f);
+			if (!isPaused()) doseX.onNext((end-start)/1000f*driver().getAmountPerSec());
+			sofar().onNext(0f);
+			start = 0;
 		});
 	}
 	protected void deviceDose(float amount) {
@@ -89,13 +80,11 @@ public class  WDoserDevice extends WDevice<DoserDriver> implements DoserDevice {
 	protected float deviceSoFar() {
 		if (start == 0) return 0;
 		if (System.currentTimeMillis() > end) {
-			doseX.onNext((end-start)/1000f*driver().getAmountPerSec());
-			start = 0;
-			stream.onNext(0f);
+			deviceOff();
 			return 0;
 		}
 		float amountSoFar = (System.currentTimeMillis()-start)/1000f*driver().getAmountPerSec();
-		soFar.onNext(amountSoFar);
+		sofar().onNext(amountSoFar);
 		return amountSoFar;
 	}
 	protected void startPulse() {

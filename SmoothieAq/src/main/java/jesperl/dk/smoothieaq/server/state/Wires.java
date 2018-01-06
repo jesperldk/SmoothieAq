@@ -37,13 +37,13 @@ public class  Wires {
 	
 	public final Observable<Long> pulse = Observable.interval(2, 10, TimeUnit.SECONDS, Schedulers.computation()).share();
 	
-	public final Observable<Event> events = Observable.merge(
+	public final Observable<Event> eventsMux = Observable.merge(
 				errors.map(ErrorEvent::create),
 				messages.map(MessageEvent::create),
 				Observable.merge(devMeasures,devOtherMeasures).map(ME::create),
 				devicesChanged.map(DeviceChangeEvent::create)
 			)
-			.onBackpressureBuffer(1, ()->error(log, 140101, Severity.major, "Wires.events are being used by someone applying backpressure, that is no good"), BackpressureOverflow.ON_OVERFLOW_DROP_LATEST)
+			.onBackpressureBuffer(1, ()->error(log, 140101, Severity.major, "Wires.eventsMux are being used by someone applying backpressure, that is no good"), BackpressureOverflow.ON_OVERFLOW_DROP_LATEST)
 			.share();
 
 	protected final Map<Class<?>, Observer<Object>> savers = new HashMap<>(); 
@@ -63,8 +63,8 @@ public class  Wires {
 	}
 	
 	public void init() {
-		pulse.subscribe(); // keeps the pulse ticking // TODO is there something smarter to do?
-		events.subscribe(); // eats all the events // TODO is there something smarter to do?
+		pulse.subscribe(); // gets it running hot ...
+		eventsMux.subscribe(); // gets it running hot ...
 		initSave(Device.class , 50, state.dbContext.dbDevice);
 		initSave(DeviceStatus.class , 50, state.dbContext.dbDeviceStatus);
 		initSave(DeviceCalibration.class , 50, state.dbContext.dbDeviceCalibration);

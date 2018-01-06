@@ -8,6 +8,7 @@ import jesperl.dk.smoothieaq.server.driver.classes.*;
 import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
+import rx.*;
 import rx.subjects.*;
 
 public class  WLevelDevice extends WDevice<LevelDriver> implements LevelDevice {
@@ -34,26 +35,16 @@ public class  WLevelDevice extends WDevice<LevelDriver> implements LevelDevice {
 		super.stop(state);
 	}
 	@Override protected void setupStreams(State state) {
-		super.setupStreams(state);
-		addDefaultStream(DeviceStream.level,device.measurementType,() -> baseStream());
-		addStream(DeviceStream.pctlevel,MeasurementType.change, () -> baseStream().map(v -> v/driver().getMaxLevel()));
-		addStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream().map(v -> v == 0f ? 0f : 1f));
-		subscribeMeasure(state,DeviceStream.level);
-		setupBaseStreams(state);
-	}
-	@Override protected void setupPauseStreams(State state) {
-		super.setupPauseStreams(state);
-		addDefaultStream(DeviceStream.pauseX,device.measurementType,() -> baseStream());
-		subscribeOtherMeasure(state,DeviceStream.pauseX);
-		setupBaseStreams(state);
-	}
-	protected void setupBaseStreams(State state) {
-		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> startstopX);
-		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> baseStream().map(v -> v/driver().getMaxLevel()*device.wattAt100pct));
-		subscribeMeasure(state,DeviceStream.watt);
-		subscribeOtherMeasure(state,DeviceStream.startstopX);
+		addStream(state, DeviceStream.level,device.measurementType,() -> baseStream());
+		addStream(state, DeviceStream.pctlevel,MeasurementType.change, () -> baseStream().map(v -> v/driver().getMaxLevel()));
+		addStream(state, DeviceStream.onoff,MeasurementType.onoff,() -> baseStream().map(v -> v == 0f ? 0f : 1f));
+		addStream(state, DeviceStream.startstopX,MeasurementType.onoff, () -> startstopX);
+		addStream(state, DeviceStream.watt,MeasurementType.energyConsumption, () -> baseStream().map(v -> v/driver().getMaxLevel()*device.wattAt100pct));
+		addStream(state, DeviceStream.pauseX, device.measurementType, () -> Observable.just(getValue()).concatWith(pauseStream));
 		subscription(state.wires.pulse.onBackpressureDrop().subscribe(v -> programLevel())); // for the side effect 
+		super.setupStreams(state);
 	}
+	private Observer<Float> level() { return isPaused() ? pauseStream : stream; }
 
 	synchronized protected void deviceLevel(float level) {
 		doErrorGuarded(() -> {
@@ -61,7 +52,7 @@ public class  WLevelDevice extends WDevice<LevelDriver> implements LevelDevice {
 			else if (level > 0) driver().on(level);
 			program = null;
 			this.level = level == 0 ? null : level;
-			stream.onNext(level);
+			level().onNext(level);
 			startstopX.onNext(level == 0 ? 0f : 1f);
 		});
 	}
@@ -73,7 +64,7 @@ public class  WLevelDevice extends WDevice<LevelDriver> implements LevelDevice {
 			level = null;
 			prevLevel = 0;
 			this.program = program;
-			stream.onNext(0f);
+			level().onNext(0f);
 			startstopX.onNext(1f);
 		});
 	}
@@ -81,13 +72,13 @@ public class  WLevelDevice extends WDevice<LevelDriver> implements LevelDevice {
 		if (program == null) return 0;
 		if (System.currentTimeMillis() > programEnd) {
 			program = null;
-			stream.onNext(0f);
+			level().onNext(0f);
 			startstopX.onNext(0f);
 			return 0;
 		}
 		float nextLevel = program.at((int) ((System.currentTimeMillis()-programStart)/1000/60));
 		if (abs(prevLevel-nextLevel) > device.repeatabilityLevel) {
-			stream.onNext(nextLevel);
+			level().onNext(nextLevel);
 			prevLevel = nextLevel;
 		}
 		return nextLevel;

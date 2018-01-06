@@ -7,6 +7,7 @@ import jesperl.dk.smoothieaq.server.driver.classes.*;
 import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
+import rx.*;
 
 public class  WToggleDevice extends WDevice<ToggleDriver> implements ToggleDevice {
 	
@@ -36,7 +37,7 @@ public class  WToggleDevice extends WDevice<ToggleDriver> implements ToggleDevic
 		stream.onNext(disabledLevel); 
 		super.enable(state);
 		deviceIsOn();
-		stream.onNext(getValue()); 
+		pauseStream.onNext(getValue()); 
 	}
 	@Override protected void unpause(State state) { 
 		disabled = true; 
@@ -44,23 +45,15 @@ public class  WToggleDevice extends WDevice<ToggleDriver> implements ToggleDevic
 		stream.onNext(getValue()); 
 	}
 	@Override protected void setupStreams(State state) {
+		addStream(state, DeviceStream.onoff,MeasurementType.onoff,() -> baseStream());
+		addStream(state, DeviceStream.level,MeasurementType.onoff,() -> baseStream());
+		addStream(state, DeviceStream.startstopX,MeasurementType.onoff, () -> stream);
+		addStream(state, DeviceStream.watt,MeasurementType.energyConsumption, () -> only(0f));
+		addStream(state, DeviceStream.pauseX,MeasurementType.onoff,() -> Observable.just(0f).concatWith(pauseStream));
+		driver().listenOn(b -> { if (!disabled) { on = b; onoff().onNext(on ? 1f : 0f); }});
 		super.setupStreams(state);
-		addDefaultStream(DeviceStream.onoff,MeasurementType.onoff,() -> baseStream());
-		addStream(DeviceStream.level,MeasurementType.onoff,() -> baseStream());
-		addStream(DeviceStream.startstopX,MeasurementType.onoff, () -> stream);
-		addStream(DeviceStream.watt,MeasurementType.energyConsumption, () -> only(0f));
-		subscribeMeasure(state,DeviceStream.onoff);
-		setupBaseMeasure(); 
 	}
-	@Override protected void setupPauseStreams(State state) {
-		super.setupStreams(state);
-		addStream(DeviceStream.pauseX,MeasurementType.onoff,() -> baseStream());
-		subscribeOtherMeasure(state,DeviceStream.pauseX);
-		setupBaseMeasure(); 
-	}
-	protected void setupBaseMeasure() {
-		driver().listenOn(b -> { if (!disabled) { on = b; stream.onNext(on ? 1f : 0f); }});
-	}
+	private Observer<Float> onoff() { return isPaused() ? pauseStream : stream; }
 	@Override protected void teardownStreams() {
 		super.teardownStreams();
 		driver().listenOn(null); 
