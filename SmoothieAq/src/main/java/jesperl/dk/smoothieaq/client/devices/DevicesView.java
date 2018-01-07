@@ -29,11 +29,10 @@ import com.google.gwt.user.client.ui.*;
 
 import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
 
-import gwt.material.design.client.base.*;
 import gwt.material.design.client.constants.*;
 import gwt.material.design.client.ui.*;
-import gwt.material.design.client.ui.html.*;
 import jesperl.dk.smoothieaq.client.*;
+import jesperl.dk.smoothieaq.client.components.*;
 import jesperl.dk.smoothieaq.client.devices.img.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
@@ -62,22 +61,6 @@ public class DevicesView extends Composite {
         devicesSubscription = ctx.cDevices.devices()
         	.map(cd -> cd.compactView.map(this::deviceCard).map(this::deviceCol))
         	.map(WSingle::new).subscribe(cardRow::add);
-    }
-    
-    public static class WSingle extends Div {
-    	private Observable<Widget> observable;
-    	private Subscription subscription;
-    	
-    	public WSingle(Observable<Widget> observable) { this.observable = observable; }
-    	
-    	@Override protected void onLoad() {
-    		super.onLoad();
-    		subscription = observable.subscribe(w -> { clear(); add(w); });
-    	}
-    	@Override protected void onUnload() {
-    		if (subscription != null) subscription.unsubscribe();
-    		super.onUnload();
-    	}
     }
     
     @Override
@@ -109,12 +92,6 @@ public class DevicesView extends Composite {
 		return Resources.device.create(device.copy()).subscribe(e -> GWT.log("create device ok - "+e),e -> GWT.log("create device err - "+e));
 	}
     
-	protected Widget deviceCol(DeviceCompactView d) {
-		MaterialColumn column = new MaterialColumn(12, 6, 4);
-		column.add(deviceCard(d));
-		return column;
-	}
-
 	protected Widget deviceCol(Widget w) {
 		MaterialColumn column = new MaterialColumn(12, 6, 4);
 		column.add(w);
@@ -127,7 +104,7 @@ public class DevicesView extends Composite {
 		card.addStyleName(css.aqcard());
 		
 		MaterialCardImage cardImage = new MaterialCardImage();
-		cardImage.add(new MaterialImage(get(d.deviceClass)));
+		cardImage.add(new MaterialImage(get(d.deviceType)));
 		card.add(cardImage);
 		
 		MaterialCardContent content = new MaterialCardContent();
@@ -147,10 +124,10 @@ public class DevicesView extends Composite {
 		return card;
 	}
 	
-	public static ImageResource get(DeviceType devClass) {
+	public static ImageResource get(DeviceType devType) {
 		DeviceImages img = DeviceImages.img;
-		if (devClass == DeviceType.filter) return img.filter();
-		if (devClass == DeviceType.generic) return img.generic();
+		if (devType == DeviceType.filter) return img.filter();
+		if (devType == DeviceType.generic) return img.generic();
 		return img.generic();
 	}
 }

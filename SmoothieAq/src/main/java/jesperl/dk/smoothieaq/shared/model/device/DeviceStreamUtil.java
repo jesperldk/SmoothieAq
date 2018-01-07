@@ -7,6 +7,9 @@ import static jesperl.dk.smoothieaq.shared.model.measure.MeasurementType.*;
 
 import java.util.*;
 
+import com.google.gwt.dev.util.collect.HashMap;
+
+import jesperl.dk.smoothieaq.shared.model.db.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 
 public abstract class DeviceStreamUtil {
@@ -44,4 +47,11 @@ public abstract class DeviceStreamUtil {
 		toMesurementType.put(alarm,MeasurementType.onoff);
 		toMesurementType.put(duetask,MeasurementType.onoff);
 	}
+	
+	public static DeviceStream fixup(DeviceStream devStream) { return EnumField.fixup(DeviceStream.class, devStream); }
+	public static short id(DeviceStream devStream) { return (short) EnumField.fixup(DeviceStream.class, devStream).getId(); }
+	
+	public static Map<Short, DeviceStream> fromId = new HashMap<>();
+	{ for (DeviceStream devStream: DeviceStream.values()) { fromId.put((short) devStream.getId(), devStream); } }
+	public static DeviceStream get(short id) { return fromId.get(id); }
 }

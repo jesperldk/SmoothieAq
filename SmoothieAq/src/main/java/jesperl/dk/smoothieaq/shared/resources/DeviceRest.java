@@ -8,6 +8,7 @@ import com.intendia.gwt.autorest.client.*;
 
 import jesperl.dk.smoothieaq.server.device.classes.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
+import jesperl.dk.smoothieaq.shared.model.measure.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 import jesperl.dk.smoothieaq.util.shared.error.*;
 import jsinterop.annotations.*;
@@ -47,11 +48,13 @@ public interface DeviceRest {
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 	public class  DeviceCompactView {
 		public short deviceId;
-		public DeviceType deviceClass;
-		public DeviceClass deviceType;
+		public DeviceType deviceType;
+		public DeviceClass deviceClass;
+		public MeasurementType measurementType;
 		public String name;
 		public String description;
 		public DeviceStatusType statusType;
+		public float currentValue;
 //		public boolean on;
 	}
 	
@@ -68,11 +71,13 @@ public interface DeviceRest {
 		DeviceCompactView view = new DeviceCompactView();
 		Device device = idev.model().getDevice();
 		view.deviceId = device.id;
-		view.deviceClass = device.deviceType;
-		view.deviceType = device.deviceClass;
+		view.deviceClass = device.deviceClass;
+		view.deviceType = device.deviceType;
 		view.description = device.description;
 		view.name = device.name;
 		view.statusType = idev.model().getStatus().statusType;
+		view.currentValue = idev.getValue();
+		view.measurementType = idev.model().getDevice().measurementType;
 //		view.on = false;
 		return view;
 	}
