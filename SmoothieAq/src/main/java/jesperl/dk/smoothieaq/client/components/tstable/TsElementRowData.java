@@ -1,6 +1,6 @@
 package jesperl.dk.smoothieaq.client.components.tstable;
 
-import static jesperl.dk.smoothieaq.util.shared.Objects.*;
+import static jesperl.dk.smoothieaq.client.context.CContext.*;
 
 import com.google.gwt.user.client.ui.*;
 
@@ -10,14 +10,14 @@ import jesperl.dk.smoothieaq.client.timeseries.*;
 
 public abstract class TsElementRowData implements TsRowData {
 	
-	private TsElement element;
-	private String stampText;
-	private String id;
+	protected TsElement element;
+	protected String stampText;
+	protected String id;
 	
 	public TsElementRowData(TsElement element) {
 		this.element = element; 
 		stampText = formatStamp(element.stamp);
-		id = strv(element.deviceId);
+		id = ctx.cDevices.name(element.deviceId, element.streamId);
 	}
 
 	@Override public long stamp() { return element.stamp; }

@@ -19,8 +19,11 @@
  */
 package jesperl.dk.smoothieaq.client.devices;
 
+import static java.util.logging.Level.*;
 import static jesperl.dk.smoothieaq.client.context.CContext.*;
 import static jesperl.dk.smoothieaq.client.css.SmoothieAqCss.*;
+
+import java.util.logging.*;
 
 import com.google.gwt.core.client.*;
 import com.google.gwt.resources.client.*;
@@ -39,6 +42,8 @@ import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
 import rx.*;
 
 public class DevicesView extends Composite {
+	static final Logger log = Logger.getLogger(DevicesView.class.getName());
+	
     interface Binder extends UiBinder<Widget, DevicesView> {}
 	private static Binder binder = GWT.create(Binder.class );
 	
@@ -85,11 +90,11 @@ public class DevicesView extends Composite {
     	panel.add(wFloatBox(device.repeatabilityLevel()));
     	panel.add(wFloatBox(device.onLevel()));
     	panel.add(wFloatBox(device.wattAt100pct()));
-    	return wModal(title,panel, () -> { GWT.log("call create device"); t(device);});
+    	return wModal(title,panel, () -> { t(device); });
     }
 
 	Subscription t(Device device) {
-		return Resources.device.create(device.copy()).subscribe(e -> GWT.log("create device ok - "+e),e -> GWT.log("create device err - "+e));
+		return Resources.device.create(device.copy()).subscribe(e -> {},e -> log.log(SEVERE,"create device err",e));
 	}
     
 	protected Widget deviceCol(Widget w) {

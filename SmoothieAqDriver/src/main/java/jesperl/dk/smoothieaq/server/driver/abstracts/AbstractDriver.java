@@ -6,6 +6,7 @@ import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.logging.*;
 
 import jesperl.dk.smoothieaq.server.access.abstracts.*;
 import jesperl.dk.smoothieaq.server.access.classes.*;
@@ -14,6 +15,7 @@ import jesperl.dk.smoothieaq.util.shared.error.*;
 import jesperl.dk.smoothieaq.util.shared.*;
 
 public abstract class  AbstractDriver<S extends AbstractDriver.Storage, D extends DeviceAccess> implements Driver {
+	private static final Logger log = Logger.getLogger(AbstractDriver.class.getName()); 
 	
 	public static class  Storage {
 		public float[] calibration;
@@ -56,6 +58,7 @@ public abstract class  AbstractDriver<S extends AbstractDriver.Storage, D extend
 	protected void init(DeviceAccessContext context, String urlString, Class<D> daType, Class<? extends AbstractDriver<?,?>> storageKey, Supplier<S> newStorage, float[] calibration) {
 		assert this.da == null : "double call of init";
 		assert context != null && urlString != null && storageKey != null;
+		log.info("Initializing "+this.getClass().getSimpleName()+" "+urlString);
 		this.simulate = context.isSimulate();
 		da = (D) context.get(urlString);
 		if (!daType.isAssignableFrom(da.getClass())) throw error(20021,major,"You must use an url with bus that implements {0} interfacet",AbstractDeviceAccess.bus(daType));

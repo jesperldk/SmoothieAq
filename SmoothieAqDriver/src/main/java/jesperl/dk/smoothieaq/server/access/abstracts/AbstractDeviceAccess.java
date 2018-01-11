@@ -33,6 +33,8 @@ public abstract class  AbstractDeviceAccess implements DeviceAccess {
 		return this;
 	}
 	
+	public boolean isSimulate() { return context.isSimulate(); }
+	
 	@Override synchronized public void store(Class<?> driverCls, Object object) { driverStorage.put(driverCls, object); }
 	@Override synchronized public Object retrieve(Class<?> driverCls) { return driverStorage.get(driverCls); }
 	synchronized public <T> T retrieveOrCreate(Class<?> driverCls, Supplier<T> newStorage) {

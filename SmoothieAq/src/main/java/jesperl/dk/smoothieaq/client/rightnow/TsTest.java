@@ -19,7 +19,7 @@ public class TsTest extends TsFull<TsMeasurement> {
 			stamp += 60*60*1000;
 			TsMeasurement element = new TsMeasurement();
 			element.stamp = stamp;
-			element.deviceId = (int) ((stamp / 60*60*1000) % 10);
+			element.deviceId = (short) ((stamp / 60*60*1000) % 10);
 			element.value = i;
 			full[i] = element;
 		}

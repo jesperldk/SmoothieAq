@@ -73,6 +73,7 @@ public class  Wires {
 		initSave(TaskDone.class , 50, state.dbContext.dbTaskDone);
 		devMeasures.subscribe(initSave(Measure.class , 200, state.dbContext.dbMeasure));
 		saveDbClass.map(Collections::singletonList).subscribe(state.dbContext.dbClass.drain());
+//		pulse.map(v -> Measure.create((short)2, DeviceStream.level, 1f)).subscribe(devMeasures);
 	}
 	
 	protected <DBO extends DbObject> Subject<Object,Object> initSave(Class<DBO> cls, int timeout, DbFile<DBO> dbFile) {

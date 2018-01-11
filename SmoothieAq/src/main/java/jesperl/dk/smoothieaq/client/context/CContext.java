@@ -6,6 +6,8 @@ public class CContext {
 	public final CWires cWires = new CWires();
 	public final CDrivers cDrivers = new CDrivers();
 	public final CDevices cDevices = new CDevices();
+	
+	public final TsMeasurements measurements = new TsMeasurements();
 
 	public void init() {
 		cWires.init();

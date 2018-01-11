@@ -1,8 +1,10 @@
 package jesperl.dk.smoothieaq.client.context;
 
-import java.util.*;
+import static jesperl.dk.smoothieaq.shared.model.device.DeviceStreamUtil.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
-import com.google.gwt.core.client.*;
+import java.util.*;
+import java.util.function.*;
 
 import jesperl.dk.smoothieaq.client.*;
 import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
@@ -13,6 +15,7 @@ import rx.subjects.*;
 public class CDevices {
 	
 	private Map<Short, CDevice> idToDevice = new HashMap<>();
+	private Map<Short, String> idToName = new HashMap<>();
 	
 	private Completable ready = Resources.device.devices()
 			.doOnNext(d -> deviceChanged(d))
@@ -32,9 +35,23 @@ public class CDevices {
 		CDevice cDevice = idToDevice.get(compactView.deviceId);
 		if (cDevice == null) {
 			cDevice = new CDevice(compactView.deviceId);
-			idToDevice.put(compactView.deviceId, cDevice); GWT.log("new dev "+cDevice.id);
+			idToDevice.put(compactView.deviceId, cDevice);
 			devicesSubject.onNext(cDevice);
 		}
+		idToName.put(compactView.deviceId, compactView.name);
 		cDevice.compactViewSubject.onNext(compactView);
 	}
+	
+	public Function<Float,String> formatter(short deviceId, short streamId) {
+		return nnv(funcNotNull(idToDevice.get(deviceId), cd -> cd.formatter(streamId)), v -> strv(v));
+	}
+	public String name(short deviceId) {
+		if (deviceId == 0) return "";
+		return idToName.get(deviceId); 
+	} 
+	public String name(short deviceId, short streamId) { 
+		if (deviceId == 0) return "";
+		if (streamId == 0) return idToName.get(deviceId);
+		return idToName.get(deviceId)+"."+fromId.get(streamId).name(); 
+	} 
 }

@@ -12,32 +12,40 @@ import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
 import jesperl.dk.smoothieaq.client.*;
 import jesperl.dk.smoothieaq.client.timeseries.*;
 import jesperl.dk.smoothieaq.shared.model.event.*;
+import jesperl.dk.smoothieaq.util.shared.*;
 import rx.*;
+import rx.Observable;
 import rx.Observer;
 import rx.functions.*;
+import rx.subjects.*;
 
 public class CWires {
 	
 	private MapSetConsumer<String,Event> demux = new MapSetConsumer<>();
 	private MapConsumer<Short,TsMeasurement> measurementDemux = new MapConsumer<>();
 	
-//	public Observable<Event> observable(Class<? extends Event> eventClass) { return subscribe(eventClass, e -> observer.onNext(e)); }
-	public Subscription subscribe(Class<? extends Event> eventClass, Observer<Event> observer) { return subscribe(eventClass, e -> observer.onNext(e)); }
-	public Subscription subscribe(Class<? extends Event> eventClass, Consumer<Event> consumer) { return demux.subscribe("."+eventClass.getSimpleName(), consumer); }
+	public Observable<Event> observable(String eventClass) { 
+		Subject<Event, Event> eventSubject = PublishSubject.create();
+		Wrap<Subscription> wsubscription = new Wrap<>();
+		return eventSubject.doOnSubscribe(() -> wsubscription.wrapped = subscribe(eventClass, eventSubject)).doOnUnsubscribe(() -> wsubscription.wrapped.unsubscribe());
+	}
+	public Subscription subscribe(String eventClass, Observer<Event> observer) { return subscribe(eventClass, e -> observer.onNext(e)); }
+	public Subscription subscribe(String eventClass, Consumer<Event> consumer) { return demux.subscribe(eventClass, consumer); }
 	
 	/*friend*/ Subscription subscribeMeasurement(short deviceId, short streamId, Observer<TsMeasurement> observer) { return measurementDemux.subscribe((short)(deviceId*256+streamId), m -> observer.onNext(m)); }
 	
 	public void init() {
-		Resources.event.events().doOnTerminate(() -> {/*TODO reconnect*/}).subscribe(e -> demux.accept(e.$type, e));
-		subscribe(ME.class, e -> { ME me = (ME)e; measurementDemux.accept(me.i, new TsMeasurement(me)); });
-		
-		subscribe(ErrorEvent.class, e -> {
+		subscribe(".ME", e -> { ME me = (ME)e; measurementDemux.accept(me.i, new TsMeasurement(me)); });
+		subscribe(".ErrorEvent", e -> {
 			ErrorEvent ee = (ErrorEvent)e;
 			GWT.log("ErrorEvent: "+ee.error.defaultMessage);
 			wToastError(ee.error.format());
 		});
-		subscribe(MessageEvent.class, e -> wToast(((MessageEvent)e).message.format()));
-		subscribe(DeviceChangeEvent.class, e -> ctx.cDevices.deviceChanged(((DeviceChangeEvent)e).compactView));
+		subscribe(".MessageEvent", e -> wToast(((MessageEvent)e).message.format()));
+		subscribe(".DeviceChangeEvent", e -> ctx.cDevices.deviceChanged(((DeviceChangeEvent)e).compactView));
+		Resources.event.events().doOnTerminate(() -> {/*TODO reconnect*/}).subscribe(e -> demux.accept(e.$type, e));
+		ctx.cDrivers.drivers().subscribe(); // lets get rolling...
+		ctx.cDevices.devices().subscribe(); // lets get rolling...
 	}
 	
 	@SuppressWarnings("serial")
@@ -48,7 +56,7 @@ public class CWires {
 	
 	@SuppressWarnings("serial")
 	private static class MapSetConsumer<K,E> extends MapConsumer<K,E> {
-		public Subscription subscribe(K k, Consumer<E> consumer) { SetConsumer<E> setConsumer = (SetConsumer<E>) get(k); if (setConsumer == null) put(k,setConsumer = new SetConsumer<>()); return setConsumer.subscribe(setConsumer); }
+		public Subscription subscribe(K k, Consumer<E> consumer) { SetConsumer<E> setConsumer = (SetConsumer<E>) get(k); if (setConsumer == null) put(k,setConsumer = new SetConsumer<>()); return setConsumer.subscribe(consumer); }
 	}
 	
 	@SuppressWarnings("serial")

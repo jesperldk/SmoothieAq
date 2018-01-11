@@ -39,6 +39,7 @@ public class  ApplicationView  extends Composite {
     @Override
     protected void onLoad() {
     	super.onLoad();
+    	GWT.log("ApplicationView onLoad");
     	ctx.init();
     }
     

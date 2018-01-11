@@ -8,8 +8,6 @@ import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 
-import com.google.gwt.dev.util.collect.HashMap;
-
 import jesperl.dk.smoothieaq.shared.model.db.*;
 import jesperl.dk.smoothieaq.util.shared.*;
 
@@ -40,7 +38,7 @@ public class DeviceUtil {
 		toClientStreams.put(dc, clientStreams);
 		toSaveStreams.put(dc, saveStreams);
 	}
-	{
+	static {
 		d(sensor,			p(level,D+S+C+P),p(measureX,0));
 		d(DeviceClass.onoff,p(startstopX,C),p(onoff,0),p(level,D+S+C+P),p(watt,C),p(capacity,0));
 		d(DeviceClass.level,p(startstopX,C),p(onoff,0),p(level,D+S+C+P),p(pctlevel,0),p(pgmX,0),p(watt,C),p(capacity,0));

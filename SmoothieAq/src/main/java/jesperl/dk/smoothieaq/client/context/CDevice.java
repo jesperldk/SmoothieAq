@@ -5,15 +5,18 @@ import static jesperl.dk.smoothieaq.shared.model.device.DeviceStream.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceStreamType.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceUtil.*;
 import static jesperl.dk.smoothieaq.shared.model.measure.MeasurementType.*;
+import static jesperl.dk.smoothieaq.shared.model.measure.MeasurementUtil.*;
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import jesperl.dk.smoothieaq.client.timeseries.*;
 import jesperl.dk.smoothieaq.shared.model.db.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
+import jesperl.dk.smoothieaq.shared.model.measure.MeasurementUtil.*;
 import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
 import jesperl.dk.smoothieaq.util.shared.*;
 import rx.Observable;
@@ -26,7 +29,9 @@ public class CDevice {
 	
 	/*friend*/ Subject<DeviceCompactView, DeviceCompactView> compactViewSubject = PublishSubject.create();
 	public Observable<DeviceCompactView> compactView = compactViewSubject.replay(1).autoConnect();
-	/* friend*/ Map<Short, Pair<MeasurementType,Observable<TsMeasurement>>> streams = new HashMap<>();
+	
+	private Map<Short, Pair<MeasurementType,Observable<TsMeasurement>>> streams = new HashMap<>();
+	private Map<Short, Function<Float,String>> formatters = new HashMap<>();
 
 	/*friend*/ CDevice(short id) { 
 		this.id = id;
@@ -37,8 +42,7 @@ public class CDevice {
 			cv.measurementType 	= EnumField.fixup(MeasurementType.class, cv.measurementType);
 			currentCompactView = cv;
 		}).first().subscribe(cv -> { // also gets it running hot...
-			
-			for (DeviceStream devStream: toClientStreams.get(currentCompactView.deviceClass)) {
+			for (DeviceStream devStream: toClientStreams.get(cv.deviceClass)) {
 				short streamId = (short) devStream.getId();
 				Observable<TsMeasurement> stream;
 				Subject<TsMeasurement, TsMeasurement> newStream = PublishSubject.create();
@@ -49,27 +53,43 @@ public class CDevice {
 					stream = newStream;
 				}
 				ctx.cWires.subscribeMeasurement(id, streamId, newStream );
-				streams.put(streamId, pair(measurementType(streamId), stream));
+				streams.put(streamId, pair(getMeasurementType(streamId), stream));
+				formatters.put(streamId, getFormatter(streamId));
 			}
 			
-			Pair<MeasurementType, Observable<TsMeasurement>> pair = streams.get((short)toPauseShadowStream.get(currentCompactView.deviceClass).getId());
+			short shadowSourceId = (short)toPauseShadowStream.get(currentCompactView.deviceClass).getId();
+			Pair<MeasurementType, Observable<TsMeasurement>> pair = streams.get(shadowSourceId);
 			Subject<TsMeasurement, TsMeasurement> newStream = PublishSubject.create();
 			short streamId = (short) DeviceStream.pauseX.getId();
 			ctx.cWires.subscribeMeasurement(id, streamId, newStream );
 			Observable<TsMeasurement> stream = Observable.merge(pair.b,newStream).share();
 			stream.subscribe(); // gets it running hot...
 			streams.put(streamId, pair(pair.a, stream));
+			formatters.put(streamId, getFormatter(shadowSourceId));
 		});
 	}
 	
-	public MeasurementType measurementType(short streamId) {
+	private Function<Float,String> getFormatter(short streamId) {
+		DeviceStream stream = DeviceStreamUtil.get(streamId);
+		MeasurementType measurementType = DeviceStreamUtil.toMesurementType.get(stream);
+		if (measurementType != otherMeasure || currentCompactView.measurementType == null) {
+			MeasurementTypeInfo measurementTypeInfo = measurementTypeToInfo.get(measurementType);
+			return measurementTypeInfo.unit.formatter();
+		}
+		MeasurementTypeInfo measurementTypeInfo = measurementTypeToInfo.get(currentCompactView.measurementType);
+		Function<Float, String> formatter = measurementTypeInfo.unit.formatter(currentCompactView.repeatabilityLevel);
+		return formatter;
+	}
+	
+	private MeasurementType getMeasurementType(short streamId) {
 		MeasurementType measurementType = DeviceStreamUtil.toMesurementType.get(DeviceStreamUtil.get(streamId));
 		return (measurementType == otherMeasure) ? currentCompactView.measurementType : measurementType;
 	}
 	
 	public DeviceCompactView getCurrentCompactView() { return currentCompactView; }
 	
-	// TODO stream() and streamAlsoPaused()
+	public MeasurementType measurementType(short streamId) { return streams.get(streamId).a; }
+	public Function<Float,String> formatter(short streamId) { return formatters.get(streamId); }
 	public List<Pair<Short,MeasurementType>> streams() { return streams.entrySet().stream().map(e -> p(e.getKey(), e.getValue().a)).collect(Collectors.toList()); }
 	public Observable<TsMeasurement> stream(short streamId) { return streams.get(streamId).b; } 
 	public Observable<TsMeasurement> streamAlsoPaused(short streamId) {

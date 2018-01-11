@@ -1,9 +1,11 @@
 package jesperl.dk.smoothieaq.client.components.tstable;
 
 import static java.lang.Math.*;
+import static java.util.logging.Level.*;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.logging.*;
 
 import com.google.gwt.core.client.*;
 
@@ -17,6 +19,7 @@ import rx.gwt.schedulers.*;
 import rx.subjects.*;
 
 public class TsTable extends Div {
+	Logger logger = Logger.getLogger("TsTable");
 	
 	public static int allocateAbove = 20; //100;
 	public static int allocateBelow = 30; //200;
@@ -30,6 +33,7 @@ public class TsTable extends Div {
 	private TsSource<TsRowData> source;
 	private Subscription subscription = null;
 	private Subscription listenSubscription = null;
+	private Subscription refreshSubScription = null;
 
 	private Queue<Action0> queue = new LinkedList<>();
 	public Subject<Void, Void> queueAsync = PublishSubject.create();
@@ -45,6 +49,7 @@ public class TsTable extends Div {
 	private boolean queuedFillTop = false;
 	private boolean queuedFillBottom = false;
 
+	private boolean loaded = false;
 	private long unloadedStamp = 0;
 	private int p;
 	private int n;
@@ -60,11 +65,23 @@ public class TsTable extends Div {
 		}
 	}
 	
+	public void refresh() {
+		if (!loaded) return;
+		teardown();
+		setup();
+	}
+	
 	@Override protected void onLoad() {
 		super.onLoad();
+		loaded = true;
+		setup();
+	}
+
+	protected void setup() {
 		queueSubscription = queueAsync.observeOn(GwtSchedulers.requestIdle()).subscribe(v -> {
 			if (!queue.isEmpty()) queue.remove().call();
 		});
+		refreshSubScription = source.refreshListen().doOnNext(v -> refresh()).subscribe();
 		
 		atBeginningFlag = unloadedStamp == 0;
 		if (unloadedStamp == 0) toTop();
@@ -87,25 +104,31 @@ public class TsTable extends Div {
 	
 	@Override protected void onUnload() {
 		super.onUnload();
+		teardown();
+	}
+
+	protected void teardown() {
 		unloadedStamp = atHead() ? 0 : stamps[pCurr];
 		reset();
+		if (refreshSubScription != null) { refreshSubScription.unsubscribe(); refreshSubScription = null; }
 		if (queueSubscription != null) { queueSubscription.unsubscribe(); queueSubscription = null; }
 		if (listenSubscription != null) { listenSubscription.unsubscribe(); listenSubscription = null; }
+		loaded = false;
 	}
 	
-	public void toTop() { GWT.log("~~toTop");
+	public void toTop() {
 		reset();
 		atBeginning.onNext(atBeginningFlag = true);
 		read(source.elementsFrom(0,0,allocateBelow,null),0,allocateAbove,allocateBelow,null);
 	}
 	
-	public void toStamp(long stamp) { GWT.log("~~toStamp");
+	public void toStamp(long stamp) {
 		reset();
 		atBeginning.onNext(atBeginningFlag = false);
 		read(source.elementsFrom(stamp,allocateAbove,allocateBelow,null),0,0,size,null);
 	}
 	
-	public void down() { GWT.log("~~down");
+	public void down() {
 		if (atTail()) return;
 		if (pBot > pCurr && queue.isEmpty()) {
 			visible(pCurr, false);
@@ -118,7 +141,7 @@ public class TsTable extends Div {
 			queue(()->down());
 		}
 	}
-	public void up() { GWT.log("~~up");
+	public void up() {
 		if (atHead()) return;
 		if (pTop < pCurr && queue.isEmpty()) {
 			pCurr--;
@@ -179,7 +202,7 @@ public class TsTable extends Div {
 		if (subscription == null) queueAsync.onNext(null);
 	}
 	
-	protected void read(Observable<TsRowData> elements, int skip, int pStart, int count, Action0 endAction) { GWT.log("~~subscribe read");
+	protected void read(Observable<TsRowData> elements, int skip, int pStart, int count, Action0 endAction) {
 		p = pStart+count;
 		n = 0;
 		subscription = elements.subscribe(new TsObserver( rd -> {
@@ -249,7 +272,7 @@ public class TsTable extends Div {
 		private Action0 endAction;
 		public TsObserver(Consumer<TsRowData> consumer, Action0 endAction) { this.consumer = consumer; this.endAction = endAction; }
 		@Override public void onCompleted() { onTerminate(); }
-		@Override public void onError(Throwable e) { GWT.log("TsTable onError: "+e.toString()); onTerminate(); } // TODO Auto-generated method stub
+		@Override public void onError(Throwable e) { logger.log(SEVERE, "TsTable onError", e); onTerminate(); } // TODO Auto-generated method stub
 		@Override public void onNext(TsRowData t) { consumer.accept(t); }
 		protected void onTerminate() {
 			if (subscription != null) subscription.unsubscribe();

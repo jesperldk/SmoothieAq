@@ -24,24 +24,24 @@ public class TsRow extends Div {
 		add(textDiv);
 	}
 	
-	@Override protected void onLoad() { GWT.log("~onLoad "+no);
+	@Override protected void onLoad() {
 		super.onLoad();
 	}
 	
 	@Override
-	protected void onUnload() { GWT.log("~onUnload "+no);
+	protected void onUnload() {
 		super.onUnload();
 	}
 	
-	public void data(TsRowData rd) { GWT.log("~data "+no);
+	public void data(TsRowData rd) {
 		draw(rd.icon(),rd.stampTxt(),rd.id(),rd.text(),rd.style());
 	}
 
-	public void empty() { GWT.log("~empty "+no);
+	public void empty() {
 		draw(null,null,null,"&nbsp;",null);
 	}
 	
-	protected void draw(Widget icon, String stamp, String id, String text, String style) {  GWT.log("~draw "+stamp+" "+id+" "+text);
+	protected void draw(Widget icon, String stamp, String id, String text, String style) {
 		set(iconDiv,icon);
 		set(stampDiv,stamp);
 		set(idDiv,id);

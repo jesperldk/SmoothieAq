@@ -40,7 +40,7 @@ public class  SpiDeviceAccess extends AbstractDeviceAccess implements ByteDevice
 	
 	@Override protected void openIt() {
 		doGuarded(eh,() -> {try {
-			device = SpiFactory.getInstance(spiChannel,speed,mode);
+			if (!isSimulate()) device = SpiFactory.getInstance(spiChannel,speed,mode);
 			log.info("Opened "+getUrl().urlString);
 		} catch (IOException e) { throw error(log ,e, 10201, medium, "Error opening SPI >{0}< - {1}", getUrl().urlString,e.getMessage()) ; }});
 		super.openIt();
@@ -59,13 +59,17 @@ public class  SpiDeviceAccess extends AbstractDeviceAccess implements ByteDevice
 			if (request == null) {
 				throw error(log, 10203, major, "cannot only read SPI >{0}<",getUrl().urlString);
 			} if (readLenght == 0) {
-				device.write(request, start, length);
+				if (!isSimulate()) device.write(request, start, length);
 				log.fine("wrote: 0x"+printHexBinary(Arrays.copyOfRange(request, start, start+length))+" --> 0x");
 				return new byte[0];
 			} else {
-				byte[] response = device.write(request, start, length);
-				log.fine("read+wrote: 0x"+printHexBinary(Arrays.copyOfRange(request, start, start+length))+" --> 0x"+printHexBinary(response));
-				return response;
+				if (!isSimulate()) {
+					byte[] response = device.write(request, start, length);
+					log.fine("read+wrote: 0x"+printHexBinary(Arrays.copyOfRange(request, start, start+length))+" --> 0x"+printHexBinary(response));
+					return response;
+				} else {
+					return new byte[0];
+				}
 			}
 		} catch (IOException e) { throw error(log ,e, 10202, minor, "Error reading/writing SPI >{0}< - {1}", getUrl().urlString,e.getMessage()); }});
 	}

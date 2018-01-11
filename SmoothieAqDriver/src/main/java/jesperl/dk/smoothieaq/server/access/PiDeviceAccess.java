@@ -35,19 +35,19 @@ public class  PiDeviceAccess extends AbstractDeviceAccess implements GpioDeviceA
 			pin = RaspiPin.getPinByAddress(pinNo);
 			mode = (url.deviceArgs.length > 0) ? intv(url.deviceArgs[0]) : 1;
 			resistor = (url.deviceArgs.length > 1) ? intv(url.deviceArgs[1]) : 0;
-			synchronized (PiDeviceAccess.class ) { if (controller == null) controller = GpioFactory.getInstance(); }
+			if (!isSimulate()) synchronized (PiDeviceAccess.class ) { if (controller == null) controller = GpioFactory.getInstance(); }
 		}, e -> error(log,e,10500, major, "Malformed pi url: {0}",url.urlString));
 		return this;
 	}
 	
 	@Override protected void openIt() {
-		setModeDigital(mode, resistor);;
+		if (!isSimulate()) setModeDigital(mode, resistor);;
 		log.info("Opened "+getUrl().urlString);
 		super.openIt();
 	}
 	
 	@Override protected void closeIt() {
-		controller.unprovisionPin(gpioPin);
+		if (!isSimulate()) controller.unprovisionPin(gpioPin);
 		super.closeIt();
 	}
 	
@@ -56,10 +56,10 @@ public class  PiDeviceAccess extends AbstractDeviceAccess implements GpioDeviceA
 		doGuardedX(() -> {
 			PinPullResistance pinRes = (resistor == 0) ? PinPullResistance.OFF : (resistor == 1) ? PinPullResistance.PULL_UP : PinPullResistance.PULL_DOWN;
 			if (mode == 1 || mode == 2) {
-				gpioPin = controller.provisionDigitalOutputPin(pin, (mode == 1) ? PinState.LOW : PinState.HIGH);
+				if (!isSimulate()) gpioPin = controller.provisionDigitalOutputPin(pin, (mode == 1) ? PinState.LOW : PinState.HIGH);
 			} else if (mode == 3) {
-				gpioPin = controller.provisionDigitalInputPin(pin, pinRes);
-				((GpioPinDigitalInput)gpioPin).setDebounce(100);
+				if (!isSimulate()) gpioPin = controller.provisionDigitalInputPin(pin, pinRes);
+				if (!isSimulate()) ((GpioPinDigitalInput)gpioPin).setDebounce(100);
 			}
 			this.mode = mode; this.resistor = resistor;
 		}, e -> error(log ,e, 10502, medium, "Error setting mode on >{0}< - {1}", getUrl().urlString, e.getMessage()));
@@ -75,7 +75,7 @@ public class  PiDeviceAccess extends AbstractDeviceAccess implements GpioDeviceA
 		open();
 		doGuardedX(() -> {
 			GpioPinDigitalOutput p = (GpioPinDigitalOutput) gpioPin;
-			if (high) p.high(); else p.low();
+			if (!isSimulate()) { if (high) p.high(); else p.low(); }
 			log.info("Set "+(high?"high":"low")+" on "+getUrl());
 		}, e -> error(log,e, 10505,medium,"could not write on >{0}< - {1}", getUrl().urlString, e.getMessage()));
 	}
@@ -84,7 +84,7 @@ public class  PiDeviceAccess extends AbstractDeviceAccess implements GpioDeviceA
 		// TODO validation
 		open();
 		return funcGuardedX(() -> { 
-			boolean high = ((GpioPinDigitalInput)gpioPin).getState() == PinState.HIGH;
+			boolean high = isSimulate() ? false : ((GpioPinDigitalInput)gpioPin).getState() == PinState.HIGH;
 			log.info("Read "+(high?"high":"low")+" on "+getUrl());
 			return high;
 		}, e -> error(log,e, 10504,medium,"Could not read on >{0}< - {1}", getUrl().urlString, e.getMessage()));
@@ -99,15 +99,15 @@ public class  PiDeviceAccess extends AbstractDeviceAccess implements GpioDeviceA
 			log.info("Listend "+(high?"high":"low")+" on "+getUrl());
 		};
 		doGuardedX(() -> {
-System.out.println("ADD LISTENER");
-			gpioPin.addListener(listener);
+			log.info("add listener on "+getUrl());
+			if (!isSimulate()) gpioPin.addListener(listener);
 		}, e -> error(log,e, 10503,medium,"could not listen on >{0}< - {1}", getUrl().urlString, e.getMessage()));
 		return listener;
 	}
 
 	@Override public void stopListen(Object listenerObj) {
 		// TODO validation
-		doGuarded(() ->	gpioPin.removeListener((GpioPinListener)listenerObj));
+		if (!isSimulate()) doGuarded(() ->	gpioPin.removeListener((GpioPinListener)listenerObj));
 	}
 	
 }

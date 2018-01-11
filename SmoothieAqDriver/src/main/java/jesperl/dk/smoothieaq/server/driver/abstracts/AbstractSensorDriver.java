@@ -55,8 +55,8 @@ public abstract class  AbstractSensorDriver<S extends AbstractSensorDriver.Stora
 	public void listen(Consumer<Float> listener) { useStorage(s -> s.listeners.put(AbstractSensorDriver.this.getClass(), listener)); }
 	
 	@Override public void release() {
-		super.release();
 		useStorage(s -> s.listeners.remove(this.getClass()));
+		super.release();
 	}
 
 	@Override public StepInfo[] calibrationInfo() {

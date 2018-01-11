@@ -39,7 +39,7 @@ public class  I2cDeviceAccess extends AbstractDeviceAccess implements ByteDevice
 	
 	@Override protected void openIt() {
 		doGuarded(eh,() -> {try {
-			device = I2CFactory.getInstance(i2cBus).getDevice(i2cAddress); 
+			if (!isSimulate()) device = I2CFactory.getInstance(i2cBus).getDevice(i2cAddress); 
 			log.info("Opened "+getUrl().urlString);
 		} catch (IOException | UnsupportedBusNumberException e) { throw error(log ,e, 10101, medium, "Error opening i2c >{0}< - {1}", getUrl().urlString, e.getMessage()); }});
 		super.openIt();
@@ -54,6 +54,7 @@ public class  I2cDeviceAccess extends AbstractDeviceAccess implements ByteDevice
 		assert until == null : "until not supported";
 		open();
 		return funcGuarded(eh,() -> {try {
+			if (isSimulate()) return new byte[0];
 			if (request == null) {
 				byte[] response = Arrays.copyOfRange(reply, 0, device.read(reply, 0, readLenght));
 				log.fine("read: 0x"+printHexBinary(response));

@@ -51,6 +51,7 @@ public interface DeviceRest {
 		public DeviceType deviceType;
 		public DeviceClass deviceClass;
 		public MeasurementType measurementType;
+		public float repeatabilityLevel;
 		public String name;
 		public String description;
 		public DeviceStatusType statusType;
@@ -78,6 +79,7 @@ public interface DeviceRest {
 		view.statusType = idev.model().getStatus().statusType;
 		view.currentValue = idev.getValue();
 		view.measurementType = idev.model().getDevice().measurementType;
+		view.repeatabilityLevel = idev.model().getDevice().repeatabilityLevel;
 //		view.on = false;
 		return view;
 	}

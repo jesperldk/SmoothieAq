@@ -27,15 +27,16 @@ public interface TsSource<E> {
 	}
 	
 	default <E2> TsSource<E2> map(Func1<E,E2> mapFuc) {
+		Func1<E,E2> nnmapFuc = e -> e == null ? null : mapFuc.call(e);
 		TsSource<E> s = this;
 		return new TsSource<E2>() {
 			@Override public Observable<E2> elementsFrom(long from, int preCount, int postCount, Func1<E2,Boolean> predicate) {
-				Observable<E2> o = s.elementsFrom(from, preCount, postCount, null).map(mapFuc);
+				Observable<E2> o = s.elementsFrom(from, preCount, postCount, null).map(nnmapFuc);
 				if (predicate != null) o = o.filter(predicate);
 				return o;
 			}
 			@Override public Observable<E2> newElements(Func1<E2,Boolean> predicate) {
-				Observable<E2> o = s.newElements(null).map(mapFuc);
+				Observable<E2> o = s.newElements(null).map(nnmapFuc);
 				if (predicate != null) o = o.filter(predicate);
 				return o;
 			}

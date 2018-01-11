@@ -21,8 +21,8 @@ public class TsMeasurement extends TsElement {
 	public TsMeasurement(ME me) {
 		this();
 		this.stamp = me.t;
-		this.deviceId = me.i/256;
-		this.streamId = me.i % 256;
+		this.deviceId = (short) (me.i/256);
+		this.streamId = (short) (me.i % 256);
 		this.value = me.v;
 	}
 }

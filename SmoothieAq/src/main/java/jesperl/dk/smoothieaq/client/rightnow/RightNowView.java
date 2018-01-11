@@ -19,6 +19,8 @@
  */
 package jesperl.dk.smoothieaq.client.rightnow;
 
+import static jesperl.dk.smoothieaq.client.context.CContext.*;
+
 import org.moxieapps.gwt.highcharts.client.*;
 
 import com.google.gwt.core.client.*;
@@ -47,7 +49,8 @@ public class  RightNowView  extends Composite {
     }
 
     protected void table() {
-    	TsView table = new TsView(new TsTest(1000).map(TsMeasurementRowData::new));
+//    	TsView table = new TsView(new TsTest(1000).map(TsMeasurementRowData::new));
+    	TsView table = new TsView(ctx.measurements.map(TsMeasurementRowData::new));
     	table.setTableHeight("300px");
 		panel.add(table);
     }
