@@ -1,5 +1,7 @@
 package jesperl.dk.smoothieaq.shared.resources;
 
+import java.util.*;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
@@ -7,12 +9,14 @@ import com.google.gwt.core.shared.*;
 import com.intendia.gwt.autorest.client.*;
 
 import jesperl.dk.smoothieaq.server.device.classes.*;
+import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 import jesperl.dk.smoothieaq.util.shared.error.*;
 import jsinterop.annotations.*;
 import rx.*;
+import rx.Observable;
 
 @AutoRestGwt @Path("device") @Produces(MediaType.APPLICATION_JSON) @Consumes(MediaType.APPLICATION_JSON)
 public interface DeviceRest {    
@@ -47,7 +51,7 @@ public interface DeviceRest {
 	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 	public class  DeviceCompactView {
-		public short deviceId;
+		public int deviceId;
 		public DeviceType deviceType;
 		public DeviceClass deviceClass;
 		public MeasurementType measurementType;
@@ -61,7 +65,7 @@ public interface DeviceRest {
 	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 	public class  DriverView {
-		public short driverId;
+		public int driverId;
 		public DeviceClass deviceClass;
 		public Message name;
 		public Message description;
@@ -87,7 +91,9 @@ public interface DeviceRest {
 	@GwtIncompatible public static DeviceView view(IDevice idev) {
 		DeviceView view = new DeviceView();
 		view.device = idev.model().getDevice();
-		view.tasks = (Task[])idev.model().getTasks().toArray();
+		List<ITask> tasks = idev.model().getTasks();
+		view.tasks = new Task[tasks.size()];
+		for (int i = 0; i < tasks.size(); i++) view.tasks[i] = tasks.get(i).model().getTask();
 		view.statusType = idev.model().getStatus().statusType;
 //		view.on = false;
 		return view;

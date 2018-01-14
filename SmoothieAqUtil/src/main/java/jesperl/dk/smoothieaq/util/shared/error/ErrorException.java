@@ -6,7 +6,7 @@ public class  ErrorException extends RuntimeException {
 	private Error error;
 	
 	public ErrorException(Error error) { super(); this.error = error; }
-	public ErrorException(Error error, Exception e) { super(e); this.error = error; }
+	public ErrorException(Error error, Throwable e) { super(e); this.error = error; }
 
 	public Error getError() { return error; }
 	@Override public String getMessage() { return error.toString(); }

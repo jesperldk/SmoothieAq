@@ -63,6 +63,7 @@ public abstract class  CN0326Driver extends AbstractPhSensorDriver<CN0326Driver.
 	}
 	
 	public void init(ByteDeviceAccess da) {
+		if (isSimulate()) return;
 		reallySleep(300);
 		flush(da);
 		init7793(da);

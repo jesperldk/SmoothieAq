@@ -7,7 +7,7 @@ import jsinterop.annotations.*;
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object") 
 public abstract class  DbWithId extends DbWithStamp implements Idable, DbWithId_Helper {
 
-	public short id;
+	public int id;
 
 	@Override @GwtIncompatible 
 	public boolean equals(Object obj) {
@@ -26,13 +26,13 @@ public abstract class  DbWithId extends DbWithStamp implements Idable, DbWithId_
 	}
 
 	@Override @GwtIncompatible
-	public void setId(short id) {
+	public void setId(int id) {
 		assert this.id == 0;
 		this.id = id;
 	}
 
 	@Override @GwtIncompatible
-	public short getId() {
+	public int getId() {
 		assert id != 0;
 		return id;
 	}

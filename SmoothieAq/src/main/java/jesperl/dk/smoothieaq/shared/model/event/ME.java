@@ -8,7 +8,7 @@ import jsinterop.annotations.*;
 @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 public class  ME extends Event implements MessageEvent_Helper { 
 
-	public short i;
+	public int i;
 	public long t;
 	public float v;
 

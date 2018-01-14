@@ -3,12 +3,14 @@ package jesperl.dk.smoothieaq.client;
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
+import java.util.logging.*;
 
 import jesperl.dk.smoothieaq.shared.model.db.*;
 import jesperl.dk.smoothieaq.util.shared.*;
 import rx.functions.*;
 
 public class ClientObjects {
+	private static final Logger log = Logger.getLogger(ClientObjects.class.getName());
 
 	@SafeVarargs
 	static public <K extends Enum<K>,V> Map<K,V> emap(Class<K> cls, Pair<K,V>... ps) {
@@ -35,5 +37,12 @@ public class ClientObjects {
 		@Override public V remove(Object key) { return super.remove(fixup(key)); }
 
 		private K fixup(Object key) { return EnumField.fixup(cls, key); }
+	}
+
+	public static rx.Observer<Object> robs() { return new SingleResouceObserver<>(); }
+	public static class SingleResouceObserver<T> implements rx.Observer<T> {
+		@Override public void onCompleted() {}
+		@Override public void onNext(T t) {}
+		@Override public void onError(Throwable e) { log.log(Level.WARNING, "Error from Resource call", e); }
 	}
 }

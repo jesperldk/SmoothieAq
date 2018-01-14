@@ -9,10 +9,11 @@ public class  Message {
 	public int msgNo;
 	public String defaultMessage;
 	public Object[] args;
+	public Severity severity; // if null not an error
 	
 	@JsOverlay public static Message create(int msgNo, String defaultMessage, Object... args) { return init(new Message(),msgNo,defaultMessage,args); }
 	@JsOverlay protected static <MSG extends Message> MSG init(MSG msg, int msgNo, String defaultMessage, Object... args) {
-		msg.msgNo = msgNo; msg.defaultMessage = defaultMessage; msg.args = args;
+		msg.msgNo = msgNo; msg.defaultMessage = defaultMessage; msg.args = args; msg.severity = null;
 		return msg;
 	}
 	
@@ -29,5 +30,5 @@ public class  Message {
         }
         return msg;
     }
-
+	
 }

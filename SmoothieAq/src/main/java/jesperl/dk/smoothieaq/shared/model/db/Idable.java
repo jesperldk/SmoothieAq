@@ -6,6 +6,6 @@ import jsinterop.annotations.*;
 
 @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 public interface Idable {
-	@GwtIncompatible public void setId(short id);
-	@GwtIncompatible public short getId();
+	@GwtIncompatible public void setId(int id);
+	@GwtIncompatible public int getId();
 }

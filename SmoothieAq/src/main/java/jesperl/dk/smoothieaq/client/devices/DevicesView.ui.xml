@@ -2,7 +2,7 @@
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
         xmlns:m="urn:import:gwt.material.design.client.ui">
 
-    <ui:with field="msg" type="jesperl.dk.smoothieaq.client.app.AppMessages"/>
+    <ui:with field="msg" type="jesperl.dk.smoothieaq.client.text.AppMessages"/>
 
     <m:MaterialPanel>
         <m:MaterialRow ui:field="cardRow" />

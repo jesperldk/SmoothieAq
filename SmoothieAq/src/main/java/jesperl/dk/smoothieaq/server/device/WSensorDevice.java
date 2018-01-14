@@ -54,10 +54,11 @@ public class  WSensorDevice extends WDevice<SensorDriver> implements SensorDevic
 		addStream(state, DeviceStream.startstopX,MeasurementType.onoff, () -> startstopX);
 		addStream(state, DeviceStream.watt,MeasurementType.energyConsumption, () -> only(0f));
 		addStream(state, DeviceStream.pauseX,device.measurementType,() -> Observable.just(disabledLevel).concatWith(pauseStream));
+//		System.out.println("listen on pulse: "+getId());
 		subscription(state.wires.pulse.onBackpressureDrop()
 				.observeOn(Schedulers.io()) // some measures can take seconds
 				.delay((getId()%10)*100, TimeUnit.MILLISECONDS) // don't hit the device busses at the same time
-				.subscribe(v -> deviceMeasure())); // for the side effect
+				.subscribe(v -> {/*System.out.println("pulse: "+getId())*/; deviceMeasure();})); // for the side effect
 		super.setupStreams(state);
 	}
 	private Observer<Float> level() { return isPaused() ? pauseStream : stream; }

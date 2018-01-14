@@ -16,7 +16,7 @@ import jsinterop.annotations.*;
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 public class  Task extends DbWithId implements Task_Helper {
 
-	public short deviceId;
+	public int deviceId;
 	public TaskType taskType; 
 	public TaskArg taskArg;
 	public Schedule schedule;
@@ -40,8 +40,9 @@ public class  Task extends DbWithId implements Task_Helper {
 	@JsOverlay 
 	static private TaskArg cloneArg(TaskType taskType) {
 		if (taskType == null) return null;
-		if (taskType.getTaskArg() == null) return null;
-		return taskType.getTaskArg().copy();
+		TaskArg taskArg = TaskTypeUtil.info(taskType).taskArg;
+		if (taskArg == null) return null;
+		return taskArg.copy();
 	}
 
 	@GwtIncompatible final public Pair<? extends Schedule,Interval> next(SchedulerContext context) {

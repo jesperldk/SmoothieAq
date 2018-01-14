@@ -15,7 +15,7 @@ public class  FindClass {
 	private final static Logger log = Logger.getLogger(FindClass.class .getName());
 	
 	public static Observable<Class<?>> create(final String packageName) {
-		return Observable.create(subscriber -> {
+		return Observable.unsafeCreate(subscriber -> {
 			subscriber.onStart();
 			log.fine("findClass("+packageName+")");
 			try {

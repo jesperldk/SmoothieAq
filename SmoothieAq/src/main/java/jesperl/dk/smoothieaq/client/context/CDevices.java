@@ -14,8 +14,8 @@ import rx.subjects.*;
 
 public class CDevices {
 	
-	private Map<Short, CDevice> idToDevice = new HashMap<>();
-	private Map<Short, String> idToName = new HashMap<>();
+	private Map<Integer, CDevice> idToDevice = new HashMap<>();
+	private Map<Integer, String> idToName = new HashMap<>();
 	
 	private Completable ready = Resources.device.devices()
 			.doOnNext(d -> deviceChanged(d))
@@ -23,7 +23,7 @@ public class CDevices {
 
 	private final Subject<CDevice, CDevice> devicesSubject = PublishSubject.create();
 	
-	public Single<CDevice> device(short id) {
+	public Single<CDevice> device(int id) {
 		return ready.toSingle(() -> idToDevice.get(id));
 	}
 	
@@ -42,14 +42,14 @@ public class CDevices {
 		cDevice.compactViewSubject.onNext(compactView);
 	}
 	
-	public Function<Float,String> formatter(short deviceId, short streamId) {
+	public Function<Float,String> formatter(int deviceId, short streamId) {
 		return nnv(funcNotNull(idToDevice.get(deviceId), cd -> cd.formatter(streamId)), v -> strv(v));
 	}
-	public String name(short deviceId) {
+	public String name(int deviceId) {
 		if (deviceId == 0) return "";
 		return idToName.get(deviceId); 
 	} 
-	public String name(short deviceId, short streamId) { 
+	public String name(int deviceId, short streamId) { 
 		if (deviceId == 0) return "";
 		if (streamId == 0) return idToName.get(deviceId);
 		return idToName.get(deviceId)+"."+fromId.get(streamId).name(); 

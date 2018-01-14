@@ -1,28 +1,25 @@
 package jesperl.dk.smoothieaq.server.device;
 
-import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
-import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceStatusChange.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceStatusType.*;
-import static jesperl.dk.smoothieaq.shared.model.device.DeviceStream.*;
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Severity.*;
 
 import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 
-import jesperl.dk.smoothieaq.client.timeseries.*;
 import jesperl.dk.smoothieaq.server.device.classes.*;
 import jesperl.dk.smoothieaq.server.driver.classes.*;
 import jesperl.dk.smoothieaq.server.state.*;
 import jesperl.dk.smoothieaq.server.task.*;
 import jesperl.dk.smoothieaq.server.task.classes.*;
-import jesperl.dk.smoothieaq.util.shared.error.Error;
 import jesperl.dk.smoothieaq.shared.model.device.*;
-import jesperl.dk.smoothieaq.shared.model.event.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 import jesperl.dk.smoothieaq.util.shared.*;
+import jesperl.dk.smoothieaq.util.shared.error.Error;
 import rx.*;
 import rx.Observable;
 import rx.Observer;
@@ -54,7 +51,9 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 			assert device.driverId == WDevice.this.device.driverId;
 			assert device.deviceClass == WDevice.this.device.deviceClass;
 			assert device.deviceType == WDevice.this.device.deviceType;
+			assert device.measurementType == WDevice.this.device.measurementType;
 			validate(state, device);
+			WDevice.this.device = device;
 			init(state.dContext);
 			state.replace(device);
 			state.wires.devicesChanged.onNext(WDevice.this);
@@ -171,8 +170,8 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 		stop(state);
 	}
 	protected void disable(State state) {
-		stop(state);
-		disconnect();
+		doDoErrorGuarded(() -> stop(state));
+		doDoErrorGuarded(() -> disconnect());
 	}
 	protected void pause(State state) {
 		stop(state);
@@ -181,9 +180,9 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 		stop(state);
 	}
 	protected void delete(State state) {
-		stop(state);
-		disconnect();
-		teardownStreams();
+		doDoErrorGuarded(() -> stop(state));
+		doDoErrorGuarded(() -> disconnect());
+		doDoErrorGuarded(() -> teardownStreams());
 	}
 
 	protected void setupStreams(State state) {
@@ -244,14 +243,14 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	@Override public boolean isEnabled() { return isEnabled(status.statusType); }
 	public boolean isEnabled(DeviceStatusType statusType) { return enabledStatus.contains(statusType); }
 	public boolean isPaused() { return status.statusType == paused; } 
+	public boolean isDeleted() { return status.statusType == deleted; } 
 	
 	@Override public Error inError() { return error; }
 	@Override public void clearError() { error = null; }
 	protected void setError(Error error) { if (this.error == null || this.error.severity.getId() < error.severity.getId()) this.error = error; }
 	
-	protected void doErrorGuarded(Doit doit) { 
-		if (error == null) doGuarded(e -> { setError(error); return null; }, doit);
-	}
+	protected void doErrorGuarded(Doit doit) { if (error == null) doGuarded(e -> { setError(e.getError()); return null; }, doit); }
+	protected void doDoErrorGuarded(Doit doit) { doGuarded(e -> { setError(e.getError()); return null; }, doit); }
 	
 	@Override public Observer<Float> drain() {
 		return new Subscriber<Float>() {

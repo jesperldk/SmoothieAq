@@ -13,14 +13,14 @@ import jesperl.dk.smoothieaq.util.shared.*;
 import rx.functions.*;
 
 public class DeviceChangeInfo extends EnumInfo {
-	public final Action1<Short> doChange;
+	public final Action1<Integer> doChange;
 	
-	public DeviceChangeInfo(IconType icon, Color bgColor, String hoverTxt, Action1<Short> doChange) {
+	public DeviceChangeInfo(IconType icon, Color bgColor, String hoverTxt, Action1<Integer> doChange) {
 		super(icon, bgColor, hoverTxt);
 		this.doChange = doChange;
 	}
 	
-	public static Pair<DeviceStatusChange, DeviceChangeInfo> dci(DeviceStatusChange change, IconType icon, Color bgColor, Action1<Short> doChange) { 
+	public static Pair<DeviceStatusChange, DeviceChangeInfo> dci(DeviceStatusChange change, IconType icon, Color bgColor, Action1<Integer> doChange) { 
 		return p(change, new DeviceChangeInfo(icon, bgColor, change.toString(), doChange)); 
 	}
 	public static Pair<DeviceStatusChange, DeviceChangeInfo> dci(DeviceStatusChange change, IconType icon, Color bgColor) { 

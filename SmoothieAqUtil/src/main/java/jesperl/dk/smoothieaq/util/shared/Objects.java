@@ -51,12 +51,21 @@ public class  Objects {
 	static public Pair<Float,Float> pair(float a, float b) { return new Pair<>(a,b); }
 	static public <S,T,U> Triple<S,T,U> triple(S a, T b, U c) { return new Triple<>(a,b,c); }
 	
+	static public <S,T> Function<S,Pair<S,T>> pair(Function<S,T> func) { return s -> pair(s,func.apply(s)); }
+	static public <S,T,U> Function<S,Pair<T,U>> pair(Function<S,T> funcT, Function<S,U> funcU) { return s -> pair(funcT.apply(s),funcU.apply(s)); }
+	static public <S,T,U> Function<S,Triple<S,T,U>> triple(Function<S,T> funcT, Function<S,U> funcU) { return s -> triple(s,funcT.apply(s),funcU.apply(s)); }
+	static public <S,T,U,V> Function<S,Triple<T,U,V>> triple(Function<S,T> funcT, Function<S,U> funcU, Function<S,V> funcV) { return s -> triple(funcT.apply(s),funcU.apply(s),funcV.apply(s)); }
+	
 	static public <S,T> void with( Pair<S,T> p, BiConsumer<S, T> consumer) { consumer.accept(p.a, p.b); }
 	static public <S,T,U> U with( Pair<S,T> p, BiFunction<S, T, U> func) { return func.apply(p.a, p.b); }
 	static public <S,T> Pair<T,T> map( Pair<S,S> p, Function<S, T> func) { return pair(func.apply(p.a), func.apply(p.b)); }
+	static public <S,T,U> void with( Triple<S,T,U> t, TriConsumer<S, T, U> consumer) { consumer.accept(t.a, t.b, t.c); }
+	static public <S,T,U,V> V with( Triple<S,T,U> t, TriFunction<S, T, U, V> func) { return func.apply(t.a, t.b, t.c); }
 	
 	static public <S,T,U> Function<Pair<S,T>,U> withFunc(BiFunction<S, T, U> func) { return p -> func.apply(p.a, p.b); }
 	static public <S,T> Consumer<Pair<S,T>> with(BiConsumer<S, T> consumer) { return p -> consumer.accept(p.a, p.b); }
+	static public <S,T,U,V> Function<Triple<S,T,U>,V> withFunc(TriFunction<S, T, U, V> func) { return t -> func.apply(t.a, t.b, t.c); }
+	static public <S,T,U> Consumer<Triple<S,T,U>> with(TriConsumer<S, T, U> consumer) { return t -> consumer.accept(t.a, t.b, t.c); }
 	
 	@SafeVarargs static public <O> O[] array(O... os) { return os; }
 	static public float[] array(float... fs) { return fs; }
@@ -115,4 +124,5 @@ public class  Objects {
 	static public float floatv(String floats) { return Float.parseFloat(floats); }
 	static public String strv(int intv) { return Integer.toString(intv); }
 	static public String strv(float floatv) { return Float.toString(floatv); }
+	static public String capitalize(String str) { return isEmpty(str) ? str : str.substring(0, 1).toUpperCase()+str.substring(1); }
 }

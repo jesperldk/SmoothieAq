@@ -15,7 +15,7 @@ public class  Device extends DbWithId implements Device_Helper {
 	public DeviceType deviceType;
 	public DeviceClass deviceClass;
 	public DeviceCategory deviceCategory;
-	public short driverId;
+	public int driverId;
 	public String deviceUrl;
 	public String name;
 	public String description; 

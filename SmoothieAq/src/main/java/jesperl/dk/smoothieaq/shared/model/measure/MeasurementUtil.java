@@ -6,8 +6,6 @@ import static jesperl.dk.smoothieaq.shared.model.measure.Unit.*;
 import java.util.*;
 import java.util.function.*;
 
-import com.google.gwt.core.shared.*;
-
 public abstract class MeasurementUtil {
 	
 	public static class UnitInfo {

@@ -45,7 +45,7 @@ public class  SchedulerContext {
 		if (tasks == null || tasks.isEmpty()) return null;
 		while (type != null) {
 			for (ITask task: tasks) if (task.model().getTask().taskType == type) return task;
-			type = type.getParrentType();
+			type = type.info().parrentType;
 		}
 		return null;
 	}

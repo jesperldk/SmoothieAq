@@ -11,11 +11,12 @@ public class TsMeasurement extends TsElement {
 		this.type = 1; // TODO
 	}
 	
-	public TsMeasurement(short deviceId, short streamId, float value) {
+	public TsMeasurement(int deviceId, short streamId, float value) {
 		this();
 		this.stamp = new Date().getTime();
 		this.deviceId = deviceId;
 		this.streamId = streamId;
+		this.value = value;
 	}
 	
 	public TsMeasurement(ME me) {

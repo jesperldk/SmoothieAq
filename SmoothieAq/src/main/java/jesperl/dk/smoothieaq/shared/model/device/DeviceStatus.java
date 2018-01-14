@@ -15,7 +15,7 @@ public class  DeviceStatus extends DbWithParrentId implements DeviceStatus_Helpe
 	public DeviceStatusType statusType;
 
 	@JsOverlay 
-	public static DeviceStatus create(short deviceId) {
+	public static DeviceStatus create(int deviceId) {
 		DeviceStatus deviceStatus = new DeviceStatus();
 		deviceStatus.id = deviceId;
 		deviceStatus.statusType = DeviceStatusType.disabled;
@@ -23,7 +23,7 @@ public class  DeviceStatus extends DbWithParrentId implements DeviceStatus_Helpe
 	}
 
 	@JsOverlay @GwtIncompatible 
-	public static DeviceStatus createS(short deviceId) {
+	public static DeviceStatus createS(int deviceId) {
 		DeviceStatus deviceStatus = create(deviceId);
 		deviceStatus.getDate();
 		return deviceStatus;

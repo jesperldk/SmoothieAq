@@ -21,9 +21,6 @@ public interface ITask extends Idable {
 	ITask changeStatus(State state, TaskStatusType statusType);
 	boolean isEnabled();
 
-//	void manualDone(); // TODO args!!!
-//	void manualPostpone(LocalDate postponeTo);
-	
 	Interval last();
 	Interval next();
 	boolean on();

@@ -3,7 +3,7 @@ package jesperl.dk.smoothieaq.server.state;
 import jesperl.dk.smoothieaq.shared.model.db.*;
 
 public class  IdFirstFilter<DBO extends DbObject> extends FirstFilter<DBO> {
-	private short max = 0;
+	private int max = 0;
 
 	@Override protected Object getKey(DBO dbo) {
 		Idable idable = (Idable) dbo;
@@ -11,5 +11,5 @@ public class  IdFirstFilter<DBO extends DbObject> extends FirstFilter<DBO> {
 		return idable.getId();
 	}
 
-	public short getMax() { return max; }
+	public int getMax() { return max; }
 }

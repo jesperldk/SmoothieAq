@@ -17,7 +17,7 @@ public class  TaskStatus extends DbWithParrentId implements TaskStatus_Helper {
 	public long manualPostponedTo;
 	
 	@JsOverlay 
-	public static TaskStatus create(short taskId) {
+	public static TaskStatus create(int taskId) {
 		TaskStatus taskStatus = new TaskStatus();
 		taskStatus.id = taskId;
 		taskStatus.statusType = TaskStatusType.enabled;
@@ -25,7 +25,7 @@ public class  TaskStatus extends DbWithParrentId implements TaskStatus_Helper {
 	}
 
 	@JsOverlay @GwtIncompatible 
-	public static TaskStatus createS(short taskId) {
+	public static TaskStatus createS(int taskId) {
 		TaskStatus taskStatus = create(taskId);
 		taskStatus.getDate();
 		return taskStatus;

@@ -21,6 +21,7 @@ public interface TaskRest {
 
 	@GET @Path("view") Single<TaskView> getView(@QueryParam("id") int taskId);
 	
+	@GET @Path("devicetasks") Observable<TaskView> tasks(@QueryParam("deviceid") int deviceId);
 	@GET @Path("tasks") Observable<TaskView> tasks();
 
 	@POST @Path("done") Single<TaskView> done(@QueryParam("id") int taskId, TaskArg arg, @QueryParam("description") String description);
@@ -37,7 +38,7 @@ public interface TaskRest {
 	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 	public static class  TaskScheduleView {
-		public short taskId;
+		public int taskId;
 		public TaskStatusType statusType;
 		public long lastStart;
 		public long nextStart;

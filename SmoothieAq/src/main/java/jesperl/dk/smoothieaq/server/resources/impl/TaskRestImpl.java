@@ -38,6 +38,9 @@ public class  TaskRestImpl extends RestImpl implements TaskRest {
 		return sview(itask(taskId));
 	}
 
+	@Override public Observable<TaskView> tasks(int deviceId) {
+		return Observable.from(idev(deviceId).model().getTasks()).map(TaskRestImpl::view);
+	}
 	@Override public Observable<TaskView> tasks() {
 		return context().tasks().map(TaskRestImpl::view);
 	}
@@ -54,13 +57,17 @@ public class  TaskRestImpl extends RestImpl implements TaskRest {
 		return manual(taskId, t -> t.postpone(state(),postponeTo));
 	}
 	
+	@Override public Single<String> validateStreamExpr(String streamExpr) {
+		return Single.just(new StreamExprParser().parseThis(streamExpr, context()).toShowable());
+	}
+
 	protected Single<TaskView> manual(int taskId, Consumer<ManualTask> c) {
 		ManualTask task = (ManualTask)itask(taskId);
 		c.accept(task);
 		return sview(task);
 	}
 	
-	protected Single<TaskView> sview(ITask x) { return Single.just(view(x)); }
+	protected Single<TaskView> sview(ITask task) { return Single.just(view(task)); }
 	protected static TaskView view(ITask task) {
 		TaskView tv = new TaskView();
 		tv.task = task.model().getTask();
@@ -68,7 +75,7 @@ public class  TaskRestImpl extends RestImpl implements TaskRest {
 		return tv;
 	}
 	
-	protected Single<TaskScheduleView> sscheduleView(ITask x) { return Single.just(scheduleView(x)); }
+	protected Single<TaskScheduleView> sscheduleView(ITask task) { return Single.just(scheduleView(task)); }
 	protected static TaskScheduleView scheduleView(ITask task) {
 		TaskStatus status = task.model().getStatus();
 		TaskScheduleView sv = new TaskScheduleView();
@@ -83,9 +90,6 @@ public class  TaskRestImpl extends RestImpl implements TaskRest {
 		return sv;
 	}
 
-	@Override public Single<String> validateStreamExpr(String streamExpr) {
-		return Single.just(new StreamExprParser().parseThis(streamExpr, context()).toShowable());
-	}
 
 
 }

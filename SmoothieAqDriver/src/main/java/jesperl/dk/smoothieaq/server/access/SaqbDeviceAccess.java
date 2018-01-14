@@ -75,7 +75,7 @@ public class  SaqbDeviceAccess extends CmdserDeviceAccess {
 				cmdDa.setNoretries(true);
 				Storage storage = cmdDa.retrieveOrCreate(SaqbDeviceAccess.class , Storage::new);
 				if (storage.saqbe != null) return storage.saqbe;
-				storage.saqbe = pair(null,null); // because we may fail below
+				storage.saqbe = pair((String)null,(String)null); // because we may fail below
 				String[] ver = cmdDa.doCmd(versionReply,versionCmd);
 				if (!"SmoothieAq".equals(ver[0])) return null;
 				storage.saqbe = pair(ver[2],somePort.getSystemPortName());

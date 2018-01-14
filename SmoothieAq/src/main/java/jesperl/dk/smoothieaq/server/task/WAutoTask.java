@@ -14,7 +14,7 @@ public abstract class  WAutoTask extends WTask implements ITask {
 	
 	@Override public synchronized void start(State state) {
 		Instant now = state.now.instant();
-		if (task.taskType.isIntervalSchedule()) {
+		if (task.taskType.info().intervalSchedule) {
 			on = true;
 			if (sApply != null) wire(state);
 			autoStart(state, next);

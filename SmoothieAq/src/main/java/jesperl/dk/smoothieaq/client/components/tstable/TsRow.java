@@ -2,13 +2,11 @@ package jesperl.dk.smoothieaq.client.components.tstable;
 
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
-import com.google.gwt.core.client.*;
 import com.google.gwt.user.client.ui.*;
 
 import gwt.material.design.client.ui.html.*;
 
 public class TsRow extends Div {
-	private int no;
 	
 	private Div iconDiv = new Div("TsIcon");
 	private Div stampDiv = new Div("TsStamp");
@@ -17,7 +15,6 @@ public class TsRow extends Div {
 
 	public TsRow(int no) {
 		super("TsRow");
-		this.no = no;
 		add(iconDiv);
 		add(stampDiv);
 		add(idDiv);

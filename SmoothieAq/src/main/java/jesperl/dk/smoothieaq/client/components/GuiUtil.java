@@ -1,6 +1,10 @@
 package jesperl.dk.smoothieaq.client.components;
 
+import static jesperl.dk.smoothieaq.client.text.EnumMessages.*;
+import static jesperl.dk.smoothieaq.client.text.FieldMessages.*;
+import static jesperl.dk.smoothieaq.shared.util.Objects2.*;
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.stream;
 
 import java.util.*;
 import java.util.stream.*;
@@ -10,9 +14,10 @@ import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.*;
 
 import gwt.material.design.addins.client.combobox.*;
+import gwt.material.design.client.base.*;
 import gwt.material.design.client.constants.*;
 import gwt.material.design.client.ui.*;
-import jesperl.dk.smoothieaq.client.components.modal.*;
+import gwt.material.design.client.ui.html.*;
 import jesperl.dk.smoothieaq.client.enums.*;
 import jesperl.dk.smoothieaq.shared.model.db.*;
 import jesperl.dk.smoothieaq.util.shared.*;
@@ -23,9 +28,10 @@ public class GuiUtil {
 	
 	public static MaterialIcon wIcon(IconType iconType) { return new MaterialIcon(iconType); }
 	
-	public static Widget wModal(Widget title, Widget body, Action okAction) {
-		return new ModalView(title, body, okAction);
+	public static Widget wModal(Widget body, Action okAction) {
+		return new ModalView(body, okAction);
 	}
+	public static <W extends HasReadOnly> W wRo(W w, boolean readOnly) { w.setReadOnly(readOnly); return w; }
 
 	public static MaterialAnchorButton wFloatButton(EnumInfo enumInfo, Action doOnClick) {
 		return wFloatButton(enumInfo.icon, enumInfo.bgColor, enumInfo.hoverTxt, doOnClick);
@@ -57,6 +63,19 @@ public class GuiUtil {
 		if (doOnClick != null) btn.setWaves(WavesType.LIGHT);
 		return btn;
 	}
+	public static MaterialLink wLink(boolean primary, String text, String hoverTxt, Action doOnClick) {
+		MaterialLink btn = new MaterialLink() {
+			@Override protected void onLoad() {
+				super.onLoad();
+				if (doOnClick != null) addClickHandler(e -> doOnClick.doit());
+			}
+		};
+		btn.setText(text);
+//		if (!primary) { btn.setBackgroundColor(Color.WHITE); btn.setTextColor(Color.BLACK); }
+		if (hoverTxt != null)  btn.setTooltip(hoverTxt);
+//		if (doOnClick != null) btn.setWaves(WavesType.LIGHT);
+		return btn;
+	}
 
 	public static MaterialTextBox wTextBox(Field<String> field) {
 		MaterialTextBox textBox = new MaterialTextBox() {
@@ -66,8 +85,14 @@ public class GuiUtil {
 				addChangeHandler(evt -> field.set(getValue()));
 			};
 		};
-		textBox.setLabel(field.getKey());
+		setLabel(textBox,field);
 		return textBox;
+	}
+	protected static void setLabel(MaterialValueBox<?> widget, Field<?> field) {
+		String name = fieldMsg.name(field);
+		widget.setPlaceholder(name);
+		String help = fieldMsg.help(field);
+		if (isNotEmpty(help) && !help.equals(name)) widget.setTooltip(help);
 	}
 	
 	public static MaterialIntegerBox wShortBox(Field<Short> field) {
@@ -78,7 +103,7 @@ public class GuiUtil {
 				addChangeHandler(evt -> field.set(funcNotNull(getValue(), Integer::shortValue)));
 			};
 		};
-		integerBox.setLabel(field.getKey());
+		setLabel(integerBox,field);
 		return integerBox;
 	}
 	
@@ -90,45 +115,59 @@ public class GuiUtil {
 				addChangeHandler(evt -> field.set(getValue()));
 			};
 		};
-		floatBox.setLabel(field.getKey());
+		setLabel(floatBox,field);
 		return floatBox;
 	}
 	
 	public static <T extends Enum<T>> MaterialComboBox<String> wComboBox(Field<T> field) { return wComboBox(field, wOptions(field.getType())); }
-	
-	public static <T> MaterialComboBox<String> wComboBox(Field<T> field, WOptions<T> options) {
+	public static <T> MaterialComboBox<String> wComboBox(Field<T> field, WOptions<T> options) { return wComboBox(field, Single.just(options)); }
+	public static <T> MaterialComboBox<String> wComboBox(Field<T> field, Single<WOptions<T>> options) {
 		MaterialComboBox<String> comboBox = new MaterialComboBox<String>() {
+			Subscription subscription;
 			protected void onLoad() {
 				super.onLoad();
-				setSingleValue(options.key(field.get()));
-				addValueChangeHandler(evt -> field.set(options.value(getSingleValue())));
+				subscription = options.subscribe(os -> {
+					addValueChangeHandler(evt -> field.set(os.value(getSingleValue())));
+					os.options.forEach(o -> {
+						Option option = addItem(o.text, o.key);
+						if (o.help != null && !o.text.equals(o.help)) option.setTitle(o.help);
+					});
+					setSingleValue(os.key(field.get()));
+				});
+			}
+			@Override protected void onUnload() {
+				subscription = unsubscribe(subscription);
+				super.onUnload();
 			}
 		};
-		options.options.forEach(o -> comboBox.addItem(o.text, o.key));
-		comboBox.setLabel(field.getKey());
+		String name = fieldMsg.name(field);
+		comboBox.setPlaceholder(name);
+		String help = fieldMsg.help(field);
+		if (isNotEmpty(help) && !help.equals(name)) comboBox.setTooltip(help);
 		return comboBox;
 	}
 	
 	public static <T extends Enum<T>> WOptions<T> wOptions(Class<T> enumClass) {
-		return new WOptions<T>(stream(enumClass.getEnumConstants()).map(e -> pair(e, enumClass.getSimpleName()+"."+e.name())));
+		return new WOptions<T>(stream(enumClass.getEnumConstants()).map(triple(e -> capitalize(enumMsg.valueLongName(e)), e -> enumMsg.valueHelp(e))));
 	}
 	public static class WOption<T> {
 		public final T value;
 		public final String key;
 		public final String text;
-		public WOption(T value, String key, String text) { this.value = value; this.key = key; this.text = text; }
+		public final String help;
+		public WOption(T value, String key, String text, String help) { this.value = value; this.key = key; this.text = text; this.help = help; }
 	}
 	public static class WOptions<T> {
 		private List<WOption<T>> options = new ArrayList<>();
 		private Map<String,T> toValue = new HashMap<>();
 		private Map<T,String> toKey = new HashMap<>();
 		
-		public WOptions(Stream<Pair<T, String>> valueAndTexts) {
-			options.add(new WOption<>(null, "", ""));
+		public WOptions(Stream<Triple<T, String, String>> valueAndTexts) {
+			options.add(new WOption<>(null, "", "", null));
 			toValue.put("", null);
-			valueAndTexts.forEach(with((value, text) -> {
+			valueAndTexts.forEach(with((value, text, help) -> {
 				String key = strv(options.size());
-				options.add(new WOption<>(value, key, text));
+				options.add(new WOption<>(value, key, text, help));
 				toValue.put(key, value);
 				toKey.put(value, key);
 			}));
@@ -140,30 +179,27 @@ public class GuiUtil {
 	}
 	
 	public static <T extends Enum<T>> MaterialListValueBox<String> wListBox(Field<T> field) { return wListBox(field, wOptions(field.getType())); }
-	
-	public static <T> MaterialListValueBox<String> wListBox(Field<T> field, WOptions<T> options) {
-		MaterialListValueBox<String> listBox = new MaterialListValueBox<String>() {
-			protected void onLoad() {
-				super.onLoad();
-				setValue(options.key(field.get()));
-				addValueChangeHandler(evt -> field.set(options.value(getValue())));
-			}
-		};
-		options.options.forEach(o -> listBox.addItem(o.key, o.text));
-		listBox.setPlaceholder(field.getKey());
-		return listBox;
-	}
+	public static <T> MaterialListValueBox<String> wListBox(Field<T> field, WOptions<T> options) { return wListBox(field, Single.just(options)); }
 	public static <T> MaterialListValueBox<String> wListBox(Field<T> field, Single<WOptions<T>> options) {
 		MaterialListValueBox<String> listBox = new MaterialListValueBox<String>() {
+			Subscription subscription;
 			protected void onLoad() {
 				super.onLoad();
-				options.subscribe(os -> {
-					setValue(os.key(field.get()));
+				subscription = options.subscribe(os -> {
 					addValueChangeHandler(evt -> field.set(os.value(getValue())));
 					os.options.forEach(o -> addItem(o.key, o.text));
+					setValue(os.key(field.get()));
 				});
 			}
+			@Override protected void onUnload() {
+				subscription = unsubscribe(subscription);
+				super.onUnload();
+			}
 		};
+		String name = fieldMsg.name(field);
+		listBox.setPlaceholder(name);
+		String help = fieldMsg.help(field);
+		if (isNotEmpty(help) && !help.equals(name)) listBox.setTooltip(help);
 		listBox.setPlaceholder(field.getKey());
 		return listBox;
 	}

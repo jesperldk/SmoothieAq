@@ -44,7 +44,7 @@ public class  DeviceContext {
 	}
 	
 	public void getready() {
-		devices.values().stream().forEach(d -> d.getReady(state));
+		devices.values().stream().filter(d -> !d.isDeleted()).forEach(d -> d.getReady(state));
 		init = false;
 		scheduleChanged();
 	}
@@ -98,7 +98,7 @@ public class  DeviceContext {
 			state.saveWithId(device);
 			wdevice.internalSet(state, DeviceStatusType.disabled);
 			return wdevice;
-		}, e -> error(log,e,100104,major,"Could not create device id={0} - {1}",device.id,e.toString()));
+		}, e -> error(log,e,100107,major,"Could not create device id={0} - {1}",device.id,e.toString()));
 	}
 	
 	public IDevice getDevice(int id) { return getWDevice(id); }

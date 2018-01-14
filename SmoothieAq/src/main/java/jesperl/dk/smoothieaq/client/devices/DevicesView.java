@@ -19,9 +19,7 @@
  */
 package jesperl.dk.smoothieaq.client.devices;
 
-import static java.util.logging.Level.*;
 import static jesperl.dk.smoothieaq.client.context.CContext.*;
-import static jesperl.dk.smoothieaq.client.css.SmoothieAqCss.*;
 
 import java.util.logging.*;
 
@@ -32,13 +30,11 @@ import com.google.gwt.user.client.ui.*;
 
 import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
 
-import gwt.material.design.client.constants.*;
 import gwt.material.design.client.ui.*;
 import jesperl.dk.smoothieaq.client.*;
 import jesperl.dk.smoothieaq.client.components.*;
 import jesperl.dk.smoothieaq.client.devices.img.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
-import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
 import rx.*;
 
 public class DevicesView extends Composite {
@@ -60,11 +56,10 @@ public class DevicesView extends Composite {
     @Override
     protected void onLoad() {
     	super.onLoad();
-        addBtn.addClickHandler(evt -> createDeviceModal());
+        addBtn.addClickHandler(evt -> { Device device = new Device(); wModal(new DeviceEditView(device,true), () -> Resources.device.create(device.copy()).subscribe()); });
 
-//        devicesSubscription = ctx.cDevices.devices().flatMap(cd -> cd.compactView).subscribe(d -> cardRow.add(deviceCol(d)));
         devicesSubscription = ctx.cDevices.devices()
-        	.map(cd -> cd.compactView.map(this::deviceCard).map(this::deviceCol))
+        	.map(cd -> cd.compactView.map(DeviceCardView::new).map(this::deviceCol))
         	.map(WSingle::new).subscribe(cardRow::add);
     }
     
@@ -74,59 +69,32 @@ public class DevicesView extends Composite {
     	super.onUnload();
     }
     
-    protected Widget createDeviceModal() {
-    	MaterialTitle title = new MaterialTitle("*New device", "***");
-    	MaterialPanel panel = new MaterialPanel();
-    	Device device = new Device();
-    	panel.add(wListBox(device.deviceType()));
-    	panel.add(wListBox(device.deviceClass()));
-    	panel.add(wListBox(device.deviceCategory()));
-//    	panel.add(wShortBox(device.driverId()));
-    	panel.add(wListBox(device.driverId(),ctx.cDrivers.options()));
-    	panel.add(wTextBox(device.deviceUrl()));
-    	panel.add(wTextBox(device.name()));
-    	panel.add(wTextBox(device.description()));
-    	panel.add(wListBox(device.measurementType()));
-    	panel.add(wFloatBox(device.repeatabilityLevel()));
-    	panel.add(wFloatBox(device.onLevel()));
-    	panel.add(wFloatBox(device.wattAt100pct()));
-    	return wModal(title,panel, () -> { t(device); });
-    }
-
-	Subscription t(Device device) {
-		return Resources.device.create(device.copy()).subscribe(e -> {},e -> log.log(SEVERE,"create device err",e));
-	}
+//    protected Widget createDeviceModalx() {
+//    	MaterialTitle title = new MaterialTitle("*New device", "***");
+//    	MaterialPanel panel = new MaterialPanel();
+//    	Device device = new Device();
+//    	panel.add(wListBox(device.deviceType()));
+//    	panel.add(wListBox(device.deviceClass()));
+//    	panel.add(wComboBox(device.deviceCategory()));
+//    	panel.add(wComboBox(device.driverId(),ctx.cDrivers.options()));
+//    	panel.add(wTextBox(device.deviceUrl()));
+//    	panel.add(wTextBox(device.name()));
+//    	panel.add(wTextBox(device.description()));
+//    	panel.add(wListBox(device.measurementType()));
+//    	panel.add(wFloatBox(device.repeatabilityLevel()));
+//    	panel.add(wFloatBox(device.onLevel()));
+//    	panel.add(wFloatBox(device.wattAt100pct()));
+//    	return wModal(title,panel, () -> { t(device); });
+//    }
+//
+//	Subscription t(Device device) {
+//		return Resources.device.create(device.copy()).subscribe(e -> {},e -> log.log(SEVERE,"create device err",e));
+//	}
     
 	protected Widget deviceCol(Widget w) {
 		MaterialColumn column = new MaterialColumn(12, 6, 4);
 		column.add(w);
 		return column;
-	}
-
-	private Widget deviceCard(DeviceCompactView d) {
-		MaterialCard card = new MaterialCard();
-		card.setOrientation(Orientation.LANDSCAPE);
-		card.addStyleName(css.aqcard());
-		
-		MaterialCardImage cardImage = new MaterialCardImage();
-		cardImage.add(new MaterialImage(get(d.deviceType)));
-		card.add(cardImage);
-		
-		MaterialCardContent content = new MaterialCardContent();
-		MaterialCardTitle title = new MaterialCardTitle();
-		title.setText(d.name);
-		content.add(title);
-		content.add(new MaterialLabel(d.description));
-		content.add(new DeviceStatusView(d));
-		card.add(content);
-		
-		
-		MaterialCardAction action = new MaterialCardAction();
-		action.add(new MaterialLink("Edit"));
-		action.add(new MaterialLink("View"));
-		card.add(action);
-		
-		return card;
 	}
 	
 	public static ImageResource get(DeviceType devType) {

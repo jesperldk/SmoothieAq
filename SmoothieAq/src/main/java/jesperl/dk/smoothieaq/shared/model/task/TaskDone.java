@@ -19,14 +19,14 @@ public class  TaskDone extends DbWithParrentId implements TaskDone_Helper {
 	public String description;
 	
 	@JsOverlay 
-	public static TaskDone create(short taskId) {
+	public static TaskDone create(int taskId) {
 		TaskDone taskDone = new TaskDone();
 		taskDone.id = taskId;
 		return taskDone;
 	}
 
 	@JsOverlay @GwtIncompatible 
-	public static TaskDone createS(short taskId) {
+	public static TaskDone createS(int taskId) {
 		TaskDone taskDone = create(taskId);
 		taskDone.getDate();
 		return taskDone;

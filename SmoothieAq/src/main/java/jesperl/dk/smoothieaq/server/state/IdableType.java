@@ -4,17 +4,17 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 
 public abstract class  IdableType implements Idable {
 	
-	private short id = 0;
+	private int id = 0;
 	private String name;
 
 	@Override
-	public void setId(short id) {
+	public void setId(int id) {
 		assert this.id == 0;
 		this.id = id;
 	}
 	
 	@Override
-	public short getId() {
+	public int getId() {
 		assert id != 0;
 		return id;
 	}

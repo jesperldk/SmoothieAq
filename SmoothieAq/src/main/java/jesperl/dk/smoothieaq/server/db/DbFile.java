@@ -59,9 +59,9 @@ public class  DbFile<DBO extends DbObject> {
 					if (dbo instanceof DbWithStamp) {
 						((DbWithStamp) dbo).stamp = map.getLong();
 						if (dbo instanceof DbWithId)
-							((DbWithId)dbo).id = map.getShort();
+							((DbWithId)dbo).id = map.getInt();
 						else if (dbo instanceof DbWithParrentId)
-							((DbWithParrentId)dbo).id = map.getShort();
+							((DbWithParrentId)dbo).id = map.getInt();
 					}
 					dbo.deserialize(map.get(), map, context);
 					log.fine("desialized "+cls.getSimpleName());
@@ -97,9 +97,9 @@ public class  DbFile<DBO extends DbObject> {
 					if (dbo instanceof DbWithStamp) {
 						buf.putLong(((DbWithStamp) dbo).stamp);
 						if (dbo instanceof DbWithId)
-							buf.putShort(((DbWithId)dbo).id);
+							buf.putInt(((DbWithId)dbo).id);
 						else if (dbo instanceof DbWithParrentId)
-							buf.putShort(((DbWithParrentId)dbo).id);
+							buf.putInt(((DbWithParrentId)dbo).id);
 					}
 					dbo.serialize(buf, context);
 					log.fine("serialized "+dbo.getClass().getSimpleName());

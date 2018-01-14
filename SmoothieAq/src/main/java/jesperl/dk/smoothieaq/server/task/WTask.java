@@ -63,11 +63,11 @@ public abstract class  WTask extends IdableType implements ITask {
 	
 	public static void validate(Task task, IDevice device) {
 		assert task.deviceId == device.getId();
-		assert task.taskType.isOfType(TaskType.manual) || task.taskType.getDeviceClass() == device.model().getDevice().deviceClass;
-		assert task.taskType.getDeviceType() == null || task.taskType.getDeviceType() == device.model().getDevice().deviceType;
-		assert task.whenStream == null || task.taskType.isWhenAllowed();
-		assert task.taskType.getTaskArg() == null || (task.taskArg != null && task.taskType.getTaskArg().getClass().isAssignableFrom(task.taskArg.getClass()));
-		assert task.taskArg == null || task.taskType.getTaskArg() != null;
+		assert task.taskType.isOfType(TaskType.manual) || task.taskType.info().deviceClass == device.model().getDevice().deviceClass;
+		assert task.taskType.info().deviceType == null || task.taskType.info().deviceType == device.model().getDevice().deviceType;
+		assert task.whenStream == null || task.taskType.info().whenAllowed;
+		assert task.taskType.info().taskArg == null || (task.taskArg != null && task.taskType.info().taskArg.getClass().isAssignableFrom(task.taskArg.getClass()));
+		assert task.taskArg == null || task.taskType.info().taskArg != null;
 		// TODO validate with proper errors
 	}
 	
@@ -130,7 +130,7 @@ public abstract class  WTask extends IdableType implements ITask {
 			if (on) end(state);
 		} else {
 			next = interval;
-			if (task.taskType.isIntervalSchedule() && on && !interval.a.isBefore(state.now.instant())) end(state);
+			if (task.taskType.info().intervalSchedule && on && !interval.a.isBefore(state.now.instant())) end(state);
 		}
 		notifyScheduled(state);
 	}

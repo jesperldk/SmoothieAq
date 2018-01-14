@@ -12,12 +12,12 @@ import jsinterop.annotations.*;
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 public class  Measure extends DbWithStamp implements Measure_Helper {
 	
-	public short deviceId;
+	public int deviceId;
 	public DeviceStream stream;
 	public float value;
 	
 	@JsOverlay 
-	public static Measure create(short deviceId, DeviceStream stream, float value) {
+	public static Measure create(int deviceId, DeviceStream stream, float value) {
 		Measure measure = new Measure();
 		measure.getDate(); // trigger stamp
 		measure.deviceId = deviceId;
