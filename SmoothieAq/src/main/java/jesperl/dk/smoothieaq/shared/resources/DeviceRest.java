@@ -45,8 +45,8 @@ public interface DeviceRest {
 	public static class  DeviceView {
 		public Device device;
 		public DeviceStatusType statusType;
-//		public boolean on;
-		public Task[] tasks; 
+		public Task autoTask;
+		public Task[] manualTasks; 
 	}
 	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
@@ -60,7 +60,6 @@ public interface DeviceRest {
 		public String description;
 		public DeviceStatusType statusType;
 		public float currentValue;
-//		public boolean on;
 	}
 	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
@@ -84,7 +83,6 @@ public interface DeviceRest {
 		view.currentValue = idev.getValue();
 		view.measurementType = idev.model().getDevice().measurementType;
 		view.repeatabilityLevel = idev.model().getDevice().repeatabilityLevel;
-//		view.on = false;
 		return view;
 	}
 
@@ -92,10 +90,11 @@ public interface DeviceRest {
 		DeviceView view = new DeviceView();
 		view.device = idev.model().getDevice();
 		List<ITask> tasks = idev.model().getTasks();
-		view.tasks = new Task[tasks.size()];
-		for (int i = 0; i < tasks.size(); i++) view.tasks[i] = tasks.get(i).model().getTask();
+		int noManualTasks = 0;
+		for (ITask t: tasks) {if (t.model().getTask().taskType.isOfType(TaskType.auto)) view.autoTask = t.model().getTask(); else noManualTasks++;}
+		view.manualTasks = new Task[noManualTasks];
+		int i = 0; for (ITask t: tasks) {if (!t.model().getTask().taskType.isOfType(TaskType.auto)) view.manualTasks[i++] = t.model().getTask(); }
 		view.statusType = idev.model().getStatus().statusType;
-//		view.on = false;
 		return view;
 	}
 }

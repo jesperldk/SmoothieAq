@@ -17,6 +17,7 @@ import jesperl.dk.smoothieaq.server.task.*;
 import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.measure.*;
+import jesperl.dk.smoothieaq.shared.model.schedule.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 import jesperl.dk.smoothieaq.util.shared.*;
 import jesperl.dk.smoothieaq.util.shared.error.Error;
@@ -70,17 +71,20 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 			state.wires.devicesChanged.onNext(WDevice.this);
 			return WDevice.this;
 		}
+//		assert device.id == 0;
+//		WDevice.validate(state, device);
+//		state.setNewId(device);
+//		WDevice<?> wdevice = createWDevice(device);
+//		state.saveWithId(device);
+//		wdevice.internalSet(state, DeviceStatusType.disabled);
+//		return wdevice;
 		
 		@Override synchronized public ITask add(State state, Task task) {
+			assert task.id == 0;
 			WTask.validate(task, WDevice.this);
-			assert !tasks.contains(task.id); // OBS!!
-			state.save(task);
-			WTask wtask = createWTask(state.dContext, task);
-			state.wires.tasksChanged.onNext(wtask);
-			WDevice.this.scheduleChanged(state);
-			return wtask;
+			return addTask(state, task);
 		}
-		
+
 		@Override public Device getDevice() { return WDevice.this.device; }
 		@Override public DeviceStatus getStatus() { return WDevice.this.status; }
 		@Override public DeviceCalibration getCalibration() { return WDevice.this.calibration; }
@@ -104,8 +108,8 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 		assert device.deviceClass != null;
 		assert device.deviceType != null;
 		assert device.deviceCategory != null;
-		assert device.driverId != 0 ^ device.deviceCategory == DeviceCategory.manual;
-		assert device.deviceUrl != null ^ device.deviceCategory == DeviceCategory.manual;
+		assert device.driverId != 0 ^ device.deviceClass == DeviceClass.manual;
+		assert device.deviceUrl != null ^ device.deviceClass == DeviceClass.manual;
 		assert device.name != null; // should be unique
 		assert !EnumSet.of(DeviceClass.sensor, DeviceClass.onoff, DeviceClass.level, DeviceClass.doser, DeviceClass.container, DeviceClass.calculated)
 				.contains(device.deviceClass) || device.measurementType != null;
@@ -116,18 +120,42 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	synchronized public void init(DeviceCalibration calibration) { this.calibration = calibration; }
 	synchronized public void init(DeviceStatus status) { this.status = status; }
 	synchronized public void init(DeviceContext context, Task task) { createWTask(context, task); }
+
+	public ITask internalInitialAutoTask(State state) {
+		Set<TaskType> types = TaskTypeUtil.autoTypes(device.deviceClass);
+		if (types == null || types.isEmpty()) return null;
+		TaskType taskType = null;
+		for (TaskType type: types) if (!type.info().whenAllowed) taskType = type;
+		if (taskType == null) taskType = types.iterator().next();
+		Task task = Task.create(getId(), taskType);
+		if (taskType.info().whenAllowed) task.whenStream = "0 -> this";
+		task.schedule = (taskType.info().intervalSchedule) ? IntervalAllways.create() : PointNever.create();
+		return addTask(state, task);
+	}
 	
+	protected ITask addTask(State state, Task task) {
+		state.setNewId(task);
+		WTask wtask = createWTask(state.dContext, task);
+		state.saveWithId(task);
+		wtask.changeStatus(state, TaskStatusType.enabled);
+		state.wires.tasksChanged.onNext(wtask);
+		WDevice.this.scheduleChanged(state);
+		return wtask;
+	}
+			
 	protected WTask createWTask(DeviceContext context, Task task) {
 		WTask wtask;
 		switch(task.taskType) {
-			case autoMeasure: wtask = new WAutoMeasureTask(); break;
-			case autoOnoff: wtask = new WAutoOnoffTask(); break;
-			case autoStatus: wtask = new WAutoStatusTask(); break;
+//			case autoMeasure: wtask = new WAutoMeasureTask(); break;
+			case autoOnoff: case autoOnoffStream: wtask = new WAutoOnoffTask(); break;
+			case autoStatusStream: wtask = new WAutoStatusTask(); break;
 			case autoLevel: wtask = new WAutoLevelTask(); break;
 			case autoLevelStream: wtask = new WAutoLevelStreamTask(); break;
 			case autoProgram: wtask = new WAutoProgramTask(); break;
 			case autoDoseAmount: wtask = new WAutoDoseAmountTask(); break;
 			case autoDoseMax: wtask = new WAutoDoseMaxTask(); break;
+			case autoContainerStream: wtask = new WAutoContainerStreamTask(); break;
+			case autoCalculatedStream: wtask = new WAutoCalculatedStreamTask(); break;
 			default: if (task.taskType.isOfType(TaskType.manual)) wtask = new WManualTask();
 					 else throw error(log,100120,major,"Unknown taskType {0}",device.deviceClass);
 		}
@@ -249,8 +277,8 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	@Override public void clearError() { error = null; }
 	protected void setError(Error error) { if (this.error == null || this.error.severity.getId() < error.severity.getId()) this.error = error; }
 	
-	protected void doErrorGuarded(Doit doit) { if (error == null) doGuarded(e -> { setError(e.getError()); return null; }, doit); }
-	protected void doDoErrorGuarded(Doit doit) { doGuarded(e -> { setError(e.getError()); return null; }, doit); }
+	public void doErrorGuarded(Doit doit) { if (error == null) doGuarded(e -> { setError(e.getError()); return null; }, doit); }
+	public void doDoErrorGuarded(Doit doit) { doGuarded(e -> { setError(e.getError()); return null; }, doit); }
 	
 	@Override public Observer<Float> drain() {
 		return new Subscriber<Float>() {

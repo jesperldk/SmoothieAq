@@ -69,9 +69,13 @@ public class  DbFile<DBO extends DbObject> {
 				}
 				s.onCompleted();
 			} catch (Exception e) {
-				log.warning("exception reading - "+e.getMessage());
-				if (e instanceof NoSuchFileException) s.onCompleted();
-				else s.onError(e);
+				if (e instanceof NoSuchFileException) {
+					log.log(Level.INFO,"no file - "+e.toString());
+					s.onCompleted();
+				} else {
+					log.log(Level.WARNING,"exception reading - "+e.toString(),e);
+					s.onError(e);
+				}
 			}
 		});
 	}
@@ -85,7 +89,7 @@ public class  DbFile<DBO extends DbObject> {
 				doGuarded(() -> { if (channel != null) channel.close(); });
 			}
 			@Override public void onError(Throwable e) { 
-				log.warning("onError on "+cls.getSimpleName()+" - "+e.getMessage());
+				log.log(Level.WARNING,"onError on "+cls.getSimpleName()+" - "+e.toString(),e);
 				onCompleted();
 			}
 

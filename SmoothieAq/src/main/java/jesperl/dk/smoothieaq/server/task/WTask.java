@@ -1,8 +1,6 @@
 package jesperl.dk.smoothieaq.server.task;
 
-import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
-
-import java.util.Date;
+import java.util.*;
 
 import jesperl.dk.smoothieaq.server.device.*;
 import jesperl.dk.smoothieaq.server.device.classes.*;
@@ -29,7 +27,7 @@ public abstract class  WTask extends IdableType implements ITask {
 		
 		@Override public synchronized ITask replace(State state, Task task) {
 			assert task.getId() == WTask.this.task.getId();
-			assert task.taskType == WTask.this.task.taskType;
+			assert task.taskType.isOfType(TaskType.manual);
 			validate(task,device);
 			state.replace(task);
 			state.wires.tasksChanged.onNext(WTask.this);
@@ -52,7 +50,7 @@ public abstract class  WTask extends IdableType implements ITask {
 	}
 	
 	protected void initInternal(State state) {
-		if (task.whenStream != null) doNoException(() -> sApply = new StreamExprParser().parse(task.whenStream, state.dContext));
+		if (task.whenStream != null) device.doErrorGuarded(() -> sApply = new StreamExprParser().parse(task.whenStream, state.dContext));
 		scheduleChanged(state);
 	}
 	

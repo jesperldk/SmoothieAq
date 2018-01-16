@@ -21,7 +21,8 @@ public interface TaskRest {
 
 	@GET @Path("view") Single<TaskView> getView(@QueryParam("id") int taskId);
 	
-	@GET @Path("devicetasks") Observable<TaskView> tasks(@QueryParam("deviceid") int deviceId);
+	@GET @Path("deviceautotask") Single<TaskView> autoTask(@QueryParam("deviceid") int deviceId);
+	@GET @Path("devicemanualtasks") Observable<TaskView> manualTasks(@QueryParam("deviceid") int deviceId);
 	@GET @Path("tasks") Observable<TaskView> tasks();
 
 	@POST @Path("done") Single<TaskView> done(@QueryParam("id") int taskId, TaskArg arg, @QueryParam("description") String description);

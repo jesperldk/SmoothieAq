@@ -4,6 +4,7 @@ import static jesperl.dk.smoothieaq.shared.model.device.DeviceClass.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceType.*;
 import static jesperl.dk.smoothieaq.shared.model.measure.MeasurementType.*;
 import static jesperl.dk.smoothieaq.shared.model.task.TaskType.*;
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import java.util.*;
 
@@ -22,20 +23,28 @@ public class TaskTypeUtil {
 		public TaskTypeInfo(DeviceClass deviceClass, DeviceType deviceType, boolean intervalSchedule, boolean whenAllowed, TaskType parrentType, TaskArg taskArg) {
 			this.deviceClass = deviceClass; this.deviceType = deviceType; this.intervalSchedule = intervalSchedule; this.whenAllowed = whenAllowed; this.parrentType = parrentType; this.taskArg = taskArg;
 		}
-		public boolean isParrentOfType(TaskType type) { return parrentType != null && parrentType.equals(type); }
+		public boolean isParrentOfType(TaskType type) { return parrentType != null && parrentType.isOfType(type); }
 	}
 
+	public static Map<TaskType, TaskTypeInfo> toInfo = new HashMap<>();
+	public static Map<DeviceClass, EnumSet<TaskType>> toAuto = new HashMap<>();
+	public static Map<DeviceType, EnumSet<TaskType>> toManual = new HashMap<>();
+	public static EnumSet<TaskType> defaultManual = EnumSet.noneOf(TaskType.class);
 	static {
+		for (int i = 0; i < DeviceClass.values().length; i++) toAuto.put(DeviceClass.values()[i], EnumSet.noneOf(TaskType.class));
 		i(auto,no,null);
 		i(autoDevice,no,auto);
-		i(autoMeasure,DeviceClass.sensor,false,false,autoDevice);
-		i(autoOnoff,DeviceClass.onoff,true,true,autoDevice);
-		i(autoStatus,DeviceClass.status,true,true,autoDevice);
+//		i(autoMeasure,DeviceClass.sensor,false,false,autoDevice);
+		i(autoOnoff,DeviceClass.onoff,true,false,autoDevice);
+		i(autoOnoffStream,DeviceClass.onoff,true,true,autoDevice);
+		i(autoStatusStream,DeviceClass.status,true,true,autoDevice);
 		i(autoLevel,level,true,false,autoDevice,LevelTaskArg.create(7));
 		i(autoLevelStream,level,true,true,autoDevice);
 		i(autoProgram,level,true,false,autoDevice,ProgramTaskArg.create(20));
 		i(autoDoseAmount,DeviceClass.doser,false,false,autoDevice,LevelTaskArg.create(7));
 		i(autoDoseMax,DeviceClass.doser,true,true,autoDevice,LevelTaskArg.create(7));
+		i(autoContainerStream,container,true,true,autoDevice);
+		i(autoCalculatedStream,calculated,true,true,autoDevice);
 	
 		i(TaskType.manual,no,null);
 	
@@ -51,18 +60,16 @@ public class TaskTypeUtil {
 		i(calibrate,maintenanceDevice);
 		i(checkAndRefill,DeviceClass.container,maintenanceDevice);
 	
-		i(clean,maintenanceDevice);
+		i(clean,maintenanceDevice,DescriptionTaskArg.create());
 		i(cleanPrefilter,filter,clean);
 		i(cleanMainfilter,filter,clean);
 		i(cleanTubes,filter,clean);
 
-		i(maintenanceTank,TaskType.manual);
+		i(maintenanceTank,TaskType.manual,DescriptionTaskArg.create());
 		i(changeWater,tank,maintenanceTank,ValueTaskArg.create(change,0,null,ValueTaskArg.water));
 		i(topUpWater,tank,maintenanceTank,ValueTaskArg.create(volume,0,null,ValueTaskArg.water));
 		i(cleanPanels,tank,maintenanceTank);
 	}
-	
-	public static Map<TaskType, TaskTypeInfo> toInfo = new HashMap<>();
 	private static void i(TaskType taskType, TaskType parrentType) { i(taskType,DeviceClass.manual,false,false,parrentType,null); }
 	private static void i(TaskType taskType, TaskType parrentType, TaskArg taskArg) { i(taskType,DeviceClass.manual,false,false,parrentType,taskArg); }
 	private static void i(TaskType taskType, DeviceType deviceType, TaskType parrentType) { i(taskType,DeviceClass.manual,deviceType,false,false,parrentType,null); }
@@ -72,6 +79,16 @@ public class TaskTypeUtil {
 	private static void i(TaskType taskType, DeviceClass deviceClass, boolean intervalSchedule, boolean whenAllowed, TaskType parrentType, TaskArg taskArg) { i(taskType, deviceClass, defaultType(deviceClass), intervalSchedule,whenAllowed, parrentType, taskArg); }
 	private static void i(TaskType taskType, DeviceClass deviceClass, DeviceType deviceType, boolean intervalSchedule, boolean whenAllowed, TaskType parrentType, TaskArg taskArg) {
 		toInfo.put(taskType, new TaskTypeInfo(deviceClass, deviceType, intervalSchedule, whenAllowed, parrentType, taskArg));
+		if (taskType.isOfType(auto) && deviceClass != null && deviceClass != no) toAuto.get(deviceClass).add(taskType);
+		if (taskType.isOfType(TaskType.manual) && deviceClass != no) {
+			if (deviceType == null) {
+				defaultManual.add(taskType);
+			} else {
+				EnumSet<TaskType> set = toManual.get(deviceType);
+				if (set == null) toManual.put(deviceType, set = EnumSet.noneOf(TaskType.class));
+				set.add(taskType);
+			}
+		}
 	}
 	public static TaskTypeInfo info(TaskType taskType) { return toInfo.get(fixup(taskType)); }
 	
@@ -88,4 +105,11 @@ public class TaskTypeUtil {
 	public static Map<Short, TaskType> fromId = new HashMap<>();
 	{ for (TaskType taskType: TaskType.values()) { fromId.put((short) taskType.getId(), taskType); } }
 	public static TaskType get(short id) { return fromId.get(id); }
+	
+	public static Set<TaskType> autoTypes(DeviceClass deviceClass) { return toAuto.get(deviceClass); }
+	public static Set<TaskType> manualTypes(DeviceType deviceType) {
+		EnumSet<TaskType> set = EnumSet.copyOf(defaultManual);
+		doNotNull(toManual.get(deviceType), set::addAll);
+		return set;
+	}
 }

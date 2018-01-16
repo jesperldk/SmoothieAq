@@ -88,7 +88,5 @@ public class  Wires {
 	}
 	
 	public void doGuarded(Doit doit) { Errors.doGuarded(e -> { errors.onNext(e.getError()); return e;}, doit); }
-	public <T> T funcGuarded(Supplyit<T> doit) { return Errors.funcGuarded(e -> { 
-		errors.onNext(e.getError()); 
-		return e;}, doit); }
+	public <T> T funcGuarded(Supplyit<T> doit) { return Errors.funcGuarded(e -> { errors.onNext(e.getError()); return e;}, doit); }
 }

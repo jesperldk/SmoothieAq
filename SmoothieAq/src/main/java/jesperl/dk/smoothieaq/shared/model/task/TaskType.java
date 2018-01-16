@@ -6,14 +6,17 @@ public enum TaskType {
 	
 	auto(10),
 	autoDevice(11),
-	autoMeasure(20),
+//	autoMeasure(20),
 	autoOnoff(30),
-	autoStatus(31),
+	autoOnoffStream(31),
+	autoStatusStream(31),
 	autoLevel(40),
 	autoLevelStream(41),
 	autoProgram(42),
 	autoDoseAmount(50),
 	autoDoseMax(51),
+	autoContainerStream(60),
+	autoCalculatedStream(70),
 	
 	manual(100),
 	

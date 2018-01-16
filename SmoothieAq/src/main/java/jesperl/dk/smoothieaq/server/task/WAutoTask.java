@@ -10,14 +10,14 @@ import rx.*;
 
 public abstract class  WAutoTask extends WTask implements ITask {
 	
-	protected List<Subscription> substriptions = null;
+	protected List<Subscription> subscriptions = null;
 	
 	@Override public synchronized void start(State state) {
 		Instant now = state.now.instant();
 		if (task.taskType.info().intervalSchedule) {
 			on = true;
-			if (sApply != null) wire(state);
 			autoStart(state, next);
+			if (sApply != null) wire(state);
 			next = new Interval(now, next.b);
 		} else {
 			next = new Interval(now,now);
@@ -28,18 +28,18 @@ public abstract class  WAutoTask extends WTask implements ITask {
 	@Override public synchronized void end(State state) {
 		Instant now = state.now.instant();
 		next = new Interval(next.a,now);
-		if (substriptions != null) unwire(state);
+		if (subscriptions != null) unwire(state);
 		autoEnd(state);
 		done(state, false, null, null);
 	}
 	
 	protected void wire(State state) {
-		substriptions = new ArrayList<>();
-		sApply.wire(state.dContext, device.drain(), substriptions);
+		subscriptions = new ArrayList<>();
+		sApply.wire(state.dContext, device.drain(), subscriptions);
 	}
 	protected void unwire(State state) {
-		for (int i = substriptions.size(); i > 0; i--) substriptions.get(i-1).unsubscribe();
-		substriptions = null;
+		for (int i = subscriptions.size(); i > 0; i--) subscriptions.get(i-1).unsubscribe();
+		subscriptions = null;
 	}
 
 	protected abstract void autoDo(State state);

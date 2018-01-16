@@ -92,11 +92,13 @@ public class  DeviceContext {
 	
 	public IDevice create(Device device) {
 		return funcGuardedX(() -> {
+			assert device.id == 0;
 			WDevice.validate(state, device);
 			state.setNewId(device);
 			WDevice<?> wdevice = createWDevice(device);
 			state.saveWithId(device);
 			wdevice.internalSet(state, DeviceStatusType.disabled);
+			wdevice.internalInitialAutoTask(state);
 			return wdevice;
 		}, e -> error(log,e,100107,major,"Could not create device id={0} - {1}",device.id,e.toString()));
 	}

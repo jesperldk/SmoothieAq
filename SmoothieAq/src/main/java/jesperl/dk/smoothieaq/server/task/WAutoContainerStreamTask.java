@@ -1,0 +1,11 @@
+package jesperl.dk.smoothieaq.server.task;
+
+import jesperl.dk.smoothieaq.server.state.*;
+import jesperl.dk.smoothieaq.shared.model.schedule.*;
+
+public class  WAutoContainerStreamTask extends WAutoTask {
+
+	@Override protected void autoDo(State state) {}
+	@Override protected void autoStart(State state, Interval next) {}
+	@Override protected void autoEnd(State state) {}
+}
