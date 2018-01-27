@@ -2,6 +2,7 @@ package jesperl.dk.smoothieaq.client.components;
 
 import static jesperl.dk.smoothieaq.client.text.EnumMessages.*;
 import static jesperl.dk.smoothieaq.client.text.FieldMessages.*;
+import static jesperl.dk.smoothieaq.client.text.InheritanceTypeMessages.*;
 import static jesperl.dk.smoothieaq.shared.util.Objects2.*;
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 import static jesperl.dk.smoothieaq.util.shared.Objects.stream;
@@ -36,7 +37,7 @@ public class GuiUtil {
 	public static MaterialAnchorButton wFloatButton(EnumInfo enumInfo, Action doOnClick) {
 		return wFloatButton(enumInfo.icon, enumInfo.bgColor, enumInfo.hoverTxt, doOnClick);
 	}
-	public static MaterialAnchorButton wFloatButton(IconType iconType, Color bgColor, String hoverTxt, Action doOnClick) {
+	public static MaterialAnchorButton wFloatButton(IconType iconType, Color bgColor, String tooltip, Action doOnClick) {
 		MaterialAnchorButton btn = new MaterialAnchorButton(ButtonType.FLOATING) {
 			@Override protected void onLoad() {
 				super.onLoad();
@@ -45,11 +46,24 @@ public class GuiUtil {
 		};
 		btn.setIconType(iconType);
 		btn.setBackgroundColor(bgColor);
-		if (hoverTxt != null)  btn.setTooltip(hoverTxt);
+		if (tooltip != null)  btn.setTooltip(tooltip);
 		if (doOnClick != null) btn.setWaves(WavesType.DEFAULT);
 		return btn;
 	}
-	public static MaterialButton wButton(IconType iconType, boolean primary, String text, String hoverTxt, Action doOnClick) {
+	public static MaterialIcon wIconButton(IconType iconType, Color iconColor, String tooltip, Action doOnClick) {
+		MaterialIcon icon = new MaterialIcon(iconType) {
+			@Override protected void onLoad() {
+				super.onLoad();
+				if (doOnClick != null) addClickHandler(e -> doOnClick.doit());
+			}
+		};
+		icon.setCircle(true);
+		if (iconColor != null) icon.setIconColor(iconColor);
+		if (tooltip != null)  icon.setTooltip(tooltip);
+		if (doOnClick != null) icon.setWaves(WavesType.DEFAULT);
+		return icon;
+	}
+	public static MaterialButton wButton(IconType iconType, boolean primary, String text, String tooltip, Action doOnClick) {
 		MaterialButton btn = new MaterialButton() {
 			@Override protected void onLoad() {
 				super.onLoad();
@@ -59,11 +73,11 @@ public class GuiUtil {
 		btn.setText(text);
 		if (iconType != null) btn.setIconType(iconType);
 		if (!primary) { btn.setBackgroundColor(Color.WHITE); btn.setTextColor(Color.BLACK); }
-		if (hoverTxt != null)  btn.setTooltip(hoverTxt);
+		if (tooltip != null)  btn.setTooltip(tooltip);
 		if (doOnClick != null) btn.setWaves(WavesType.LIGHT);
 		return btn;
 	}
-	public static MaterialLink wLink(boolean primary, String text, String hoverTxt, Action doOnClick) {
+	public static MaterialLink wLink(boolean primary, String text, String tooltip, Action doOnClick) {
 		MaterialLink btn = new MaterialLink() {
 			@Override protected void onLoad() {
 				super.onLoad();
@@ -72,7 +86,7 @@ public class GuiUtil {
 		};
 		btn.setText(text);
 //		if (!primary) { btn.setBackgroundColor(Color.WHITE); btn.setTextColor(Color.BLACK); }
-		if (hoverTxt != null)  btn.setTooltip(hoverTxt);
+		if (tooltip != null)  btn.setTooltip(tooltip);
 //		if (doOnClick != null) btn.setWaves(WavesType.LIGHT);
 		return btn;
 	}
@@ -101,6 +115,18 @@ public class GuiUtil {
 				super.onLoad();
 				setValue(funcNotNull(field.get(), Short::intValue));
 				addChangeHandler(evt -> field.set(funcNotNull(getValue(), Integer::shortValue)));
+			};
+		};
+		setLabel(integerBox,field);
+		return integerBox;
+	}
+	
+	public static MaterialIntegerBox wIntegerBox(Field<Integer> field) {
+		MaterialIntegerBox integerBox = new MaterialIntegerBox() {
+			protected void onLoad() {
+				super.onLoad();
+				setValue(field.get());
+				addChangeHandler(evt -> field.set(getValue()));
 			};
 		};
 		setLabel(integerBox,field);
@@ -147,8 +173,13 @@ public class GuiUtil {
 		return comboBox;
 	}
 	
-	public static <T extends Enum<T>> WOptions<T> wOptions(Class<T> enumClass) {
-		return new WOptions<T>(stream(enumClass.getEnumConstants()).map(triple(e -> capitalize(enumMsg.valueLongName(e)), e -> enumMsg.valueHelp(e))));
+	public static WOptions<String> wTypeOptions(Set<String> types) { 
+		return new WOptions<String>(types.stream().map(triple(s -> capitalize(typeMsg.typeLongName(s)), s -> typeMsg.typeHelp(s))));
+	}
+	public static <T extends Enum<T>> WOptions<T> wOptions(Class<T> enumClass) { return wOptions(stream(enumClass.getEnumConstants())); }
+	public static <T extends Enum<T>> WOptions<T> wOptions(Set<T> enums) { return wOptions(enums.stream()); }
+	public static <T extends Enum<T>> WOptions<T> wOptions(Stream<T> enums) {
+		return new WOptions<T>(enums.map(triple(e -> capitalize(enumMsg.valueLongName(e)), e -> enumMsg.valueHelp(e))));
 	}
 	public static class WOption<T> {
 		public final T value;

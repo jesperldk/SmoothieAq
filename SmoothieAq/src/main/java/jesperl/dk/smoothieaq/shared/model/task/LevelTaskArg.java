@@ -13,8 +13,13 @@ public class  LevelTaskArg extends TaskArg implements LevelTaskArg_Helper {
 
 	public float level;
 	
-	@JsOverlay public static LevelTaskArg create(float level) {
+	@JsOverlay public static LevelTaskArg create() {
 		LevelTaskArg taskArg = new LevelTaskArg();
+		return taskArg;
+	}
+	
+	@JsOverlay public static LevelTaskArg create(float level) {
+		LevelTaskArg taskArg = LevelTaskArg.create();
 		taskArg.level = level;
 		return taskArg;
 	}

@@ -46,7 +46,7 @@ public class TsRow extends Div {
 		if (htmlText != null && style != null) htmlText.setStyleName(style);
 	}
 	
-	protected static Widget set(Div div, String str) { return set(div,funcNotNull(str, s -> new HTML(s))); }
+	protected static Widget set(Div div, String str) { return set(div,(Widget)funcNotNull(str, s -> new HTML(s))); }
 	
 	protected static Widget set(Div div, Widget widget) {
 		div.clear();

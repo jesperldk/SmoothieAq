@@ -15,8 +15,13 @@ public class  IntervalEqualTo extends ScheduleInterval implements IntervalEqualT
 	public int equalToTaskId;
 	
 	@JsOverlay 
+	public static IntervalEqualTo create() {
+		return Schedule_HelperInheritace.createIntervalEqualTo();
+	}
+	
+	@JsOverlay 
 	public static IntervalEqualTo create(int equalToTaskId) {
-		IntervalEqualTo intervalEqualTo = Schedule_HelperInheritace.createIntervalEqualTo();
+		IntervalEqualTo intervalEqualTo = create();
 		intervalEqualTo.equalToTaskId = equalToTaskId;
 		return intervalEqualTo;
 	}

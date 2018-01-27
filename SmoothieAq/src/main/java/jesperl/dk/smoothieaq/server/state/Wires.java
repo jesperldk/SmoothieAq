@@ -41,7 +41,8 @@ public class  Wires {
 				errors.map(ErrorEvent::create),
 				messages.map(MessageEvent::create),
 				Observable.merge(devMeasures,devOtherMeasures).map(ME::create),
-				devicesChanged.map(DeviceChangeEvent::create)
+				devicesChanged.map(DeviceChangeEvent::create),
+				tasksChanged.map(TaskChangeEvent::create)
 			)
 			.onBackpressureBuffer(1, ()->error(log, 140101, Severity.major, "Wires.eventsMux are being used by someone applying backpressure, that is no good"), BackpressureOverflow.ON_OVERFLOW_DROP_LATEST)
 			.share();
@@ -65,20 +66,20 @@ public class  Wires {
 	public void init() {
 		pulse.subscribe(); // gets it running hot ...
 		eventsMux.subscribe(); // gets it running hot ...
-		initSave(Device.class , 50, state.dbContext.dbDevice);
-		initSave(DeviceStatus.class , 50, state.dbContext.dbDeviceStatus);
-		initSave(DeviceCalibration.class , 50, state.dbContext.dbDeviceCalibration);
-		initSave(Task.class , 50, state.dbContext.dbTask);
-		initSave(TaskStatus.class , 50, state.dbContext.dbTaskStatus);
-		initSave(TaskDone.class , 50, state.dbContext.dbTaskDone);
-		devMeasures.subscribe(initSave(Measure.class , 200, state.dbContext.dbMeasure));
+		initSave(Device.class, 50, state.dbContext.dbDevice);
+		initSave(DeviceStatus.class, 50, state.dbContext.dbDeviceStatus);
+		initSave(DeviceCalibration.class, 50, state.dbContext.dbDeviceCalibration);
+		initSave(Task.class, 50, state.dbContext.dbTask);
+		initSave(TaskStatus.class, 50, state.dbContext.dbTaskStatus);
+		initSave(TaskDone.class, 50, state.dbContext.dbTaskDone);
+		devMeasures.subscribe(initSave(Measure.class, 200, state.dbContext.dbMeasure));
 		saveDbClass.map(Collections::singletonList).subscribe(state.dbContext.dbClass.drain());
 //		pulse.map(v -> Measure.create((short)2, DeviceStream.level, 1f)).subscribe(devMeasures);
 	}
 	
 	protected <DBO extends DbObject> Subject<Object,Object> initSave(Class<DBO> cls, int timeout, DbFile<DBO> dbFile) {
 		Subject<Object,Object> save = new SerializedSubject<>(PublishSubject.create());
-		save.map(cls::cast).buffer(timeout, TimeUnit.MILLISECONDS, 30, Schedulers.io()).subscribe(dbFile.drain());
+		save.map(cls::cast).buffer(timeout, TimeUnit.MILLISECONDS, 60, Schedulers.io()).subscribe(dbFile.drain());
 		savers.put(cls, save);
 		return save;
 	}

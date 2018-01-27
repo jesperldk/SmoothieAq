@@ -48,9 +48,9 @@ public interface EnumMessages extends ConstantsWithLookup {
 	}
 	default String _lookup(String key) { try { return getString(key); } catch (Exception e) { return null; } }
 	default String _lookup(Enum<?> enumValue, Map<Enum<?>,String> map, String lookupSuffix, Supplier<String> defaultValue) {
-		return _put(map, enumValue, nnv(_lookup(enumValue.getClass().getSimpleName()+lookupSuffix,enumValue.toString()+suffix2(lookupSuffix)), () -> defaultValue.get()));
+		return _put(map, enumValue, nnv(_lookup(enumValue.getClass().getSimpleName()+lookupSuffix,enumValue.toString()+_suffix2(lookupSuffix)), () -> defaultValue.get()));
 	}
-	default String suffix2(String suffix1) { return (suffix1.length() == 0) ? "" : suffix1.substring(1, 2); }
+	default String _suffix2(String suffix1) { return (suffix1.length() == 0) ? "" : suffix1.substring(1, 2); }
 	default String _lookup(String key, String key2) { try { return getMap(key).get(key2); } catch (Exception e) { return null; } }
 	static <K,V> V _put(Map<K,V> map, K k, V v) { map.put(k, v); return v; } 
 	
@@ -64,14 +64,7 @@ public interface EnumMessages extends ConstantsWithLookup {
 				
 	default <T extends Enum<T>> String valueLongName(Class<T> enumClass, T enumValue) { return valueLongName(EnumField.fixup(enumClass, enumValue)); }
 	default String valueLongName(Field<?> field) { return valueLongName((Enum<?>)field.get()); }
-	default String valueLongName(Enum<?> enumValue) { 
-		return enumValue == null ? 
-				"" : 
-					nnv(_valueLongNames.get(enumValue), 
-							() ->  
-					_lookup(enumValue, _valueLongNames, "_LongEnum", 
-							() -> 
-					valueName(enumValue))); }
+	default String valueLongName(Enum<?> enumValue) { return enumValue == null ? "" : nnv(_valueLongNames.get(enumValue), () -> _lookup(enumValue, _valueLongNames, "_LongEnum", () -> valueName(enumValue))); }
 				
 	default <T extends Enum<T>> String valueHelp(Class<T> enumClass, T enumValue) { return valueHelp(EnumField.fixup(enumClass, enumValue)); }
 	default String valueHelp(Field<?> field) { return valueHelp((Enum<?>)field.get()); }

@@ -255,7 +255,9 @@ public class  GwtJsonTypeProcessor extends AbstractProcessor {
 			writer.write("	@JsOverlay\n");
 			writer.write("	static "+rootType+" $copy("+rootType+" s) {\n");
 			writer.write("		if (s == null) return null;\n");
-			writer.write("		return $copy.get(s.$type).apply(s);\n");
+			writer.write("		"+rootType+" c = $copy.get(s.$type).apply(s);\n");
+			writer.write("		c.$type = s.$type;\n");
+			writer.write("		return c;\n");
 			writer.write("	}\n");
 			writer.write("\n");
 		}

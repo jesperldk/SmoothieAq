@@ -6,8 +6,8 @@ import rx.*;
 import rx.subjects.*;
 
 public class Field<T> {
-	protected final Supplier<T> get;
-	protected final Consumer<T> set;
+	protected Supplier<T> get;
+	protected Consumer<T> set;
 	protected final String key;
 	protected final Class<T> type;
 	protected Subject<T, T> listenerSubject;

@@ -21,10 +21,15 @@ public class  EveryNMonths extends EveryPeriod implements EveryNMonths_Helper {
 	@GwtIncompatible private Adjuster adjuster;
 	
 	@JsOverlay 
+	public static EveryNMonths create() {
+		return Schedule_HelperInheritace.createEveryNMonths();
+	}
+
+	@JsOverlay 
 	public static EveryNMonths create(boolean relativeToActual, int months, ScheduleDayInMonth dayInMonth, int atSpecifiDay,
 			boolean[] atWeekDays, boolean first) {
 		assert dayInMonth != null ^ atSpecifiDay != 0 ^ atWeekDays != null;
-		EveryNMonths everyNMonths = Schedule_HelperInheritace.createEveryNMonths();
+		EveryNMonths everyNMonths = create();
 		everyNMonths.relativeToActual = relativeToActual;
 		everyNMonths.months = months;
 		everyNMonths.dayInMonth = dayInMonth;

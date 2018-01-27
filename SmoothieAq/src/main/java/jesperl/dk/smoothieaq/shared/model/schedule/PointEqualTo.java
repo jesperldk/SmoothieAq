@@ -18,6 +18,11 @@ public class  PointEqualTo extends SchedulePoint implements PointEqualTo_Helper 
 	public int equalToDeviceId;
 
 	@JsOverlay 
+	public static PointEqualTo create() {
+		return Schedule_HelperInheritace.createPointEqualTo();
+	}
+
+	@JsOverlay 
 	public static PointEqualTo create(int deviceId) {
 		PointEqualTo pointEqualTo = Schedule_HelperInheritace.createPointEqualTo();
 		pointEqualTo.equalToDeviceId = deviceId;

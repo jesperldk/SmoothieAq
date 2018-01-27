@@ -119,8 +119,8 @@ public class  DeviceContext {
 	
 	public void addTask(WTask task) { tasks.put((int) task.getId(), task); }
 	
-	public ITask getTask(int id) {
-		ITask wrapper = tasks.get(id);
+	public WTask getWTask(int id) {
+		WTask wrapper = tasks.get(id);
 		if (wrapper == null) throw error(log,100106,minor,"No task with id={0}",id);
 		return wrapper;
 	}

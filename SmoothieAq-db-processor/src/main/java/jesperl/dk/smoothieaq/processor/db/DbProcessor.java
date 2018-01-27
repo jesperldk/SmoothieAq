@@ -22,7 +22,7 @@ public class  DbProcessor extends AbstractProcessor {
 
     @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
     	if (annotations == null || annotations.isEmpty()) return false;
-    	log("DB1.3 process, processingOver="+roundEnv.processingOver()+" "+annotations.iterator().next());
+    	log("DB1.4 process, processingOver="+roundEnv.processingOver()+" "+annotations.iterator().next());
 		try {
 			roundEnv.getElementsAnnotatedWith(annotations.iterator().next()).stream()
     		.filter(e -> e.getKind().isClass() && e instanceof TypeElement)
@@ -144,7 +144,7 @@ public class  DbProcessor extends AbstractProcessor {
 			String baseField = baseVar+"."+fieldName;
 			if (type == Type.objectT) {
 				w("\t\tif ("+baseField+" == null)\n"); out("","0");
-				w("\t\telse\n\t\t\t"+baseVar+".serialize(out,context);\n");
+				w("\t\telse\n\t\t\t"+baseField+".serialize(out,context);\n");
 			} else if (type == Type.enumT) {
 				w("\t\tif ("+baseField+" == null)\n"); out("","0");
 				w("\t\telse\n"); out("",baseField+".getId()");

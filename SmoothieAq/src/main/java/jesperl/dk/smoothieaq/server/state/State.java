@@ -25,8 +25,6 @@ public class  State extends SimpleState {
 	private AtomicInteger nextId = new AtomicInteger(1); // TODO
 	private AtomicInteger nextClassId = new AtomicInteger(1); // TODO
 
-//	private ConcurrentHashMap<Integer,Idable> objects = new ConcurrentHashMap<>();
-
 	private Map<Integer,Class<?>> classMap = new ConcurrentHashMap<>();
 	private Map<Class<?>,Integer> mapClass = new ConcurrentHashMap<>();
 	
@@ -43,22 +41,22 @@ public class  State extends SimpleState {
 	
 	public void init() {
 		dbContext.init();
+		wires.init();
+		loadClasses();
 		schedulerThread.start();
 		dContext.init();
 		sContext.init();
 		load();
 		dContext.getready();
-		wires.init();
 		ready = true;
 	}
 	
 	protected void load() {
-		loadClasses();
+		// all these should run sequentially, we just do it on the current thread
 		loadIdeable(dbContext.dbDevice.stream(), dContext::load);
 		loadIdeable(dbContext.dbDeviceStatus.stream(), ds -> dContext.getWDevice(ds.id).init(ds));
-		
-		// TODO Auto-generated method stub
-		
+		loadIdeable(dbContext.dbTask.stream(), t -> dContext.getWDevice(t.deviceId).init(dContext,t));
+		loadIdeable(dbContext.dbTaskStatus.stream(), ts -> dContext.getWTask(ts.id).init(ts));
 	}
 
 	protected <DBO extends DbObject> void loadIdeable(Observable<DBO> stream, Action1<? super DBO> load) {
@@ -121,7 +119,11 @@ public class  State extends SimpleState {
 		return id.shortValue();
 	}
 	
-	public Class<?> getClass(int id) { return classMap.get(id); }
+	public Class<?> getClass(int id) { 
+		Class<?> cls = classMap.get(id);
+		if (cls == null) throw new RuntimeException("Could not find class for id "+id);
+		return cls; 
+	}
 	
 	public int getNextId() { return nextId.getAndIncrement(); }
 

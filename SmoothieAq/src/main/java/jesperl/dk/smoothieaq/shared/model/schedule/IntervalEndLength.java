@@ -16,8 +16,13 @@ public class  IntervalEndLength extends ScheduleInterval implements IntervalEndL
 	public ScheduleTime length;
 	
 	@JsOverlay 
+	public static IntervalEndLength create() {
+		return Schedule_HelperInheritace.createIntervalEndLength();
+	}
+	
+	@JsOverlay 
 	public static IntervalEndLength create(SchedulePoint end, ScheduleTime length) {
-		IntervalEndLength intervalEndLength = Schedule_HelperInheritace.createIntervalEndLength();
+		IntervalEndLength intervalEndLength = create();
 		intervalEndLength.end = end;
 		intervalEndLength.length = length;
 		return intervalEndLength;

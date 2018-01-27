@@ -8,13 +8,14 @@ import gwt.material.design.client.constants.*;
 import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.html.*;
 import jesperl.dk.smoothieaq.client.*;
+import jesperl.dk.smoothieaq.client.context.*;
 import jesperl.dk.smoothieaq.client.tasks.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
 
-public class DeviceTasksView extends Div {
+public class DeviceManualTasksView extends Div {
 
-	public DeviceTasksView(DeviceView deviceView) {
+	public DeviceManualTasksView(CDevice cDevice, DeviceView deviceView) {
     	add(new MaterialTitle("Tasks for device "+deviceView.device.name)); // TODO
     	MaterialPanel panel = new MaterialPanel();
 //    	panel.add(wRo(wComboBox(device.deviceType()),!newDevice));
@@ -31,7 +32,7 @@ public class DeviceTasksView extends Div {
     	panel.add(wButton(IconType.ADD, true, "Add new task", null, () -> {
     		Task task = new Task();
     		task.deviceId = deviceView.device.id;
-    		wModal(new TaskEditView(task, true), () -> Resources.task.create(task).subscribe(robs()));
+    		wModal(new TaskEditView(cDevice, task, true, false), () -> Resources.task.create(task).subscribe(robs()));
     	}));
     	add(panel);
 	}

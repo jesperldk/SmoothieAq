@@ -53,6 +53,7 @@ public class  Task extends DbWithId implements Task_Helper {
 		return pair(schedule, schedule.nextInterval(taskContext));
 	}
 
+	
 //	@GwtIncompatible
 //	public Pair<? extends Schedule, Interval> nextForTask(TaskContext context) {
 //		return Arrays.stream(schedules)

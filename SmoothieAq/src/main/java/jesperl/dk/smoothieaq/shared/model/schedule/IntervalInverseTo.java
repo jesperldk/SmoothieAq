@@ -15,8 +15,13 @@ public class  IntervalInverseTo extends ScheduleInterval implements IntervalInve
 	public int inverseToTaskId;
 	
 	@JsOverlay 
+	public static IntervalInverseTo create() {
+		return Schedule_HelperInheritace.createIntervalInverseTo();
+	}
+	
+	@JsOverlay 
 	public static IntervalInverseTo create(int inverseToTaskId) {
-		IntervalInverseTo intervalInverseTo = Schedule_HelperInheritace.createIntervalInverseTo();
+		IntervalInverseTo intervalInverseTo = create();
 		intervalInverseTo.inverseToTaskId = inverseToTaskId;
 		return intervalInverseTo;
 	}

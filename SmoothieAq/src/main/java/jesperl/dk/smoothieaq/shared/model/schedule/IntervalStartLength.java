@@ -17,8 +17,13 @@ public class  IntervalStartLength extends ScheduleInterval implements IntervalSt
 	public ScheduleTime length;
 	
 	@JsOverlay 
+	public static IntervalStartLength create() {
+		return Schedule_HelperInheritace.createIntervalStartLength();
+	}
+	
+	@JsOverlay 
 	public static IntervalStartLength create(SchedulePoint start, ScheduleTime length) {
-		IntervalStartLength intervalStartLength = Schedule_HelperInheritace.createIntervalStartLength();
+		IntervalStartLength intervalStartLength = create();
 		intervalStartLength.start = start;
 		intervalStartLength.length = length;
 		return intervalStartLength;

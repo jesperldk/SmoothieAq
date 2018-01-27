@@ -19,8 +19,13 @@ public class  PointRelative extends PointAtDay implements PointRelative_Helper {
 	public ScheduleTime shiftTime;
 	
 	@JsOverlay 
+	public static PointRelative create() {
+		return Schedule_HelperInheritace.createPointRelative();
+	}
+	
+	@JsOverlay 
 	public static PointRelative create(int relativeToDeviceId, boolean beginning, boolean earlier, ScheduleTime shiftTime) {
-		PointRelative pointRelative = Schedule_HelperInheritace.createPointRelative();
+		PointRelative pointRelative = create();
 		pointRelative.relativeToDeviceId = relativeToDeviceId;
 		pointRelative.beginning = beginning;
 		pointRelative.earlier = earlier;

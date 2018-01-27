@@ -21,8 +21,14 @@ public class  ValueTaskArg extends TaskArg implements ValueTaskArg_Helper {
 	@JsOverlay public static String water = "water";
 	
 	@JsOverlay 
-	public static ValueTaskArg create(MeasurementType measurementType, float value, Unit unit, String substance) {
+	public static ValueTaskArg create() {
 		ValueTaskArg valueTaskArg = TaskArg_HelperInheritace.createValueTaskArg();
+		return valueTaskArg;
+	}
+	
+	@JsOverlay 
+	public static ValueTaskArg create(MeasurementType measurementType, float value, Unit unit, String substance) {
+		ValueTaskArg valueTaskArg = ValueTaskArg.create();
 		valueTaskArg.measurementType = measurementType;
 		valueTaskArg.value = value;
 		valueTaskArg.unit = unit;

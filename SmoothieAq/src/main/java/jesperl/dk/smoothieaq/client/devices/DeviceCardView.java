@@ -2,8 +2,10 @@ package jesperl.dk.smoothieaq.client.devices;
 
 import static jesperl.dk.smoothieaq.client.css.SmoothieAqCss.*;
 import static jesperl.dk.smoothieaq.client.text.AppMessages.*;
+import static jesperl.dk.smoothieaq.shared.model.device.DeviceClass.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceStatusType.*;
 
+import java.util.*;
 import java.util.function.*;
 
 import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
@@ -12,6 +14,7 @@ import gwt.material.design.client.constants.*;
 import gwt.material.design.client.ui.*;
 import jesperl.dk.smoothieaq.client.*;
 import jesperl.dk.smoothieaq.client.context.*;
+import jesperl.dk.smoothieaq.client.tasks.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
 import jesperl.dk.smoothieaq.util.shared.*;
@@ -49,13 +52,27 @@ public class DeviceCardView extends MaterialCard {
 		}
 		
 		MaterialCardAction action = new MaterialCardAction();
-		action.add(wLink(false, appMsg.edit(), null, () -> {
+		if (dc.deviceClass != manual)
+			action.add(wIconButton(IconType.TIMELINE, null, appMsg.deviceGraph(), null));
+		
+		if (dc.deviceClass != manual)
+			action.add(wIconButton(IconType.ERROR, null, appMsg.deviceErrorNone(), null));
+		
+		if (EnumSet.of(sensor, toggle, container, calculated).contains(dc.deviceClass))
+			action.add(wIconButton(IconType.NOTIFICATIONS_NONE, null, appMsg.deviceAlarm(), null));
+		
+		if (EnumSet.of(onoff, level, doser, status).contains(dc.deviceClass))
+			action.add(wIconButton(IconType.SCHEDULE, null, appMsg.deviceSchedule(), () ->
+			cd.deviceView.subscribe(dv -> wModal(new TaskEditView(cd, dv.autoTask, false, true), null))));
+		
+		action.add(wIconButton(IconType.DATE_RANGE, null, appMsg.deviceTasks(), () -> 
+			cd.deviceView.subscribe(dv -> wModal(new DeviceManualTasksView(cd, dv), null))));
+		
+		action.add(wIconButton(IconType.EDIT, null, appMsg.edit(), () -> {
 			cd.device.subscribe(d -> { 
 				Device device = d.copy(); wModal(new DeviceEditView(device,false), () -> 
 				Resources.device.update(device.copy()).subscribe()); });
 		}));
-		action.add(wLink(false, appMsg.tasks(), null, () -> cd.deviceView.subscribe(dv -> wModal(new DeviceTasksView(dv), null))));
-		action.add(wLink(false, appMsg.view(), null, null));
 		add(action);
 	}
 	

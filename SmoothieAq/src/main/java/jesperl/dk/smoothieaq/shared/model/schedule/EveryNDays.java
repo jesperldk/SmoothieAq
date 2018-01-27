@@ -20,8 +20,13 @@ public class  EveryNDays extends EveryPeriod implements EveryNDays_Helper {
 	@GwtIncompatible private transient Adjuster adjuster;
 	
 	@JsOverlay 
+	public static EveryNDays create() {
+		return Schedule_HelperInheritace.createEveryNDays();
+	}
+	
+	@JsOverlay 
 	public static EveryNDays create(boolean relativeToActual, int days, ScheduleTime atTime) {
-		EveryNDays everyNDays = Schedule_HelperInheritace.createEveryNDays();
+		EveryNDays everyNDays = create();
 		everyNDays.relativeToActual = relativeToActual;
 		everyNDays.days = (short) days;
 		everyNDays.atTime = atTime;

@@ -20,8 +20,13 @@ public class  EveryNHours extends EveryDuration implements EveryNHours_Helper {
 	@GwtIncompatible private Adjuster adjuster;
 	
 	@JsOverlay 
+	public static EveryNHours create() {
+		return Schedule_HelperInheritace.createEveryNHours();
+	}
+	
+	@JsOverlay 
 	public static EveryNHours create(boolean relativeToActual, int hours, int atMinute) {
-		EveryNHours everyNHours = Schedule_HelperInheritace.createEveryNHours();
+		EveryNHours everyNHours = create();
 		everyNHours.relativeToActual = relativeToActual;
 		everyNHours.hours = (short) hours;
 		everyNHours.atMinute = (short) atMinute;

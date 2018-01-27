@@ -19,8 +19,13 @@ public class  EveryNWeeks extends EveryPeriod implements EveryNWeeks_Helper {
 	@GwtIncompatible private Adjuster adjuster;
 
 	@JsOverlay 
+	public static EveryNWeeks create() {
+		return Schedule_HelperInheritace.createEveryNWeeks();
+	}
+
+	@JsOverlay 
 	public static EveryNWeeks create(boolean relativeToActual, int weeks, boolean[] atWeekDays, ScheduleTime atTime) {
-		EveryNWeeks everyNWeeks = Schedule_HelperInheritace.createEveryNWeeks();
+		EveryNWeeks everyNWeeks = create();
 		everyNWeeks.relativeToActual = relativeToActual;
 		everyNWeeks.weeks = weeks;
 		everyNWeeks.atWeekDays = atWeekDays;

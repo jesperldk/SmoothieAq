@@ -16,8 +16,13 @@ public class  IntervalStartEnd extends ScheduleInterval implements IntervalStart
 	public SchedulePoint end;
 	
 	@JsOverlay 
+	public static IntervalStartEnd create() {
+		return Schedule_HelperInheritace.createIntervalStartEnd();
+	}
+	
+	@JsOverlay 
 	public static IntervalStartEnd create(SchedulePoint start, SchedulePoint end) {
-		IntervalStartEnd intervalStartEnd = Schedule_HelperInheritace.createIntervalStartEnd();
+		IntervalStartEnd intervalStartEnd = create();
 		intervalStartEnd.start = start;
 		intervalStartEnd.end = end;
 		return intervalStartEnd;

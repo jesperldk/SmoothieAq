@@ -54,10 +54,8 @@ public abstract class  WTask extends IdableType implements ITask {
 		scheduleChanged(state);
 	}
 	
-	public synchronized WTask init(State state, TaskDone done) {
-		last = new Interval(new Date(done.start).toInstant(),new Date(done.end).toInstant());
-		return this;
-	}
+	public synchronized void init(TaskStatus status) { this.status = status; }
+	public synchronized void init(TaskDone done) { last = new Interval(new Date(done.start).toInstant(),new Date(done.end).toInstant()); }
 	
 	public static void validate(Task task, IDevice device) {
 		assert task.deviceId == device.getId();

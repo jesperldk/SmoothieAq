@@ -1,13 +1,18 @@
 package jesperl.dk.smoothieaq.shared.resources;
 
+import java.util.*;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import com.google.gwt.core.shared.*;
 import com.intendia.gwt.autorest.client.*;
 
+import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 import jsinterop.annotations.*;
 import rx.*;
+import rx.Observable;
 
 @AutoRestGwt @Path("task") @Produces(MediaType.APPLICATION_JSON) @Consumes(MediaType.APPLICATION_JSON)
 public interface TaskRest {  
@@ -38,6 +43,12 @@ public interface TaskRest {
 	}
 	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
+	public static class  TaskCompactView {
+		public Task task;
+		public TaskStatusType statusType;
+	}
+	
+	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 	public static class  TaskScheduleView {
 		public int taskId;
 		public TaskStatusType statusType;
@@ -49,4 +60,31 @@ public interface TaskRest {
 		public long manualPostponedTo;
 	}
 	
+	@GwtIncompatible public static TaskView view(ITask task) {
+		TaskView tv = new TaskView();
+		tv.task = task.model().getTask();
+		tv.scheduleView = scheduleView(task);
+		return tv;
+	}
+	
+	@GwtIncompatible public static TaskCompactView compactView(ITask task) {
+		TaskCompactView tv = new TaskCompactView();
+		tv.task = task.model().getTask();
+		tv.statusType = task.model().getStatus().statusType;
+		return tv;
+	}
+	
+	@GwtIncompatible public static TaskScheduleView scheduleView(ITask task) {
+		TaskStatus status = task.model().getStatus();
+		TaskScheduleView sv = new TaskScheduleView();
+		sv.taskId = task.getId();
+		sv.statusType = status.statusType;
+		sv.lastStart = Date.from(task.last().start()).getTime();
+		sv.nextStart = Date.from(task.next().start()).getTime();
+		sv.on = task.on();
+		sv.nextEnd = Date.from(task.last().end()).getTime();
+		sv.manualWaitingFrom = status.manualWaitingFrom;
+		sv.manualPostponedTo = status.manualPostponedTo;
+		return sv;
+	}
 }

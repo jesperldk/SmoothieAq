@@ -13,6 +13,28 @@ public interface AppMessages extends Messages {
 	String menuDevices();
 	
 	
+	@DefaultMessage("Show graph")
+	String deviceGraph();
+	
+	@DefaultMessage("No errors")
+	String deviceError();
+	
+	@DefaultMessage("Show errors")
+	String deviceErrorNone();
+	
+	@DefaultMessage("Show and edit alarm")
+	String deviceAlarm();
+	
+	@DefaultMessage("Show and edit schedule")
+	String deviceSchedule();
+	
+	@DefaultMessage("Show and edit tasks")
+	String deviceTasks();
+
+	@DefaultMessage("Edit device name and setting")
+	String deviceEdit();
+	
+	
 	@DefaultMessage("Edit")
 	String edit();
 	

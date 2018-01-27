@@ -36,7 +36,7 @@ public class  SchedulerContext {
 	
 	public LocalDateTime localDateTime() { return state().now.localDateTime(); }
 	
-	public ITask getTask(int id) { return dContext().getTask(id); }
+	public ITask getTask(int id) { return dContext().getWTask(id); }
 	
 	public IDevice getDevice(int deviceId) { return dContext().getDevice(deviceId); }
 	public List<ITask> getDeviceTasks(int deviceId) { return getDevice(deviceId).model().getTasks(); }
@@ -50,7 +50,7 @@ public class  SchedulerContext {
 		return null;
 	}
 	
-	public Interval last(int taskId) { return dContext.getTask(taskId).last(); }
+	public Interval last(int taskId) { return dContext.getWTask(taskId).last(); }
 	
 //	public Interval next(Task task) {
 //		return null; // TODO

@@ -2,7 +2,6 @@ package jesperl.dk.smoothieaq.server.noserver;
 
 import jesperl.dk.smoothieaq.server.*;
 import jesperl.dk.smoothieaq.server.device.*;
-import jesperl.dk.smoothieaq.server.resources.*;
 import jesperl.dk.smoothieaq.server.resources.impl.*;
 import jesperl.dk.smoothieaq.server.streamexpr.*;
 import jesperl.dk.smoothieaq.server.streamexpr.node.*;

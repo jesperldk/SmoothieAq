@@ -17,6 +17,11 @@ public class  PointAtDayAbsolute extends PointAtDay implements PointAtDayAbsolut
 	public boolean[] weekDays;
 	
 	@JsOverlay 
+	public static PointAtDayAbsolute create() {
+		return Schedule_HelperInheritace.createPointAtDayAbsolute();
+	}
+	
+	@JsOverlay 
 	public static PointAtDayAbsolute create(ScheduleTime atTime, boolean[] weekDays) {
 		PointAtDayAbsolute pointAtDayAbsolute = Schedule_HelperInheritace.createPointAtDayAbsolute();
 		pointAtDayAbsolute.atTime = atTime;

@@ -1,46 +1,64 @@
 package jesperl.dk.smoothieaq.client.tasks;
 
-import static jesperl.dk.smoothieaq.client.context.CContext.*;
+import static jesperl.dk.smoothieaq.client.inheritancetypes.TaskArgInfo.*;
 
-import com.google.gwt.core.client.*;
+import java.util.*;
 
 import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
 
 import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.html.*;
 import jesperl.dk.smoothieaq.client.components.*;
+import jesperl.dk.smoothieaq.client.context.*;
+import jesperl.dk.smoothieaq.client.inheritancetypes.*;
+import jesperl.dk.smoothieaq.shared.model.db.fields.*;
+import jesperl.dk.smoothieaq.shared.model.schedule.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 import jesperl.dk.smoothieaq.shared.model.task.TaskTypeUtil.*;
+import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
 
 public class TaskEditView extends Div {
 
-	public TaskEditView(Task task, boolean newTask) {
-    	add(new MaterialTitle("Task for device "+ctx.cDevices.name(task.deviceId))); // TODO
+	public TaskEditView(CDevice cDevice, Task task, boolean newTask, boolean autoTask) {
+		DeviceCompactView cv = cDevice.getCurrentCompactView();
+    	add(new MaterialTitle((autoTask ? "Schedule for " : "Task for device ")+cv.name)); // TODO
+    	
+    	Set<TaskType> types = autoTask ? TaskTypeUtil.autoTypes(cv.deviceClass) : TaskTypeUtil.manualTypes(cv.deviceType);
+    	
     	MaterialPanel panel = new MaterialPanel();
-    	panel.add(wRo(wComboBox(task.taskType()),!newTask));
-    	panel.add(new WSingle(task.taskType().listen().doOnNext(tt -> GWT.log("got one "+tt)).map(tt -> {
+    	panel.add(wComboBox(task.taskType(), wOptions(types)));
+    	panel.add(new WSingle(task.taskType().listen().map(tt -> {
         	MaterialPanel panel2 = new MaterialPanel();
     		if (tt == null) return panel2;
     		TaskTypeInfo ttInfo = tt.info();
+    		
     		if (ttInfo.taskArg != null) {
-    			panel2.add(new MaterialLabel("taskArg")); // TODO
+    			if (task.taskArg == null || !task.taskArg.$type.equals(ttInfo.taskArg.$type)) task.taskArg = ttInfo.taskArg.copy();
+    			info(task.taskArg).addFields(task.taskArg, panel2);
     		}
+    		
     		if (ttInfo.whenAllowed) panel2.add(wTextBox(task.whenStream()));
-    		if (ttInfo.intervalSchedule) {
-    			panel2.add(new MaterialLabel("schedule")); // TODO
-    		}
-    		return panel2;
+    		
+    		Set<String> scheduleTypes = 
+    				(!autoTask)					? ScheduleInfo.manualPoints :
+    				(ttInfo.intervalSchedule) 	? ScheduleInfo.autoSchedules :
+    											  ScheduleInfo.autoPoints;
+    		StringField scheduleType = new StringField("Schedule.type");
+    		if (task.schedule != null && scheduleTypes.contains(task.schedule.$type)) scheduleType.set(task.schedule.$type);
+    		
+    		panel2.add(wComboBox(scheduleType, wTypeOptions(scheduleTypes)));
+    		panel2.add(new WSingle(scheduleType.listen().map(st -> {
+            	MaterialPanel panel3 = new MaterialPanel();
+        		if (st == null) return panel3;
+        		
+        		InheritanceTypeInfo<Schedule> sInfo = ScheduleInfo.infos.get(scheduleType.get());
+       			if (task.schedule == null || !task.schedule.$type.equals(scheduleType.get())) task.schedule = sInfo.create();
+       			sInfo.addFields(task.schedule, panel3);
+       		
+        		return panel3;
+        	})));
+       		return panel2;
     	})));
-//    	panel.add(wRo(wComboBox(device.deviceClass()),!newDevice));
-//    	panel.add(wComboBox(device.deviceCategory()));
-//    	panel.add(wRo(wComboBox(device.driverId(),ctx.cDrivers.options()),!newDevice));
-//    	panel.add(wTextBox(device.deviceUrl()));
-//    	panel.add(wTextBox(device.name()));
-//    	panel.add(wTextBox(device.description()));
-//    	panel.add(wRo(wComboBox(device.measurementType()),!newDevice));
-//    	panel.add(wFloatBox(device.repeatabilityLevel()));
-//    	panel.add(wFloatBox(device.onLevel()));
-//    	panel.add(wFloatBox(device.wattAt100pct()));
     	add(panel);
 	}
 }

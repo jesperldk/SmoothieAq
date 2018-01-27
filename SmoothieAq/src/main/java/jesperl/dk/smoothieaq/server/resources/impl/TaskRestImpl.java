@@ -1,6 +1,5 @@
 package jesperl.dk.smoothieaq.server.resources.impl;
 
-import java.util.*;
 import java.util.function.*;
 
 import jesperl.dk.smoothieaq.server.streamexpr.*;
@@ -8,11 +7,10 @@ import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 import jesperl.dk.smoothieaq.shared.resources.*;
 import rx.*;
-import rx.Observable;
 
 public class  TaskRestImpl extends RestImpl implements TaskRest {
 
-	protected ITask itask(int taskId) { return context().getTask(taskId); }
+	protected ITask itask(int taskId) { return context().getWTask(taskId); }
 
 	@Override public Single<Task> get(int taskId) {
 		return funcGuarded(() -> Single.just(itask(taskId).model().getTask()));
@@ -39,13 +37,13 @@ public class  TaskRestImpl extends RestImpl implements TaskRest {
 	}
 
 	@Override public Single<TaskView> autoTask(int deviceId) {
-		return funcGuarded(() -> Observable.from(idev(deviceId).model().getTasks()).filter(it -> it.model().getTask().taskType.isOfType(TaskType.auto)).map(TaskRestImpl::view).toSingle());
+		return funcGuarded(() -> Observable.from(idev(deviceId).model().getTasks()).filter(it -> it.model().getTask().taskType.isOfType(TaskType.auto)).map(TaskRest::view).toSingle());
 	}
 	@Override public Observable<TaskView> manualTasks(int deviceId) {
-		return funcGuarded(() -> Observable.from(idev(deviceId).model().getTasks()).filter(it -> !it.model().getTask().taskType.isOfType(TaskType.auto)).map(TaskRestImpl::view));
+		return funcGuarded(() -> Observable.from(idev(deviceId).model().getTasks()).filter(it -> !it.model().getTask().taskType.isOfType(TaskType.auto)).map(TaskRest::view));
 	}
 	@Override public Observable<TaskView> tasks() {
-		return funcGuarded(() -> context().tasks().map(TaskRestImpl::view));
+		return funcGuarded(() -> context().tasks().map(TaskRest::view));
 	}
 
 	@Override public Single<TaskView> done(int taskId, TaskArg arg, String description) {
@@ -70,27 +68,8 @@ public class  TaskRestImpl extends RestImpl implements TaskRest {
 		return sview(task);
 	}
 	
-	protected Single<TaskView> sview(ITask task) { return Single.just(view(task)); }
-	protected static TaskView view(ITask task) {
-		TaskView tv = new TaskView();
-		tv.task = task.model().getTask();
-		tv.scheduleView = scheduleView(task);
-		return tv;
-	}
+	protected Single<TaskView> sview(ITask task) { return Single.just(TaskRest.view(task)); }
 	
-	protected Single<TaskScheduleView> sscheduleView(ITask task) { return Single.just(scheduleView(task)); }
-	protected static TaskScheduleView scheduleView(ITask task) {
-		TaskStatus status = task.model().getStatus();
-		TaskScheduleView sv = new TaskScheduleView();
-		sv.taskId = task.getId();
-		sv.statusType = status.statusType;
-		sv.lastStart = Date.from(task.last().start()).getTime();
-		sv.nextStart = Date.from(task.next().start()).getTime();
-		sv.on = task.on();
-		sv.nextEnd = Date.from(task.last().end()).getTime();
-		sv.manualWaitingFrom = status.manualWaitingFrom;
-		sv.manualPostponedTo = status.manualPostponedTo;
-		return sv;
-	}
+	protected Single<TaskScheduleView> sscheduleView(ITask task) { return Single.just(TaskRest.scheduleView(task)); }
 
 }
