@@ -44,10 +44,15 @@ public class CWires {
 		});
 		subscribe(".MessageEvent", e -> wToast(((MessageEvent)e).message.format()));
 		subscribe(".DeviceChangeEvent", e -> ctx.cDevices.deviceChanged(((DeviceChangeEvent)e).compactView));
+		subscribe(".TaskChangeEvent", e -> ctx.cTasks.taskChanged(((TaskChangeEvent)e).compactView));
+		
 		Resources.event.events().doOnTerminate(() -> {/*TODO reconnect*/}).subscribe(e -> demux.accept(e.$type, e));
+		
 		ctx.cDrivers.drivers().subscribe(); // lets get rolling...
 		ctx.cDevices.devices().subscribe(); // lets get rolling...
+		ctx.cTasks.tasks().subscribe(); // lets get rolling...
 	}
+	
 	
 	@SuppressWarnings("serial")
 	private static class MapConsumer<K,E> extends HashMap<K, Consumer<E>> {

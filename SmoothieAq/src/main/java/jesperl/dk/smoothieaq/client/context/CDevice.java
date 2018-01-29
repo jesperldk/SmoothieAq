@@ -29,9 +29,14 @@ public class CDevice {
 	private DeviceCompactView currentCompactView;
 	
 	/*friend*/ Subject<DeviceCompactView, DeviceCompactView> compactViewSubject = PublishSubject.create();
-	public final Observable<Pair<CDevice,DeviceCompactView>> compactView = compactViewSubject.map(cv -> pair(this,cv)).replay(1).autoConnect();
+	public final Observable<Pair<CDevice,DeviceCompactView>> compactView = compactViewSubject.map(cv -> pair(this,fixup(cv))).replay(1).autoConnect();
 	public final Single<Device> device;
 	public final Single<DeviceView> deviceView;
+	
+	/*friend*/ CTask autoTaskX;
+	public final Single<CTask> autoTask = Single.just(autoTaskX);
+	/*friend*/ Subject<CTask, CTask> manualTasksSubject = PublishSubject.create();
+	public final Observable<CTask> manualTasks = manualTasksSubject.replay().autoConnect();
 	
 	private Map<Short, Pair<MeasurementType,Observable<TsMeasurement>>> streams = new HashMap<>();
 	private Map<Short, Function<Float,String>> formatters = new HashMap<>();
@@ -39,16 +44,21 @@ public class CDevice {
 	/*friend*/ CDevice(int id) { 
 		this.id = id;
 		compactView.map(Pair::getB).doOnNext(cv -> {
-			cv.deviceClass 		= EnumField.fixup(DeviceClass.class, cv.deviceClass);
-			cv.deviceType 		= EnumField.fixup(DeviceType.class, cv.deviceType);
-			cv.statusType		= EnumField.fixup(DeviceStatusType.class, cv.statusType);
-			cv.measurementType 	= EnumField.fixup(MeasurementType.class, cv.measurementType);
 			currentCompactView = cv;
 		}).first().subscribe(cv -> { // also gets it running hot...
 			setupStream(cv);
 		});
+		manualTasks.subscribe(); // gets it running hot
 		device = Resources.device.get(id);
 		deviceView = Resources.device.getView(id);
+	}
+
+	private DeviceCompactView fixup(DeviceCompactView cv) {
+		cv.deviceClass 		= EnumField.fixup(DeviceClass.class, cv.deviceClass);
+		cv.deviceType 		= EnumField.fixup(DeviceType.class, cv.deviceType);
+		cv.statusType		= EnumField.fixup(DeviceStatusType.class, cv.statusType);
+		cv.measurementType 	= EnumField.fixup(MeasurementType.class, cv.measurementType);
+		return cv;
 	}
 
 	protected void setupStream(DeviceCompactView cv) {

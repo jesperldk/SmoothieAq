@@ -48,6 +48,8 @@ public class  DbContext {
 		dbClass = DbFile.create(DbClass.class , false, this);
 	}
 	
+	public <E extends Enum<?>> E getEnum(Class<E> cls, byte idByte) { return getEnum(cls, idByte & 0xFF); }
+
 	@SuppressWarnings("unchecked")
 	public <E extends Enum<?>> E getEnum(Class<E> cls, int id) {
 		if (id == 0) return null;

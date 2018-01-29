@@ -9,7 +9,8 @@ public class WSingle extends Div {
 	private Observable<Widget> observable;
 	private Subscription subscription;
 	
-	public WSingle(Observable<Widget> observable) { this.observable = observable; }
+	@SuppressWarnings("unchecked")
+	public WSingle(Observable<? extends Widget> observable) { this.observable = (Observable<Widget>) observable; }
 	
 	@Override protected void onLoad() {
 		super.onLoad();

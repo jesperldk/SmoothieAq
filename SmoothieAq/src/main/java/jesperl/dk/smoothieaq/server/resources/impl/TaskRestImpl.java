@@ -42,8 +42,8 @@ public class  TaskRestImpl extends RestImpl implements TaskRest {
 	@Override public Observable<TaskView> manualTasks(int deviceId) {
 		return funcGuarded(() -> Observable.from(idev(deviceId).model().getTasks()).filter(it -> !it.model().getTask().taskType.isOfType(TaskType.auto)).map(TaskRest::view));
 	}
-	@Override public Observable<TaskView> tasks() {
-		return funcGuarded(() -> context().tasks().map(TaskRest::view));
+	@Override public Observable<TaskCompactView> tasks() {
+		return funcGuarded(() -> context().tasks().map(TaskRest::compactView));
 	}
 
 	@Override public Single<TaskView> done(int taskId, TaskArg arg, String description) {

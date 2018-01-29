@@ -63,7 +63,7 @@ public class  State extends SimpleState {
 		IdFirstFilter<DBO> filter = new IdFirstFilter<>();
 		stream.filter(filter)
 			.doOnTerminate(() -> { if (filter.getMax() >= nextId.get()) nextId.set(filter.getMax()+1); })
-			.subscribe(load);
+			.subscribe(d -> doGuarded(() -> load.call(d), e -> null));
 	}
 
 	protected void loadClasses() {

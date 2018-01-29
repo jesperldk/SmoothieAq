@@ -4,6 +4,7 @@ import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import com.google.gwt.user.client.ui.*;
 
+import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.html.*;
 
 public class TsRow extends Div {
@@ -46,7 +47,7 @@ public class TsRow extends Div {
 		if (htmlText != null && style != null) htmlText.setStyleName(style);
 	}
 	
-	protected static Widget set(Div div, String str) { return set(div,(Widget)funcNotNull(str, s -> new HTML(s))); }
+	protected static Widget set(Div div, String str) { return set(div,(Widget)funcNotNull(str, s -> new MaterialLabel(s))); }
 	
 	protected static Widget set(Div div, Widget widget) {
 		div.clear();

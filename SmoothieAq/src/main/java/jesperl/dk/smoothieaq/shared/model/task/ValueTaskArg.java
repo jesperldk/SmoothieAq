@@ -14,7 +14,6 @@ public class  ValueTaskArg extends TaskArg implements ValueTaskArg_Helper {
 	
 	public MeasurementType measurementType;
 	public float value;
-	public Unit unit;
 	public String substance;
 	
 	@JsOverlay public static String substanceFromDevice = "substanceFromDevice";
@@ -27,11 +26,10 @@ public class  ValueTaskArg extends TaskArg implements ValueTaskArg_Helper {
 	}
 	
 	@JsOverlay 
-	public static ValueTaskArg create(MeasurementType measurementType, float value, Unit unit, String substance) {
+	public static ValueTaskArg create(MeasurementType measurementType, float value, String substance) {
 		ValueTaskArg valueTaskArg = ValueTaskArg.create();
 		valueTaskArg.measurementType = measurementType;
 		valueTaskArg.value = value;
-		valueTaskArg.unit = unit;
 		valueTaskArg.substance = substance; 
 		return valueTaskArg;
 	}

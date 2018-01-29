@@ -8,9 +8,6 @@ import jesperl.dk.smoothieaq.util.shared.error.*;
 public interface MsgMessages extends ConstantsWithLookup {
 	public static MsgMessages msgMsg = GWT.create(MsgMessages.class );
 
-	@DefaultStringValue("Abekat")
-	String M20110();
-
 	@DefaultStringValue("Could not create device id={0} - {1}")
 	String M100107();
 

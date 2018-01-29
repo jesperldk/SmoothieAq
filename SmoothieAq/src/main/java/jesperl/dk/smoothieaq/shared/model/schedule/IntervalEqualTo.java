@@ -12,7 +12,7 @@ import jsinterop.annotations.*;
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 public class  IntervalEqualTo extends ScheduleInterval implements IntervalEqualTo_Helper {
 	
-	public int equalToTaskId;
+	public int equalToDeviceId;
 	
 	@JsOverlay 
 	public static IntervalEqualTo create() {
@@ -20,9 +20,9 @@ public class  IntervalEqualTo extends ScheduleInterval implements IntervalEqualT
 	}
 	
 	@JsOverlay 
-	public static IntervalEqualTo create(int equalToTaskId) {
+	public static IntervalEqualTo create(int equalToDeviceId) {
 		IntervalEqualTo intervalEqualTo = create();
-		intervalEqualTo.equalToTaskId = equalToTaskId;
+		intervalEqualTo.equalToDeviceId = equalToDeviceId;
 		return intervalEqualTo;
 	}
 

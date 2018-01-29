@@ -60,7 +60,7 @@ public class DevicesView extends Composite {
 
         devicesSubscription = ctx.cDevices.devices()
         	.map(cd -> cd.compactView.map(DeviceCardView::new).map(this::deviceCol))
-        	.map(WSingle::new).subscribe(cardRow::add);
+        	.map(GuiUtil::wSingle).subscribe(cardRow::add);
     }
     
     @Override
@@ -68,28 +68,6 @@ public class DevicesView extends Composite {
     	devicesSubscription.unsubscribe();
     	super.onUnload();
     }
-    
-//    protected Widget createDeviceModalx() {
-//    	MaterialTitle title = new MaterialTitle("*New device", "***");
-//    	MaterialPanel panel = new MaterialPanel();
-//    	Device device = new Device();
-//    	panel.add(wListBox(device.deviceType()));
-//    	panel.add(wListBox(device.deviceClass()));
-//    	panel.add(wComboBox(device.deviceCategory()));
-//    	panel.add(wComboBox(device.driverId(),ctx.cDrivers.options()));
-//    	panel.add(wTextBox(device.deviceUrl()));
-//    	panel.add(wTextBox(device.name()));
-//    	panel.add(wTextBox(device.description()));
-//    	panel.add(wListBox(device.measurementType()));
-//    	panel.add(wFloatBox(device.repeatabilityLevel()));
-//    	panel.add(wFloatBox(device.onLevel()));
-//    	panel.add(wFloatBox(device.wattAt100pct()));
-//    	return wModal(title,panel, () -> { t(device); });
-//    }
-//
-//	Subscription t(Device device) {
-//		return Resources.device.create(device.copy()).subscribe(e -> {},e -> log.log(SEVERE,"create device err",e));
-//	}
     
 	protected Widget deviceCol(Widget w) {
 		MaterialColumn column = new MaterialColumn(12, 6, 4);

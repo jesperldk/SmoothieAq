@@ -24,8 +24,11 @@ import jesperl.dk.smoothieaq.shared.model.db.*;
 import jesperl.dk.smoothieaq.util.shared.*;
 import jesperl.dk.smoothieaq.util.shared.error.Errors.*;
 import rx.*;
+import rx.Observable;
 
 public class GuiUtil {
+
+	public static WSingle wSingle(Observable<? extends Widget> observable) { return new WSingle(observable); }
 	
 	public static MaterialIcon wIcon(IconType iconType) { return new MaterialIcon(iconType); }
 	

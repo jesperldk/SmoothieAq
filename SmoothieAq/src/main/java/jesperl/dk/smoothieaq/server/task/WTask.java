@@ -131,5 +131,5 @@ public abstract class  WTask extends IdableType implements ITask {
 		notifyScheduled(state);
 	}
 
-	@Override public String toString() { return device+"/Task#"+getId(); }
+	@Override public String toString() { return device+"/"+task.taskType+"#"+getId(); }
 }

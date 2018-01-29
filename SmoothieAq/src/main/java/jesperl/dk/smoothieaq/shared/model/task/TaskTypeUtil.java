@@ -51,8 +51,8 @@ public class TaskTypeUtil {
 		i(TaskType.other,TaskType.manual,DescriptionTaskArg.create());
 
 		i(manualDosing,no,TaskType.manual);
-		i(dosing,manualDosing,ValueTaskArg.create(volume,0,null,null));
-		i(dryDosing,manualDosing,ValueTaskArg.create(weight,0,null,null));
+		i(dosing,manualDosing,ValueTaskArg.create(volume,0,null));
+		i(dryDosing,manualDosing,ValueTaskArg.create(weight,0,null));
 
 		i(manualMeassure,TaskType.manual,MeasurementTaskArg.create());
 
@@ -66,8 +66,8 @@ public class TaskTypeUtil {
 		i(cleanTubes,filter,clean);
 
 		i(maintenanceTank,TaskType.manual,DescriptionTaskArg.create());
-		i(changeWater,tank,maintenanceTank,ValueTaskArg.create(change,0,null,ValueTaskArg.water));
-		i(topUpWater,tank,maintenanceTank,ValueTaskArg.create(volume,0,null,ValueTaskArg.water));
+		i(changeWater,tank,maintenanceTank,ValueTaskArg.create(change,0,ValueTaskArg.water));
+		i(topUpWater,tank,maintenanceTank,ValueTaskArg.create(volume,0,ValueTaskArg.water));
 		i(cleanPanels,tank,maintenanceTank);
 	}
 	private static void i(TaskType taskType, TaskType parrentType) { i(taskType,DeviceClass.manual,false,false,parrentType,null); }

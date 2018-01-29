@@ -44,13 +44,15 @@ public class  Scheduler implements Runnable {
 	
 	public void addToSchedule(ITask task) {
 		if (!task.isEnabled()) {
+			log.fine(() -> "task not enabled "+task);
 			task.scheduled(context.state(), null);
 		} else {
 			Pair<? extends Schedule, Interval> next = task.model().getTask().next(context);
 			if (next == null) {
-				log.info(()->"No next for "+task.model().getTask());
+				log.info(()->"No next for "+task);
 				task.scheduled(context.state(), null);
 			} else {
+				log.fine(() -> "scheduling task "+task);
 				addToSchedule(next.b.start(), task, true, next.a, next.b);
 				task.scheduled(context.state(), next.b);
 			}
@@ -95,7 +97,7 @@ public class  Scheduler implements Runnable {
 			if (peek == null) continue;
 			Instant at = peek.at;
 			long until = context.instant().until(at,MILLIS);
-			if (until > 0)
+			if (until > 0) {
 				log.info("waiting "+until+" millis");
 				if (context.state().now.timeIsFlying()) {
 					context.state().now.flyTo(at);
@@ -106,6 +108,7 @@ public class  Scheduler implements Runnable {
 						wait(until);
 					}
 				} catch (InterruptedException e) {}
+			}
 			log.fine(()->"time is now "+context.instant());
 			
 			Scheduled next;

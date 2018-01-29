@@ -1,7 +1,5 @@
 package jesperl.dk.smoothieaq.shared.resources;
 
-import java.util.*;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
@@ -12,7 +10,6 @@ import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 import jsinterop.annotations.*;
 import rx.*;
-import rx.Observable;
 
 @AutoRestGwt @Path("task") @Produces(MediaType.APPLICATION_JSON) @Consumes(MediaType.APPLICATION_JSON)
 public interface TaskRest {  
@@ -28,7 +25,7 @@ public interface TaskRest {
 	
 	@GET @Path("deviceautotask") Single<TaskView> autoTask(@QueryParam("deviceid") int deviceId);
 	@GET @Path("devicemanualtasks") Observable<TaskView> manualTasks(@QueryParam("deviceid") int deviceId);
-	@GET @Path("tasks") Observable<TaskView> tasks();
+	@GET @Path("tasks") Observable<TaskCompactView> tasks();
 
 	@POST @Path("done") Single<TaskView> done(@QueryParam("id") int taskId, TaskArg arg, @QueryParam("description") String description);
 	@POST @Path("skip") Single<TaskView> skip(@QueryParam("id") int taskId);
@@ -79,12 +76,12 @@ public interface TaskRest {
 		TaskScheduleView sv = new TaskScheduleView();
 		sv.taskId = task.getId();
 		sv.statusType = status.statusType;
-		sv.lastStart = Date.from(task.last().start()).getTime();
-		sv.nextStart = Date.from(task.next().start()).getTime();
-		sv.on = task.on();
-		sv.nextEnd = Date.from(task.last().end()).getTime();
-		sv.manualWaitingFrom = status.manualWaitingFrom;
-		sv.manualPostponedTo = status.manualPostponedTo;
+//		sv.lastStart = Date.from(task.last().start()).getTime();
+//		sv.nextStart = Date.from(task.next().start()).getTime();
+//		sv.on = task.on();
+//		sv.nextEnd = Date.from(task.last().end()).getTime();
+//		sv.manualWaitingFrom = status.manualWaitingFrom;
+//		sv.manualPostponedTo = status.manualPostponedTo;
 		return sv;
 	}
 }

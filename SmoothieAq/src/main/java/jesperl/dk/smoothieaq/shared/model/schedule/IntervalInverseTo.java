@@ -12,7 +12,7 @@ import jsinterop.annotations.*;
 @DbVersion(1) @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 public class  IntervalInverseTo extends ScheduleInterval implements IntervalInverseTo_Helper {
 	
-	public int inverseToTaskId;
+	public int inverseToDeviceId;
 	
 	@JsOverlay 
 	public static IntervalInverseTo create() {
@@ -20,9 +20,9 @@ public class  IntervalInverseTo extends ScheduleInterval implements IntervalInve
 	}
 	
 	@JsOverlay 
-	public static IntervalInverseTo create(int inverseToTaskId) {
+	public static IntervalInverseTo create(int inverseToDeviceId) {
 		IntervalInverseTo intervalInverseTo = create();
-		intervalInverseTo.inverseToTaskId = inverseToTaskId;
+		intervalInverseTo.inverseToDeviceId = inverseToDeviceId;
 		return intervalInverseTo;
 	}
 

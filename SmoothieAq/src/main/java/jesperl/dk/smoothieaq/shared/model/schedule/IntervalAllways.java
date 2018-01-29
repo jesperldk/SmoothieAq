@@ -20,7 +20,7 @@ public class  IntervalAllways extends ScheduleInterval implements IntervalAllway
 
 	@Override @GwtIncompatible
 	public Interval nextInterval(TaskContext context) {
-		return new Interval(context.instant(), context.instant().plus(999, ChronoUnit.YEARS));
+		return new Interval(context.instant(), context.instant().plus(999*360, ChronoUnit.DAYS));
 	}
 
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { IntervalAllways_Db.serialize(this, out, context); }

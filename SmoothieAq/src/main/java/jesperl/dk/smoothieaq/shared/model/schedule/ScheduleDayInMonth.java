@@ -1,7 +1,7 @@
 package jesperl.dk.smoothieaq.shared.model.schedule;
 
 public enum ScheduleDayInMonth {
-	specific(1), weekDay(2), workDay(3), weekendDay(4);
+	specific(1), firstWeekDay(2), lastWeekDay(3);
 	
 	public final int id;
 	

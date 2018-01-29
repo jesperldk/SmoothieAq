@@ -16,7 +16,6 @@ public class  EveryNMonths extends EveryPeriod implements EveryNMonths_Helper {
 	public ScheduleDayInMonth dayInMonth;
 	public int atSpecifiDay;
 	public boolean[] atWeekDays;
-	public boolean first; // true==first, false==last day in month
 	
 	@GwtIncompatible private Adjuster adjuster;
 	
@@ -26,8 +25,7 @@ public class  EveryNMonths extends EveryPeriod implements EveryNMonths_Helper {
 	}
 
 	@JsOverlay 
-	public static EveryNMonths create(boolean relativeToActual, int months, ScheduleDayInMonth dayInMonth, int atSpecifiDay,
-			boolean[] atWeekDays, boolean first) {
+	public static EveryNMonths create(boolean relativeToActual, int months, ScheduleDayInMonth dayInMonth, int atSpecifiDay, boolean[] atWeekDays) {
 		assert dayInMonth != null ^ atSpecifiDay != 0 ^ atWeekDays != null;
 		EveryNMonths everyNMonths = create();
 		everyNMonths.relativeToActual = relativeToActual;
@@ -35,7 +33,6 @@ public class  EveryNMonths extends EveryPeriod implements EveryNMonths_Helper {
 		everyNMonths.dayInMonth = dayInMonth;
 		everyNMonths.atSpecifiDay = atSpecifiDay;
 		everyNMonths.atWeekDays = atWeekDays;
-		everyNMonths.first = first;
 		return everyNMonths;
 	}
 

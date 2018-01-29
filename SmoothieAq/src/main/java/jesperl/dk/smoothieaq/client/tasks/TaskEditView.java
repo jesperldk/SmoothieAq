@@ -8,7 +8,6 @@ import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
 
 import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.html.*;
-import jesperl.dk.smoothieaq.client.components.*;
 import jesperl.dk.smoothieaq.client.context.*;
 import jesperl.dk.smoothieaq.client.inheritancetypes.*;
 import jesperl.dk.smoothieaq.shared.model.db.fields.*;
@@ -27,7 +26,7 @@ public class TaskEditView extends Div {
     	
     	MaterialPanel panel = new MaterialPanel();
     	panel.add(wComboBox(task.taskType(), wOptions(types)));
-    	panel.add(new WSingle(task.taskType().listen().map(tt -> {
+    	panel.add(wSingle(task.taskType().listen().map(tt -> {
         	MaterialPanel panel2 = new MaterialPanel();
     		if (tt == null) return panel2;
     		TaskTypeInfo ttInfo = tt.info();
@@ -47,7 +46,7 @@ public class TaskEditView extends Div {
     		if (task.schedule != null && scheduleTypes.contains(task.schedule.$type)) scheduleType.set(task.schedule.$type);
     		
     		panel2.add(wComboBox(scheduleType, wTypeOptions(scheduleTypes)));
-    		panel2.add(new WSingle(scheduleType.listen().map(st -> {
+    		panel2.add(wSingle(scheduleType.listen().map(st -> {
             	MaterialPanel panel3 = new MaterialPanel();
         		if (st == null) return panel3;
         		
