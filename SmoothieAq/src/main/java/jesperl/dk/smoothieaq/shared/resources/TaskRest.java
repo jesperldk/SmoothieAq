@@ -1,5 +1,7 @@
 package jesperl.dk.smoothieaq.shared.resources;
 
+import java.util.*;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
@@ -10,6 +12,7 @@ import jesperl.dk.smoothieaq.server.task.classes.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 import jsinterop.annotations.*;
 import rx.*;
+import rx.Observable;
 
 @AutoRestGwt @Path("task") @Produces(MediaType.APPLICATION_JSON) @Consumes(MediaType.APPLICATION_JSON)
 public interface TaskRest {  
@@ -25,7 +28,7 @@ public interface TaskRest {
 	
 	@GET @Path("deviceautotask") Single<TaskView> autoTask(@QueryParam("deviceid") int deviceId);
 	@GET @Path("devicemanualtasks") Observable<TaskView> manualTasks(@QueryParam("deviceid") int deviceId);
-	@GET @Path("tasks") Observable<TaskCompactView> tasks();
+	@GET @Path("tasks") Observable<TaskView> tasks();
 
 	@POST @Path("done") Single<TaskView> done(@QueryParam("id") int taskId, TaskArg arg, @QueryParam("description") String description);
 	@POST @Path("skip") Single<TaskView> skip(@QueryParam("id") int taskId);
@@ -35,7 +38,7 @@ public interface TaskRest {
 
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 	public static class  TaskView {
-		public Task task;
+		public TaskCompactView compactView;
 		public TaskScheduleView scheduleView;
 	}
 	
@@ -48,7 +51,6 @@ public interface TaskRest {
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
 	public static class  TaskScheduleView {
 		public int taskId;
-		public TaskStatusType statusType;
 		public long lastStart;
 		public long nextStart;
 		public boolean on;
@@ -59,7 +61,7 @@ public interface TaskRest {
 	
 	@GwtIncompatible public static TaskView view(ITask task) {
 		TaskView tv = new TaskView();
-		tv.task = task.model().getTask();
+		tv.compactView = compactView(task);
 		tv.scheduleView = scheduleView(task);
 		return tv;
 	}
@@ -75,13 +77,12 @@ public interface TaskRest {
 		TaskStatus status = task.model().getStatus();
 		TaskScheduleView sv = new TaskScheduleView();
 		sv.taskId = task.getId();
-		sv.statusType = status.statusType;
-//		sv.lastStart = Date.from(task.last().start()).getTime();
-//		sv.nextStart = Date.from(task.next().start()).getTime();
-//		sv.on = task.on();
-//		sv.nextEnd = Date.from(task.last().end()).getTime();
-//		sv.manualWaitingFrom = status.manualWaitingFrom;
-//		sv.manualPostponedTo = status.manualPostponedTo;
+		if (task.last() != null) sv.lastStart = Date.from(task.last().start()).getTime();
+		if (task.next() != null) sv.nextStart = Date.from(task.next().start()).getTime();
+		sv.on = task.on();
+		if (task.last() != null) sv.nextEnd = Date.from(task.last().end()).getTime();
+		sv.manualWaitingFrom = status.manualWaitingFrom;
+		sv.manualPostponedTo = status.manualPostponedTo;
 		return sv;
 	}
 }

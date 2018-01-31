@@ -1,12 +1,26 @@
 package jesperl.dk.smoothieaq.client.tasks;
 
+import static jesperl.dk.smoothieaq.client.ClientObjects.*;
+import static jesperl.dk.smoothieaq.client.text.AppMessages.*;
 import static jesperl.dk.smoothieaq.client.text.EnumMessages.*;
 import static jesperl.dk.smoothieaq.client.text.TaskMessages.*;
+import static jesperl.dk.smoothieaq.shared.model.task.TaskStatusType.*;
 import static jesperl.dk.smoothieaq.shared.model.task.TaskType.*;
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
+import com.google.gwt.user.client.ui.*;
+
+import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
+
+import gwt.material.design.client.constants.*;
+import gwt.material.design.client.ui.*;
+import gwt.material.design.client.ui.html.*;
+import jesperl.dk.smoothieaq.client.*;
+import jesperl.dk.smoothieaq.client.context.*;
 import jesperl.dk.smoothieaq.client.inheritancetypes.*;
+import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
+import jesperl.dk.smoothieaq.shared.resources.TaskRest.*;
 
 public class TaskUtil {
 
@@ -21,5 +35,58 @@ public class TaskUtil {
 		buf.append(ScheduleInfo.format(task.schedule));
 		if (isNotEmpty(task.whenStream)) buf.append(taskMsg.when(task.whenStream));
 		return capitalize(buf.toString());
+	}
+	
+	public static String schedule(TaskScheduleView scheduleView) {
+		StringBuilder buf = new StringBuilder();
+		if (scheduleView.manualWaitingFrom != 0)
+			buf.append(taskMsg.waitingFrom(formatStamp(scheduleView.manualPostponedTo)));
+		else if (scheduleView.manualPostponedTo != 0)
+			buf.append(taskMsg.postponedTo(formatStamp(scheduleView.manualPostponedTo)));
+		else if (scheduleView.nextStart != 0)
+			buf.append(taskMsg.nextStart(formatStamp(scheduleView.nextStart)));
+		else if (scheduleView.nextEnd != 0 && scheduleView.on)
+			buf.append(taskMsg.nextEnd(formatStamp(scheduleView.nextEnd)));
+		else
+			buf.append(taskMsg.noNext());
+		if (scheduleView.lastStart != 0)
+			buf.append(taskMsg.lastStart(formatStamp(scheduleView.lastStart)));
+		return capitalize(buf.toString());
+	}
+	
+	public static Widget actions(CTask cTask, TaskCompactView tcv) {
+		return wSingle(cTask.cDevice.flatMapObservable(cd -> cd.compactView).map( pd -> {
+			CDevice cDevice = pd.a;
+			Span actions = new Span();
+			if (!pd.a.isNotDeleted()) return actions;
+			if (cTask.isNotDeleted()) {
+				boolean autoTask = tcv.task.taskType.isOfType(auto);
+				if (!autoTask)
+					actions.add(wIconButton2(IconType.PAN_TOOL, null, appMsg.taskDo(), () -> {}));
+				
+				actions.add(wIconButton(IconType.EDIT, null, appMsg.taskEdit(), () -> {
+					Task task = tcv.task.copy();
+		    		wModal(new TaskEditView(cDevice, task, false, autoTask), () -> Resources.task.update(task.copy()).subscribe(robs()));
+		    	}));
+				
+				MaterialLink delete = wLink(IconType.DELETE, false, appMsg.taskDelete(), null, () -> 
+					Resources.task.statusChange(cTask.id, deleted).subscribe(robs()));
+				if (tcv.statusType == disabled) {
+					MaterialLink enable = wLink(IconType.PLAY_ARROW, false, appMsg.taskEnable(), null, () -> 
+						Resources.task.statusChange(cTask.id, enabled).subscribe(robs()));
+					actions.add(wDropdown(IconType.PAUSE, null, appMsg.taskPaused(), enable, delete));
+				} else {
+					MaterialLink pause = wLink(IconType.PAUSE, false, appMsg.taskPause(), null, () -> 
+						Resources.task.statusChange(cTask.id, disabled).subscribe(robs()));
+					if (pd.b.statusType != DeviceStatusType.enabled)
+						actions.add(wDropdown(IconType.PLAY_CIRCLE_OUTLINE, null, appMsg.taskEnabledDeviceNot(), pause, delete));
+					else
+						actions.add(wDropdown(IconType.PLAY_ARROW, null, appMsg.taskEnabled(), pause, delete));
+				}
+			} else {
+				actions.add(wIconButton(IconType.DELETE, null, appMsg.taskDeleted(), () -> {}));
+			}
+			return actions;
+		}));
 	}
 }

@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.*;
 import gwt.material.design.client.ui.html.*;
 import rx.*;
 
-public class WSingle extends Div {
+public class WSingle extends Span {
 	private Observable<Widget> observable;
 	private Subscription subscription;
 	

@@ -29,6 +29,7 @@ public abstract class  WTask extends IdableType implements ITask {
 			assert task.getId() == WTask.this.task.getId();
 			assert task.taskType.isOfType(TaskType.manual);
 			validate(task,device);
+			WTask.this.task = task;
 			state.replace(task);
 			state.wires.tasksChanged.onNext(WTask.this);
 			initInternal(state);
@@ -85,7 +86,7 @@ public abstract class  WTask extends IdableType implements ITask {
 		done.taskArg = arg;
 		done.description = description;
 		last = next;
-		next = null;
+//		next = null;
 		on = false;
 		state.save(done);
 		state.wires.tasksDone.onNext(done);
@@ -126,7 +127,7 @@ public abstract class  WTask extends IdableType implements ITask {
 			if (on) end(state);
 		} else {
 			next = interval;
-			if (task.taskType.info().intervalSchedule && on && !interval.a.isBefore(state.now.instant())) end(state);
+			if (task.taskType.info().intervalSchedule && on && interval.a.isAfter(state.now.instant())) end(state);
 		}
 		notifyScheduled(state);
 	}

@@ -16,7 +16,7 @@ public class CTasks {
 	private Map<Integer, CTask> idToTask = new HashMap<>();
 	
 	private Completable ready = Resources.task.tasks()
-			.doOnNext(t -> taskChanged(t))
+			.doOnNext(tv -> { taskChanged(tv.compactView); scheduleChanged(tv.scheduleView); }) 
 			.count().cache().toCompletable();
 
 	private final Subject<CTask, CTask> tasksSubject = PublishSubject.create();
@@ -43,6 +43,12 @@ public class CTasks {
 			});
 		}
 		cTask.compactViewSubject.onNext(compactView);
+	}
+	
+	public void scheduleChanged(TaskScheduleView scheduleView) {
+		CTask cTask = idToTask.get(scheduleView.taskId);
+		if (cTask == null) return;
+		cTask.scheduleViewSubject.onNext(scheduleView);
 	}
 	
 //	public Function<Float,String> formatter(int deviceId, short streamId) {

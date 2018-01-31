@@ -1,6 +1,7 @@
-package jesperl.dk.smoothieaq.client.devices;
+package jesperl.dk.smoothieaq.client.tasks;
 
 import static jesperl.dk.smoothieaq.client.ClientObjects.*;
+import static jesperl.dk.smoothieaq.client.tasks.TaskUtil.*;
 
 import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
 
@@ -10,9 +11,7 @@ import gwt.material.design.client.ui.html.*;
 import jesperl.dk.smoothieaq.client.*;
 import jesperl.dk.smoothieaq.client.components.*;
 import jesperl.dk.smoothieaq.client.context.*;
-import jesperl.dk.smoothieaq.client.tasks.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
-import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
 import rx.*;
 
 public class DeviceManualTasksView extends Div {
@@ -20,7 +19,7 @@ public class DeviceManualTasksView extends Div {
 	private CDevice cDevice;
 	private Subscription taskSubscription;
 
-	public DeviceManualTasksView(CDevice cDevice, DeviceView deviceView) {
+	public DeviceManualTasksView(CDevice cDevice) {
 		this.cDevice = cDevice;
  	}
     @Override
@@ -38,7 +37,13 @@ public class DeviceManualTasksView extends Div {
     	add(panel);
 
         taskSubscription = cDevice.manualTasks
-        	.map(ct -> ct.compactView.map(cv -> new MaterialLabel(TaskUtil.format(cv.b.task))))
+        	.map(ct -> ct.compactView.map(pt -> {
+        		Div div = new Div();
+        		div.add(new MaterialLabel(format(pt.b.task)));
+        		div.add(wSingle(ct.scheduleView.map(sv -> new MaterialLabel(schedule(sv)))));
+        		div.add(actions(pt.a, pt.b));
+        		return div;
+        	}))
         	.map(GuiUtil::wSingle)
         	.subscribe(list::add);
     }

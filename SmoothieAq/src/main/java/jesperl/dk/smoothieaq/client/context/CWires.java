@@ -45,6 +45,7 @@ public class CWires {
 		subscribe(".MessageEvent", e -> wToast(((MessageEvent)e).message.format()));
 		subscribe(".DeviceChangeEvent", e -> ctx.cDevices.deviceChanged(((DeviceChangeEvent)e).compactView));
 		subscribe(".TaskChangeEvent", e -> ctx.cTasks.taskChanged(((TaskChangeEvent)e).compactView));
+		subscribe(".TaskScheduledEvent", e -> ctx.cTasks.scheduleChanged(((TaskScheduledEvent)e).scheduleView));
 		
 		Resources.event.events().doOnTerminate(() -> {/*TODO reconnect*/}).subscribe(e -> demux.accept(e.$type, e));
 		

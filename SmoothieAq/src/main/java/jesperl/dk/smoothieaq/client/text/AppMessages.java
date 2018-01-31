@@ -35,6 +35,34 @@ public interface AppMessages extends Messages {
 	String deviceEdit();
 	
 	
+	@DefaultMessage("Do the task")
+	String taskDo();
+	
+	@DefaultMessage("Edit task")
+	String taskEdit();
+	
+	@DefaultMessage("Task is enabled, click to change")
+	String taskEnabled();
+	
+	@DefaultMessage("Task is enabled but the device is not, click to change status for task")
+	String taskEnabledDeviceNot();
+	
+	@DefaultMessage("Task is paused, click to change")
+	String taskPaused();
+	
+	@DefaultMessage("Task is deleted")
+	String taskDeleted();
+	
+	@DefaultMessage("Enable task")
+	String taskEnable();
+	
+	@DefaultMessage("Pause task")
+	String taskPause();
+	
+	@DefaultMessage("Delete task")
+	String taskDelete();
+	
+	
 	@DefaultMessage("Edit")
 	String edit();
 	

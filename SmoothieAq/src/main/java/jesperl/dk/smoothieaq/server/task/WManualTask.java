@@ -10,8 +10,7 @@ import jesperl.dk.smoothieaq.shared.model.task.*;
 public class  WManualTask extends WTask implements ManualTask {
 	
 	@Override public synchronized void start(State state) {
-		internalSetManualState(state,state.now.millis(),0);
-		// TODO message
+		internalSetManualState(state,state.now.instant().toEpochMilli(),0);
 		notifyScheduled(state);
 	}
 	@Override public void end(State state) {}

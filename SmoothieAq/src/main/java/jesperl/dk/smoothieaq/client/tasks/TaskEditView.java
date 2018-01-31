@@ -20,7 +20,7 @@ public class TaskEditView extends Div {
 
 	public TaskEditView(CDevice cDevice, Task task, boolean newTask, boolean autoTask) {
 		DeviceCompactView cv = cDevice.getCurrentCompactView();
-    	add(new MaterialTitle((autoTask ? "Schedule for " : "Task for device ")+cv.name)); // TODO
+    	add(new MaterialTitle((autoTask ? "Schedule for " : "Task for device ")+cv.name)); // TODO text
     	
     	Set<TaskType> types = autoTask ? TaskTypeUtil.autoTypes(cv.deviceClass) : TaskTypeUtil.manualTypes(cv.deviceType);
     	

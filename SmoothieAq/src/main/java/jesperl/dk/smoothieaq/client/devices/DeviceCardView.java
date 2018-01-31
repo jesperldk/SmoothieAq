@@ -53,20 +53,19 @@ public class DeviceCardView extends MaterialCard {
 		
 		MaterialCardAction action = new MaterialCardAction();
 		if (dc.deviceClass != manual)
-			action.add(wIconButton(IconType.TIMELINE, null, appMsg.deviceGraph(), null));
+			action.add(wIconButton(IconType.TIMELINE, null, appMsg.deviceGraph(), () -> {}));
 		
 		if (dc.deviceClass != manual)
-			action.add(wIconButton(IconType.ERROR, null, appMsg.deviceErrorNone(), null));
+			action.add(wIconButton(IconType.ERROR, null, appMsg.deviceErrorNone(), () -> {}));
 		
 		if (EnumSet.of(sensor, toggle, container, calculated).contains(dc.deviceClass))
-			action.add(wIconButton(IconType.NOTIFICATIONS_NONE, null, appMsg.deviceAlarm(), null));
+			action.add(wIconButton(IconType.NOTIFICATIONS_NONE, null, appMsg.deviceAlarm(), () -> {}));
 		
 		if (EnumSet.of(onoff, level, doser, status).contains(dc.deviceClass))
 			action.add(wIconButton(IconType.SCHEDULE, null, appMsg.deviceSchedule(), () ->
-			cd.deviceView.subscribe(dv -> wModal(new TaskEditView(cd, dv.autoTask, false, true), null))));
+			cd.autoTask.flatMap(ct -> ct.compactView.first().toSingle()).subscribe(pt -> wModal(new TaskEditView(cd, pt.b.task, false, true), null))));
 		
-		action.add(wIconButton(IconType.DATE_RANGE, null, appMsg.deviceTasks(), () -> 
-			cd.deviceView.subscribe(dv -> wModal(new DeviceManualTasksView(cd, dv), null))));
+		action.add(wIconButton(IconType.DATE_RANGE, null, appMsg.deviceTasks(), () ->  wModal(new DeviceManualTasksView(cd), null)));
 		
 		action.add(wIconButton(IconType.EDIT, null, appMsg.edit(), () -> {
 			cd.device.subscribe(d -> { 

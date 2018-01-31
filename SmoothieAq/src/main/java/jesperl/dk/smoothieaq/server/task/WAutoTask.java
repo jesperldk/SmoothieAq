@@ -16,9 +16,9 @@ public abstract class  WAutoTask extends WTask implements ITask {
 		Instant now = state.now.instant();
 		if (task.taskType.info().intervalSchedule) {
 			on = true;
+			next = new Interval(now, next.b);
 			autoStart(state, next);
 			if (sApply != null) wire(state);
-			next = new Interval(now, next.b);
 		} else {
 			next = new Interval(now,now);
 			autoDo(state);

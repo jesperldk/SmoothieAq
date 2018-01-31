@@ -1,5 +1,6 @@
 package jesperl.dk.smoothieaq.client.context;
 
+import static jesperl.dk.smoothieaq.shared.model.task.TaskStatusType.*;
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import jesperl.dk.smoothieaq.shared.model.db.*;
@@ -21,7 +22,7 @@ public class CTask {
 	public final Observable<TaskScheduleView> scheduleView = scheduleViewSubject.map(sv -> fixup(sv)).replay(1).autoConnect();
 	
 	/*friend*/ CDevice cDeviceX;
-	public final Single<CDevice> cDevice = Single.just(cDeviceX);
+	public final Single<CDevice> cDevice = Single.fromCallable(() -> cDeviceX);
 
 	//	private Map<Short, Pair<MeasurementType,Observable<TsMeasurement>>> streams = new HashMap<>();
 //	private Map<Short, Function<Float,String>> formatters = new HashMap<>();
@@ -40,8 +41,9 @@ public class CTask {
 		});
 	}
 
+	public boolean isNotDeleted() { return currentCompactView == null || currentCompactView.statusType != deleted; }
+
 	private TaskScheduleView fixup(TaskScheduleView sv) {
-		sv.statusType 		= EnumField.fixup(TaskStatusType.class, sv.statusType);
 		return sv;
 	}
 

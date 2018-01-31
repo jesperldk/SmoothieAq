@@ -42,7 +42,8 @@ public class  Wires {
 				messages.map(MessageEvent::create),
 				Observable.merge(devMeasures,devOtherMeasures).map(ME::create),
 				devicesChanged.map(DeviceChangeEvent::create),
-				tasksChanged.map(TaskChangeEvent::create)
+				tasksChanged.map(TaskChangeEvent::create),
+				tasksScheduled.map(TaskScheduledEvent::create)
 			)
 			.onBackpressureBuffer(1, ()->error(log, 140101, Severity.major, "Wires.eventsMux are being used by someone applying backpressure, that is no good"), BackpressureOverflow.ON_OVERFLOW_DROP_LATEST)
 			.share();

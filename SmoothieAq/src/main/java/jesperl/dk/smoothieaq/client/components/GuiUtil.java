@@ -36,6 +36,22 @@ public class GuiUtil {
 		return new ModalView(body, okAction);
 	}
 	public static <W extends HasReadOnly> W wRo(W w, boolean readOnly) { w.setReadOnly(readOnly); return w; }
+	
+	private static int dropdownNo = 1;
+	public static MaterialWidget wDropdown(IconType iconType, Color iconColor, String tooltip, MaterialWidget... links) {
+		String activator = "A"+(dropdownNo++);
+		Span span = new Span();
+		MaterialIcon icon = new MaterialIcon(iconType);
+		if (iconColor != null) icon.setIconColor(iconColor);
+		if (tooltip != null) icon.setTooltip(tooltip);
+		icon.setActivates(activator);
+		span.add(icon);
+		MaterialDropDown dropDown = new MaterialDropDown(activator);
+		dropDown.setConstrainWidth(false);
+		for (MaterialWidget link: links) dropDown.add(link);
+		span.add(dropDown);
+		return span;
+	}
 
 	public static MaterialAnchorButton wFloatButton(EnumInfo enumInfo, Action doOnClick) {
 		return wFloatButton(enumInfo.icon, enumInfo.bgColor, enumInfo.hoverTxt, doOnClick);
@@ -52,6 +68,30 @@ public class GuiUtil {
 		if (tooltip != null)  btn.setTooltip(tooltip);
 		if (doOnClick != null) btn.setWaves(WavesType.DEFAULT);
 		return btn;
+	}
+	public static MaterialIcon wIconButton2(IconType iconType, Color iconColor, String tooltip, Action doOnClick) {
+		MaterialIcon icon = new MaterialIcon(iconType) {
+			@Override protected void onLoad() {
+				super.onLoad();
+				if (doOnClick != null) addClickHandler(e -> doOnClick.doit());
+			}
+		};
+		icon.setCircle(true);
+		if (iconColor != null) icon.setIconColor(iconColor);
+		if (tooltip != null)  icon.setTooltip(tooltip);
+		if (doOnClick != null) icon.setWaves(WavesType.DEFAULT);
+//		top: -2px; padding: 0px !important; padding-top: 7px !important; width: 16px !important; height: 16px !important; right: -6px; font-weight: bold; font-family: Roboto, sans-serif;
+//		icon: position: relative
+//		icon.setpLayoutPosition(Position.valueOf(name));
+		MaterialBadge badge = new MaterialBadge("1", Color.WHITE, Color.RED);
+		badge.setCircle(true);
+		badge.setHeight("12px !important");
+		badge.setWidth("12px !important");
+		badge.setTop(-4);
+		badge.setPadding(0);
+		badge.setRight(2);
+		icon.add(badge);
+		return icon;
 	}
 	public static MaterialIcon wIconButton(IconType iconType, Color iconColor, String tooltip, Action doOnClick) {
 		MaterialIcon icon = new MaterialIcon(iconType) {
@@ -81,6 +121,9 @@ public class GuiUtil {
 		return btn;
 	}
 	public static MaterialLink wLink(boolean primary, String text, String tooltip, Action doOnClick) {
+		return wLink(null, primary, text, tooltip, doOnClick);
+	}
+	public static MaterialLink wLink(IconType iconType, boolean primary, String text, String tooltip, Action doOnClick) {
 		MaterialLink btn = new MaterialLink() {
 			@Override protected void onLoad() {
 				super.onLoad();
@@ -89,8 +132,9 @@ public class GuiUtil {
 		};
 		btn.setText(text);
 //		if (!primary) { btn.setBackgroundColor(Color.WHITE); btn.setTextColor(Color.BLACK); }
+		if (iconType != null) { btn.setIconType(iconType); btn.setIconPosition(IconPosition.LEFT); }
 		if (tooltip != null)  btn.setTooltip(tooltip);
-//		if (doOnClick != null) btn.setWaves(WavesType.LIGHT);
+		if (doOnClick != null) btn.setWaves(WavesType.LIGHT);
 		return btn;
 	}
 

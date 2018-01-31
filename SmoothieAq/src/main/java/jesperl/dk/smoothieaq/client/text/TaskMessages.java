@@ -129,4 +129,23 @@ public interface TaskMessages extends Messages {
 	@DefaultMessage("when ''{0}''")
 	public String when(String when);
 	
+	
+	@DefaultMessage("postponed to {0}")
+	public String postponedTo(String stamp);
+	
+	@DefaultMessage("this task is due, and have been waiting since {0}!")
+	public String waitingFrom(String stamp);
+	
+	@DefaultMessage("next scheduled for {0}")
+	public String nextStart(String stamp);
+	
+	@DefaultMessage("is currently started, and will stop at {0}")
+	public String nextEnd(String stamp);
+	
+	@DefaultMessage("is not scheduled")
+	public String noNext();
+	
+	@DefaultMessage(", it was last started at {0}")
+	public String lastStart(String stamp);
+	
 }

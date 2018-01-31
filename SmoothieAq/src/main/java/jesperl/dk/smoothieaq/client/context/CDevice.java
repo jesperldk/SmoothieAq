@@ -1,6 +1,7 @@
 package jesperl.dk.smoothieaq.client.context;
 
 import static jesperl.dk.smoothieaq.client.context.CContext.*;
+import static jesperl.dk.smoothieaq.shared.model.device.DeviceStatusType.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceStream.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceStreamType.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceUtil.*;
@@ -60,6 +61,8 @@ public class CDevice {
 		cv.measurementType 	= EnumField.fixup(MeasurementType.class, cv.measurementType);
 		return cv;
 	}
+	
+	public boolean isNotDeleted() { return currentCompactView == null || currentCompactView.statusType != deleted; }
 
 	protected void setupStream(DeviceCompactView cv) {
 		for (DeviceStream devStream: toClientStreams.get(cv.deviceClass)) {
