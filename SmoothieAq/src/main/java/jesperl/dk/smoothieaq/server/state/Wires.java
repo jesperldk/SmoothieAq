@@ -53,10 +53,10 @@ public class  Wires {
 
 	private State state;
 	
-	public Subscription devMeasureObserve(IDevice idevice, DeviceStream dstream, Observable<Float> stream) {
+	public Subscription devSaveMeasureObserve(IDevice idevice, DeviceStream dstream, Observable<Float> stream) {
 		return stream.map(f -> Measure.create(idevice.getId(), dstream, f)).subscribe(devMeasures);
 	}
-	public Subscription devOtherMeasuerObserve(IDevice idevice, DeviceStream dstream, Observable<Float> stream) {
+	public Subscription devClientMeasuerObserve(IDevice idevice, DeviceStream dstream, Observable<Float> stream) {
 		return stream.map(f -> Measure.create(idevice.getId(), dstream, f)).subscribe(devOtherMeasures);
 	}
 	

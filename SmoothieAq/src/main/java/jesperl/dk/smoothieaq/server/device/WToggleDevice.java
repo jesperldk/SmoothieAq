@@ -35,7 +35,7 @@ public class  WToggleDevice extends WDevice<ToggleDriver> implements ToggleDevic
 	@Override protected void pause(State state) {  
 		disabled = false; 
 		stream.onNext(disabledLevel); 
-		super.enable(state);
+		super.pause(state);
 		deviceIsOn();
 		pauseStream.onNext(getValue()); 
 	}

@@ -24,10 +24,14 @@ public class DeviceUtil {
 	private static int C = 4;
 	private static int P = 8;
 	@SafeVarargs private static void d(DeviceClass dc, Pair<DeviceStream,Integer>... ps) {
+		List<Pair<DeviceStream,Integer>> pl = new ArrayList<>(list(ps));
+		pl.add(p(alarm,S+C));
+		pl.add(p(error,S+C));
+		pl.add(p(duetask,C));
 		Set<DeviceStream> streams = new HashSet<>();
 		Set<DeviceStream> clientStreams = new HashSet<>();
 		Set<DeviceStream> saveStreams = new HashSet<>();
-		for (Pair<DeviceStream,Integer> p: ps) {
+		for (Pair<DeviceStream,Integer> p: pl) {
 			streams.add(p.a);
 			if ((p.b & D) > 0) toDefaultStream.put(dc, p.a);
 			if ((p.b & P) > 0) toPauseShadowStream.put(dc, p.a);

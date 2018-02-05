@@ -1,5 +1,7 @@
 package jesperl.dk.smoothieaq.shared.resources;
 
+import static jesperl.dk.smoothieaq.util.shared.Objects.*;
+
 import java.util.*;
 
 import javax.ws.rs.*;
@@ -59,7 +61,10 @@ public interface DeviceRest {
 		public String name;
 		public String description;
 		public DeviceStatusType statusType;
+		public Message error;
 		public float currentValue;
+		public float currentDuetasks;
+		public float currentAlarm;
 	}
 	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
@@ -83,6 +88,9 @@ public interface DeviceRest {
 		view.currentValue = idev.getValue();
 		view.measurementType = idev.model().getDevice().measurementType;
 		view.repeatabilityLevel = idev.model().getDevice().repeatabilityLevel;
+		view.error = funcNotNull(idev.inError(), e -> Message.create(e.msgNo, e.defaultMessage, e.args));
+		view.currentDuetasks = idev.dueTasks();
+		view.currentAlarm = idev.alarm();
 		return view;
 	}
 

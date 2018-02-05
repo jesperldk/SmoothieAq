@@ -22,9 +22,9 @@ public class TsFull<E extends TsElement> implements TsSource<E> {
 		refresh.onNext(null);
 	}
 
-	@Override public Observable<E> elementsFrom(long from, int preCount, int postCount, Func1<E,Boolean> predicate) {
+	@Override public Observable<E> elementsFrom(long fromNewestNotIncl, int preCount, int postCount, Func1<E,Boolean> predicate) {
 		return Observable.unsafeCreate(s -> {
-			long frm = (from == 0) ? Long.MAX_VALUE : from;
+			long frm = (fromNewestNotIncl == 0) ? Long.MAX_VALUE : fromNewestNotIncl;
 			int pre = preCount;
 			int post = postCount;
 			@SuppressWarnings("unchecked") E[] lookback = (E[]) new TsElement[post];
@@ -41,11 +41,9 @@ public class TsFull<E extends TsElement> implements TsSource<E> {
 			lookbackp = max(0,lookbackp-post);
 			while (post > 0) { if (s.isUnsubscribed()) return; 
 				post--;
-				int pp = lookbackp % postCount;
-				E t = lookback[pp];
-				s.onNext(t);
+				s.onNext(lookback[lookbackp % postCount]);
 				lookbackp++;
-				}
+			}
 			while (p < buf.length && pre > 0) { if (s.isUnsubscribed()) return; if (filter(predicate,buf[p])) { s.onNext(buf[p]); p++; pre--; } }
 			while (pre > 0) { if (s.isUnsubscribed()) return; s.onNext(null); pre--; }
 			s.onCompleted();

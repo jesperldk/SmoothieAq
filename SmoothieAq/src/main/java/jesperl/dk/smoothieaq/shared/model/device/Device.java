@@ -23,6 +23,8 @@ public class  Device extends DbWithId implements Device_Helper {
 	public float repeatabilityLevel;
 	public float onLevel;
 	public float wattAt100pct;
+	public boolean dontSaveLevel;
+	public boolean dontClientLevel;
 	
 	@JsOverlay public final Device copy() { return Device_Db.copy(new Device(),this); }
 	@Override @JsOverlay @GwtIncompatible public void serialize(ByteBuffer out, DbContext context) { Device_Db.serialize(this, out, context); }

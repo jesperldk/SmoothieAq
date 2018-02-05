@@ -1,21 +1,13 @@
 package jesperl.dk.smoothieaq.client.devices;
 
 import static jesperl.dk.smoothieaq.client.css.SmoothieAqCss.*;
-import static jesperl.dk.smoothieaq.client.text.AppMessages.*;
-import static jesperl.dk.smoothieaq.shared.model.device.DeviceClass.*;
 import static jesperl.dk.smoothieaq.shared.model.device.DeviceStatusType.*;
 
-import java.util.*;
 import java.util.function.*;
-
-import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
 
 import gwt.material.design.client.constants.*;
 import gwt.material.design.client.ui.*;
-import jesperl.dk.smoothieaq.client.*;
 import jesperl.dk.smoothieaq.client.context.*;
-import jesperl.dk.smoothieaq.client.tasks.*;
-import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.resources.DeviceRest.*;
 import jesperl.dk.smoothieaq.util.shared.*;
 import rx.*;
@@ -52,29 +44,11 @@ public class DeviceCardView extends MaterialCard {
 		}
 		
 		MaterialCardAction action = new MaterialCardAction();
-		if (dc.deviceClass != manual)
-			action.add(wIconButton(IconType.TIMELINE, null, appMsg.deviceGraph(), () -> {}));
 		
-		if (dc.deviceClass != manual)
-			action.add(wIconButton(IconType.ERROR, null, appMsg.deviceErrorNone(), () -> {}));
-		
-		if (EnumSet.of(sensor, toggle, container, calculated).contains(dc.deviceClass))
-			action.add(wIconButton(IconType.NOTIFICATIONS_NONE, null, appMsg.deviceAlarm(), () -> {}));
-		
-		if (EnumSet.of(onoff, level, doser, status).contains(dc.deviceClass))
-			action.add(wIconButton(IconType.SCHEDULE, null, appMsg.deviceSchedule(), () ->
-			cd.autoTask.flatMap(ct -> ct.compactView.first().toSingle()).subscribe(pt -> wModal(new TaskEditView(cd, pt.b.task, false, true), null))));
-		
-		action.add(wIconButton(IconType.DATE_RANGE, null, appMsg.deviceTasks(), () ->  wModal(new DeviceManualTasksView(cd), null)));
-		
-		action.add(wIconButton(IconType.EDIT, null, appMsg.edit(), () -> {
-			cd.device.subscribe(d -> { 
-				Device device = d.copy(); wModal(new DeviceEditView(device,false), () -> 
-				Resources.device.update(device.copy()).subscribe()); });
-		}));
+		action.add(DeviceUtil.actions(cd, dc));
 		add(action);
 	}
-	
+
 	@Override protected void onLoad() {
 		super.onLoad();
 		if (currently != null) {

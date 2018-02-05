@@ -125,6 +125,7 @@ public abstract class  WTask extends IdableType implements ITask {
 	@Override public synchronized void scheduled(State state, Interval interval) {
 		if (interval == null) {
 			if (on) end(state);
+			next = null;
 		} else {
 			next = interval;
 			if (task.taskType.info().intervalSchedule && on && interval.a.isAfter(state.now.instant())) end(state);

@@ -21,6 +21,7 @@ import jesperl.dk.smoothieaq.client.inheritancetypes.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.model.task.*;
 import jesperl.dk.smoothieaq.shared.resources.TaskRest.*;
+import rx.*;
 
 public class TaskUtil {
 
@@ -40,17 +41,17 @@ public class TaskUtil {
 	public static String schedule(TaskScheduleView scheduleView) {
 		StringBuilder buf = new StringBuilder();
 		if (scheduleView.manualWaitingFrom != 0)
-			buf.append(taskMsg.waitingFrom(formatStamp(scheduleView.manualPostponedTo)));
+			buf.append(taskMsg.waitingFrom(formatStampMinutes(scheduleView.manualWaitingFrom)));
 		else if (scheduleView.manualPostponedTo != 0)
-			buf.append(taskMsg.postponedTo(formatStamp(scheduleView.manualPostponedTo)));
+			buf.append(taskMsg.postponedTo(formatStampMinutes(scheduleView.manualPostponedTo)));
 		else if (scheduleView.nextStart != 0)
-			buf.append(taskMsg.nextStart(formatStamp(scheduleView.nextStart)));
+			buf.append(taskMsg.nextStart(formatStampMinutes(scheduleView.nextStart)));
 		else if (scheduleView.nextEnd != 0 && scheduleView.on)
-			buf.append(taskMsg.nextEnd(formatStamp(scheduleView.nextEnd)));
+			buf.append(taskMsg.nextEnd(formatStampMinutes(scheduleView.nextEnd)));
 		else
 			buf.append(taskMsg.noNext());
 		if (scheduleView.lastStart != 0)
-			buf.append(taskMsg.lastStart(formatStamp(scheduleView.lastStart)));
+			buf.append(taskMsg.lastStart(formatStampMinutes(scheduleView.lastStart)));
 		return capitalize(buf.toString());
 	}
 	
@@ -62,7 +63,9 @@ public class TaskUtil {
 			if (cTask.isNotDeleted()) {
 				boolean autoTask = tcv.task.taskType.isOfType(auto);
 				if (!autoTask)
-					actions.add(wIconButton2(IconType.PAN_TOOL, null, appMsg.taskDo(), () -> {}));
+					actions.add(wBadge(wIconButton(IconType.PAN_TOOL, null, appMsg.taskDo(), () -> {}),
+							Observable.just(Color.BLUE),
+							cTask.scheduleView.map(sv -> sv.manualWaitingFrom != 0 ? 1f : 0f),false));
 				
 				actions.add(wIconButton(IconType.EDIT, null, appMsg.taskEdit(), () -> {
 					Task task = tcv.task.copy();

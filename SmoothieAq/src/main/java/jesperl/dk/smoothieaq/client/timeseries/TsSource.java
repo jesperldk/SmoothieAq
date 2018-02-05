@@ -5,7 +5,7 @@ import rx.functions.*;
 
 public interface TsSource<E> {
 
-	Observable<E> elementsFrom(long from, int preCount, int postCount, Func1<E,Boolean> predicate);
+	Observable<E> elementsFrom(long fromNewestNotIncl, int countNewer, int countOlder, Func1<E,Boolean> predicate);
 	Observable<E> newElements(Func1<E,Boolean> predicate);
 	Observable<Void> refreshListen();
 	void release();
@@ -14,10 +14,10 @@ public interface TsSource<E> {
 		TsSource<E> s = this;
 		return new TsSource<E>() {
 			@Override public Observable<E> elementsFrom(long from, int preCount, int postCount, Func1<E,Boolean> predicate2) {
-				return s.elementsFrom(from, preCount, postCount, predicate).filter(predicate);
+				return s.elementsFrom(from, preCount, postCount, e -> predicate.call(e) && predicate2.call(e));
 			}
 			@Override public Observable<E> newElements(Func1<E,Boolean> predicate2) {
-				return s.newElements(predicate).filter(predicate);
+				return s.newElements(e -> predicate.call(e) && predicate2.call(e));
 			}
 			@Override public Observable<Void> refreshListen() {
 				return s.refreshListen();

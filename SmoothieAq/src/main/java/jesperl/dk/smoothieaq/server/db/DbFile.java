@@ -9,22 +9,26 @@ import java.util.*;
 import java.util.logging.*;
 
 import jesperl.dk.smoothieaq.shared.model.db.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
 import rx.Observable;
 import rx.Observer;
+import rx.observables.*;
 
 public class  DbFile<DBO extends DbObject> {
 	private final static Logger log = Logger.getLogger(DbFile.class .getName());
-	
+//	
 	public static final int bufSize = 2*1024; // must be greater than the largest object size
 	public static final String header = "SmoothieAq 00.01";
 	public static final int headerSize = header.getBytes().length;
 	
 	private Class<DBO> cls;
-//	private DbSerializer serializer;
 	private Path path;
 	private boolean fixedDboSize;
 	private int dboSize = 0;
 	private DbContext context;
+	private boolean withStamp;
+	private boolean withId;
+	private boolean withParrentId;
 	
 	private DbFile() {}
 	
@@ -35,49 +39,99 @@ public class  DbFile<DBO extends DbObject> {
 	static public <D extends DbObject> DbFile<D> create(Class<D> cls, boolean fixedDboSize, Path path, DbContext context) {
 		DbFile<D> dbFile = new DbFile<>();
 		dbFile.cls = cls;
-//		dbFile.serializer = context.getSerializer(cls);
 		dbFile.fixedDboSize = fixedDboSize;
 		dbFile.path = path;
 		dbFile.context = context;
+		dbFile.withStamp = false;
+		dbFile.withId = false;
+		dbFile.withParrentId = false;
+		if (DbWithStamp.class.isAssignableFrom(cls)) {
+			dbFile.withStamp = true;
+			if (DbWithId.class.isAssignableFrom(cls)) dbFile.withId = true;
+			else if (DbWithParrentId.class.isAssignableFrom(cls)) dbFile.withParrentId = true;
+		}
 		return dbFile;
 	}
-	
+//	
 	public Observable<DBO> stream() {
-		return Observable.unsafeCreate(s -> { // TODO new create - handle backpressure
-			try ( 
-				FileChannel	channel = FileChannel.open(path ,StandardOpenOption.READ);
-			) {
-				int p = (int) channel.size();
-				MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_ONLY, 0, p);
-				while (p > headerSize) {
-					if (s.isUnsubscribed()) return;
-					map.position(p-2);
-					int dboSize = map.getShort();
-					if (fixedDboSize && this.dboSize == 0) this.dboSize = dboSize;
-					map.position(p = p-2-dboSize);
-					DBO dbo = cls.newInstance();
-					if (dbo instanceof DbWithStamp) {
-						((DbWithStamp) dbo).stamp = map.getLong();
-						if (dbo instanceof DbWithId)
-							((DbWithId)dbo).id = map.getInt();
-						else if (dbo instanceof DbWithParrentId)
-							((DbWithParrentId)dbo).id = map.getInt();
+		return stream(0,0,-1);
+	}
+	
+	private static class StreamState {
+		FileChannel	channel = null;
+		int p;
+		MappedByteBuffer map;
+		int[] lookbackPs;
+		boolean scanning;
+		int nNewer;
+		int nOlder;
+		int lookbackPp = 0;
+	}
+	public Observable<DBO> stream(long fromNewestNotIncl, int countNewer, int countOlder) {
+		assert fromNewestNotIncl == 0 || withStamp;
+		long from = (fromNewestNotIncl == 0) ? Long.MAX_VALUE : fromNewestNotIncl;
+		return Observable.create(SyncOnSubscribe.createSingleState(
+			() -> {
+				StreamState s = new StreamState();
+				try { 
+					s.channel = FileChannel.open(path ,StandardOpenOption.READ);
+					if (s.channel.size() > Integer.MAX_VALUE) throw error(log, 110104, Severity.fatal,"File to large for memory map {0}", path);
+					s.p = (int) s.channel.size();
+					s.map = s.channel.map(FileChannel.MapMode.READ_ONLY, 0, s.p);
+					s.nNewer = countNewer;
+					s.nOlder = countOlder;
+					s.lookbackPs = new int[s.nNewer];
+					s.scanning = fromNewestNotIncl != 0;
+				} catch (NoSuchFileException e) {
+					throw error(log, e, 110101, Severity.info, "File not found {0} - {1}", path, e.toString());
+				} catch (Throwable e) {
+					if (s.channel != null) doNoException(() -> s.channel.close());
+					throw error(log, e, 110102, Severity.fatal, "Error opening file {0} - {1}", path, e.toString());
+				}
+				return s;
+			}, 
+			(s,o) -> {
+				try {
+					if (s.lookbackPp >= 0) {
+						// TODO
 					}
-					dbo.deserialize(map.get(), map, context);
-					log.fine("desialized "+cls.getSimpleName());
-					s.onNext(dbo);
+					while (true) { // would have been more natural with a do-while, but my Eclipse dies with that!?
+						if (s.p <= headerSize) {
+							o.onCompleted();
+							s.scanning = false;
+						} else {
+							s.map.position(s.p-2);
+							int dboSize = s.map.getShort();
+							if (fixedDboSize && this.dboSize == 0) this.dboSize = dboSize;
+							s.map.position(s.p = s.p-2-dboSize);
+							DBO dbo = deserialize(s);
+							o.onNext(dbo);
+						}
+						break;
+					} 
+				} catch (Throwable e) {
+					error(log, e, 110103, Severity.fatal, "Error reading file {0} - {1}", path, e.toString());
+					o.onError(e);
 				}
-				s.onCompleted();
-			} catch (Exception e) {
-				if (e instanceof NoSuchFileException) {
-					log.log(Level.INFO,"no file - "+e.toString());
-					s.onCompleted();
-				} else {
-					log.log(Level.WARNING,"exception reading - "+e.toString(),e);
-					s.onError(e);
-				}
+			}, 
+			s -> {
+				if (s.channel != null) doNoException(() -> s.channel.close());
 			}
-		});
+		));
+	}
+
+	private DBO deserialize(StreamState s) throws InstantiationException, IllegalAccessException {
+		DBO dbo = cls.newInstance();
+		if (withStamp) {
+			((DbWithStamp) dbo).stamp = s.map.getLong();
+			if (withId)
+				((DbWithId)dbo).id = s.map.getInt();
+			else if (withParrentId)
+				((DbWithParrentId)dbo).id = s.map.getInt();
+		}
+		dbo.deserialize(s.map.get(), s.map, context);
+		log.fine("desialized "+cls.getSimpleName());
+		return dbo;
 	}
 	
 	public Observer<List<DBO>> drain() {
@@ -132,47 +186,4 @@ public class  DbFile<DBO extends DbObject> {
 		};
 	}
 	
-//	public void x() throws IOException {
-//	Path testSaq = FileSystems.getDefault().getPath("test.saq");
-//	
-////	String tempdir = System.getProperty("java.io.tempdir");
-////	System.out.println("tempdir: "+tempdir);
-//	
-//	try (
-////			RandomAccessFile file = new RandomAccessFile(new File(tempdir,"test.saq"),"rw");
-//			FileChannel channela = FileChannel.open(testSaq, StandardOpenOption.APPEND,StandardOpenOption.WRITE,StandardOpenOption.CREATE);
-//			FileChannel channelr = FileChannel.open(testSaq ,StandardOpenOption.READ);
-//	) {
-//		int k=1024;
-//		ByteBuffer buf = ByteBuffer.allocateDirect(10*k);
-//		long length = channela.size();
-//		if (length == 0) {
-//			buf.limit(10*k); buf.position(0); 
-//			buf.put("SmoothieAq 00.01".getBytes());
-//			buf.flip();
-//			channela.write(buf);
-//		}
-//		MappedByteBuffer map = channelr.map(FileChannel.MapMode.READ_ONLY, 0, length);
-//		System.out.println("len: "+length);
-//		if (length == 0) {
-//			put(channela, buf,0);
-//		} else if (length < 70) {
-//			put(channela, buf,100);
-//			map.position(16);
-//			for (int i = 0; i < 10; i++) System.out.println(map.getInt());
-//		} else {
-//			map.position(16+4*10);
-//			for (int i = 0; i < 10; i++) System.out.println(map.getInt());
-//		}
-//	}
-//	}
-//	
-//	public static void put(FileChannel channel, ByteBuffer buf, int base) throws IOException {
-//		int k=1024;
-//		buf.limit(10*k); buf.position(0);
-//		for (int i = base; i < base+10; i++) buf.putInt(i);
-//		buf.flip();
-//		channel.write(buf);
-//	}
-
 }

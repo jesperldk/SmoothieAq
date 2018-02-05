@@ -30,6 +30,8 @@ public interface IDevice extends Idable {
 	
 	Error inError();
 	void clearError();
+	Float dueTasks();
+	Float alarm();
 
 	boolean isCalibrationNeeded();
 

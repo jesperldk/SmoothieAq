@@ -25,7 +25,7 @@ public abstract class DeviceStreamUtil {
 		toType.put(capacity,continousStream);
 		toType.put(measureX,eventStream);
 		toType.put(error,continousStream);
-		toType.put(alarm,continousStream);
+		toType.put(DeviceStream.alarm,continousStream);
 		toType.put(duetask,continousStream);
 	}
 
@@ -42,7 +42,7 @@ public abstract class DeviceStreamUtil {
 		toMesurementType.put(capacity,otherMeasure);
 		toMesurementType.put(measureX,otherMeasure);
 		toMesurementType.put(error,MeasurementType.onoff);
-		toMesurementType.put(alarm,MeasurementType.onoff);
+		toMesurementType.put(DeviceStream.alarm,MeasurementType.alarm);
 		toMesurementType.put(duetask,MeasurementType.onoff);
 	}
 	

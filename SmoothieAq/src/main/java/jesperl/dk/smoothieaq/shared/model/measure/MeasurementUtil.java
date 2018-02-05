@@ -63,6 +63,7 @@ public abstract class MeasurementUtil {
 		unitToInfo.put(yesno,new UnitInfo("yes/no","",0));
 		unitToInfo.put(Unit.onoff,new UnitInfo("on/off","",0));
 		unitToInfo.put(Unit.status,new UnitInfo("status","",0));
+		unitToInfo.put(Unit.alarm,new UnitInfo("alarm","",0));
 	}
 
 	public static class MeasurementTypeInfo {
@@ -88,5 +89,6 @@ public abstract class MeasurementUtil {
 		measurementTypeToInfo.put(humidity,new MeasurementTypeInfo("humidity", fraction));
 		measurementTypeToInfo.put(MeasurementType.onoff,new MeasurementTypeInfo("onoff", Unit.onoff));
 		measurementTypeToInfo.put(MeasurementType.status,new MeasurementTypeInfo("status",Unit.status));
+		measurementTypeToInfo.put(MeasurementType.alarm,new MeasurementTypeInfo("alarm",Unit.alarm));
 	}
 }

@@ -41,9 +41,10 @@ public class GuiUtil {
 	public static MaterialWidget wDropdown(IconType iconType, Color iconColor, String tooltip, MaterialWidget... links) {
 		String activator = "A"+(dropdownNo++);
 		Span span = new Span();
-		MaterialIcon icon = new MaterialIcon(iconType);
-		if (iconColor != null) icon.setIconColor(iconColor);
-		if (tooltip != null) icon.setTooltip(tooltip);
+		MaterialIcon icon = wIconButton(iconType, iconColor, tooltip, () -> {});
+//		MaterialIcon icon = new MaterialIcon(iconType);
+//		if (iconColor != null) icon.setIconColor(iconColor);
+//		if (tooltip != null) icon.setTooltip(tooltip);
 		icon.setActivates(activator);
 		span.add(icon);
 		MaterialDropDown dropDown = new MaterialDropDown(activator);
@@ -69,29 +70,62 @@ public class GuiUtil {
 		if (doOnClick != null) btn.setWaves(WavesType.DEFAULT);
 		return btn;
 	}
-	public static MaterialIcon wIconButton2(IconType iconType, Color iconColor, String tooltip, Action doOnClick) {
-		MaterialIcon icon = new MaterialIcon(iconType) {
+//	public static MaterialIcon wIconButton2(IconType iconType, Color iconColor, String tooltip, Action doOnClick) {
+//		MaterialIcon icon = new MaterialIcon(iconType) {
+//			@Override protected void onLoad() {
+//				super.onLoad();
+//				if (doOnClick != null) addClickHandler(e -> doOnClick.doit());
+//			}
+//		};
+//		icon.setCircle(true);
+//		if (iconColor != null) icon.setIconColor(iconColor);
+//		if (tooltip != null)  icon.setTooltip(tooltip);
+//		if (doOnClick != null) icon.setWaves(WavesType.DEFAULT);
+////		top: -2px; padding: 0px !important; padding-top: 7px !important; width: 16px !important; height: 16px !important; right: -6px; font-weight: bold; font-family: Roboto, sans-serif;
+////		icon: position: relative
+////		icon.setpLayoutPosition(Position.valueOf(name));
+//		MaterialBadge badge = new MaterialBadge("1", Color.WHITE, Color.RED);
+//		badge.setCircle(true);
+//		badge.setHeight("12px !important");
+//		badge.setWidth("12px !important");
+//		badge.setTop(-4);
+//		badge.setPadding(0);
+//		badge.setRight(2);
+//		icon.add(badge);
+//		return icon;
+//	}
+	public static MaterialWidget wBadge(MaterialWidget icon, Observable<Color> color, Observable<Float> no, boolean hideWhenZero) {
+		Span span = new Span();
+		span.addStyleName("badgeable");
+		MaterialBadge  badge = new MaterialBadge() {
+			Subscriptions subscriptions = new Subscriptions();
 			@Override protected void onLoad() {
 				super.onLoad();
-				if (doOnClick != null) addClickHandler(e -> doOnClick.doit());
+				if (hideWhenZero) span.addStyleName("hide");
+				addStyleName("hide");
+				subscriptions.subscripe(no, n -> {
+					if (n == 0) {
+						if (hideWhenZero) span.addStyleName("hide");
+						addStyleName("hide");
+					} else {
+						if (hideWhenZero) span.removeStyleName("hide");
+						removeStyleName("hide");
+						setText(strv(n.intValue()));
+					}
+				});
+				setBackgroundColor(Color.RED);
+				if (color != null) subscriptions.subscripe(color, c -> setBackgroundColor(c));
+			}
+			@Override protected void onUnload() {
+				subscriptions.unsubscripe();
+				super.onUnload();
 			}
 		};
-		icon.setCircle(true);
-		if (iconColor != null) icon.setIconColor(iconColor);
-		if (tooltip != null)  icon.setTooltip(tooltip);
-		if (doOnClick != null) icon.setWaves(WavesType.DEFAULT);
-//		top: -2px; padding: 0px !important; padding-top: 7px !important; width: 16px !important; height: 16px !important; right: -6px; font-weight: bold; font-family: Roboto, sans-serif;
-//		icon: position: relative
-//		icon.setpLayoutPosition(Position.valueOf(name));
-		MaterialBadge badge = new MaterialBadge("1", Color.WHITE, Color.RED);
-		badge.setCircle(true);
-		badge.setHeight("12px !important");
-		badge.setWidth("12px !important");
-		badge.setTop(-4);
-		badge.setPadding(0);
-		badge.setRight(2);
-		icon.add(badge);
-		return icon;
+		badge.addStyleName("smallbadge");
+//		badge.setCircle(true);
+		span.add(badge);
+		span.add(icon);
+		return span;
 	}
 	public static MaterialIcon wIconButton(IconType iconType, Color iconColor, String tooltip, Action doOnClick) {
 		MaterialIcon icon = new MaterialIcon(iconType) {
@@ -289,7 +323,10 @@ public class GuiUtil {
 	private static final DateTimeFormat weekdayFmt = DateTimeFormat.getFormat("EEE");
 	private static final DateTimeFormat dateFmt = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_SHORT);
 	private static final DateTimeFormat timeFmt = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.TIME_MEDIUM);
-	public static String formatStamp(long stamp) {
+	private static final DateTimeFormat timeShortFmt = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.TIME_SHORT);
+	public static String formatStamp(long stamp) { return formatStamp(stamp, false); }
+	public static String formatStampMinutes(long stamp) { return formatStamp(stamp, true); }
+	public static String formatStamp(long stamp, boolean noSeconds) {
 		StringBuilder buf = new StringBuilder();
 		Date nowDate = new Date();
 		Date stampDate = new Date(stamp);
@@ -301,7 +338,7 @@ public class GuiUtil {
 		else buf.append(dateFmt.format(stampDate));
 		
 		Date stampReset = new Date(stamp); CalendarUtil.resetTime(stampReset);
-		if (stampReset.getTime() != stamp) buf.append(" ").append(timeFmt.format(stampDate));
+		if (stampReset.getTime() != stamp) buf.append(" ").append((noSeconds?timeShortFmt:timeFmt).format(stampDate));
 		
 		return buf.toString();
 	}

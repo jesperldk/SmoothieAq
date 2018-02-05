@@ -114,6 +114,7 @@ public class CDevice {
 	public Function<Float,String> formatter(short streamId) { return formatters.get(streamId); }
 	public List<Pair<Short,MeasurementType>> streams() { return streams.entrySet().stream().map(e -> p(e.getKey(), e.getValue().a)).collect(Collectors.toList()); }
 	public Observable<TsMeasurement> stream(short streamId) { return streams.get(streamId).b; } 
+	public Observable<TsMeasurement> stream(DeviceStream streamId) { return streams.get((short)streamId.getId()).b; } 
 	public Observable<TsMeasurement> streamAlsoPaused(short streamId) {
 		return (toPauseShadowStream.get(currentCompactView.deviceClass).getId() == streamId) ? streams.get((short)pauseX.getId()).b : streams.get(streamId).b; 
 	}

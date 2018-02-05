@@ -15,6 +15,7 @@ public enum MeasurementType {
 	humidity(8),
 	onoff(9),
 	status(10),
+	alarm(11),
 	;
 	
 	private int id;

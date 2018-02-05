@@ -35,8 +35,12 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	protected List<ITask> tasks = new ArrayList<>();
 	private DRIVER driver;
 	
+	private Subject<IDevice,IDevice> devicesChanged;
 	protected PublishSubject<Float> stream = PublishSubject.create();
 	protected PublishSubject<Float> pauseStream = PublishSubject.create();
+	protected PublishSubject<Float> errorStream = PublishSubject.create();
+	protected PublishSubject<Float> alarmStream = PublishSubject.create();
+	protected PublishSubject<Float> dueStream = PublishSubject.create();
 //	protected Subject<Void,Void> pulse;
 //	protected Supplier<Observable<Float>> defaultStreamG;
 	protected Map<DeviceStream, Pair<MeasurementType,Supplier<Observable<Float>>>> streamsG = new HashMap<>();
@@ -44,6 +48,7 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	private List<Subscription> startSubscriptions = new ArrayList<>();
 	
 	private Error error;
+	private Set<WTask> dueTasks = new HashSet<>();
 	
 	private Model model = new Model() {
 		
@@ -94,7 +99,8 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	@Override public Model model() { return model; }
 
 	@SuppressWarnings("unchecked")
-	synchronized public void init(DeviceContext context, Device device, Driver driver) {
+	synchronized public void init(Subject<IDevice,IDevice> devicesChanged, DeviceContext context, Device device, Driver driver) {
+		this.devicesChanged = devicesChanged;
 		this.setId(device.getId());
 		this.driver = (DRIVER) driver;
 		this.device = device;
@@ -214,7 +220,9 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	}
 
 	protected void setupStreams(State state) {
-		
+		addStream(state, DeviceStream.alarm, MeasurementType.alarm, () -> alarmStream); 
+		addStream(state, DeviceStream.error, MeasurementType.onoff, () -> errorStream);
+		addStream(state, DeviceStream.duetask, MeasurementType.otherMeasure, () -> dueStream);
 	}
 	protected void teardownStreams() {
 		startSubscriptions.forEach(s -> s.unsubscribe());
@@ -226,12 +234,13 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	}
 	protected void disconnect() {
 		driver().release();
+		clearError();
 	}
 	protected void stop(State state) {}
 	
 	protected void subscription(Subscription s) { startSubscriptions.add(s); }
-	protected void subscribeMeasure(State state, DeviceStream ds) { subscription(state.wires.devMeasureObserve(this, ds, stream(ds))); }
-	protected void subscribeOtherMeasure(State state, DeviceStream ds) { subscription(state.wires.devOtherMeasuerObserve(this, ds, stream(ds))); }
+	protected void subscribeSaveMeasure(State state, DeviceStream ds) { subscription(state.wires.devSaveMeasureObserve(this, ds, stream(ds))); }
+	protected void subscribeClientMeasure(State state, DeviceStream ds) { subscription(state.wires.devClientMeasuerObserve(this, ds, stream(ds))); }
 
 	@Override public synchronized DeviceStatusChange[] legalCommands() {
 		return (DeviceStatusChange[]) internalLegalCommands().toArray();
@@ -273,9 +282,34 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	public boolean isPaused() { return status.statusType == paused; } 
 	public boolean isDeleted() { return status.statusType == deleted; } 
 	
+	@Override public Float dueTasks() { return (float)dueTasks.size(); }
+	public void setDue(WTask task, boolean due) {
+		if (due && !dueTasks.contains(task)) {
+			dueTasks.add(task);
+			dueStream.onNext((float)dueTasks.size());
+		} else if (!due && dueTasks.contains(task)) {
+			dueTasks.remove(task);
+			dueStream.onNext((float)dueTasks.size());
+		}
+	}
+	
+	@Override public Float alarm() { return 0f; }
+	
 	@Override public Error inError() { return error; }
-	@Override public void clearError() { error = null; }
-	protected void setError(Error error) { if (this.error == null || this.error.severity.getId() < error.severity.getId()) this.error = error; }
+	@Override public void clearError() { 
+		if (error != null) { 
+			error = null; 
+			errorStream.onNext(0f); 
+			devicesChanged.onNext(this); 
+		} 
+	}
+	protected void setError(Error error) { 
+		if (this.error == null || this.error.severity.getId() < error.severity.getId()) {
+			this.error = error; 
+			errorStream.onNext(1f); 
+			devicesChanged.onNext(this); 
+		}
+	}
 	
 	public void doErrorGuarded(Doit doit) { if (error == null) doGuarded(e -> { setError(e.getError()); return null; }, doit); }
 	public void doDoErrorGuarded(Doit doit) { doGuarded(e -> { setError(e.getError()); return null; }, doit); }
@@ -301,8 +335,10 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 			streamG = () -> stream;
 		}
 		streamsG.put(streamId, pair(type,streamG)); 
-		if (DeviceUtil.toSaveStreams.get(device.deviceClass).contains(streamId)) subscribeMeasure(state, streamId);
-		else if (DeviceUtil.toClientStreams.get(device.deviceClass).contains(streamId)) subscribeOtherMeasure(state, streamId);
+		if (DeviceUtil.toSaveStreams.get(device.deviceClass).contains(streamId) || (streamId == DeviceStream.level && device.dontSaveLevel)) 
+			subscribeSaveMeasure(state, streamId);
+		else if (DeviceUtil.toClientStreams.get(device.deviceClass).contains(streamId) || (streamId == DeviceStream.level && device.dontClientLevel)) 
+			subscribeClientMeasure(state, streamId);
 	}
 
 	@Override public String toString() { return device.name+"#"+getId(); }

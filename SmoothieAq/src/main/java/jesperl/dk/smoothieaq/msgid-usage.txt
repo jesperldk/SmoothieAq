@@ -2,7 +2,7 @@ server.device
 1001.00 Xxx
 
 server.db
-1101.00 Xxx
+1101.00 DbFuke
 
 server.stream
 1201.00

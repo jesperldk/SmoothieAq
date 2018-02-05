@@ -85,7 +85,7 @@ public class  DeviceContext {
 			case doser: wdevice = new WDoserDevice(); break;
 			default: throw error(log,100104,major,"Unknown deviceClass {0}",device.deviceClass);
 		}
-		wdevice.init(this, device, driver);
+		wdevice.init(state.wires.devicesChanged, this, device, driver);
 		devices.put((int) wdevice.getId(), wdevice);
 		return wdevice;
 	}
@@ -99,6 +99,7 @@ public class  DeviceContext {
 			state.saveWithId(device);
 			wdevice.internalSet(state, DeviceStatusType.disabled);
 			wdevice.internalInitialAutoTask(state);
+			wdevice.getReady(state);
 			return wdevice;
 		}, e -> error(log,e,100107,major,"Could not create device id={0} - {1}",device.id,e.toString()));
 	}

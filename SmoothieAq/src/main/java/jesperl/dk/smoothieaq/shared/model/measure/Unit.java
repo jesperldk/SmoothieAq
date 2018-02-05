@@ -38,8 +38,9 @@ public enum Unit {
 	
 	bool(80),
 	yesno(81),
-	onoff(83),
+	onoff(82),
 	status(83),
+	alarm(84),
 	;
 
 	private int id;
@@ -64,6 +65,7 @@ public enum Unit {
 	public Function<Float,String> formatter(float repeatabilityLevel) {
 		if (this == onoff) return v -> (v== null || v < -999) ? "-" : (v < 0.001) ? "off" : "on"; 
 		if (this == status) return v -> (v== null || v < -999) ? "-" : (v < 0.001) ? "off" : (v < 1.001) ? "on" : "blink"+round(v);
+		if (this == alarm) return v -> (v== null || v < -999) ? "-" : (v < 0.001) ? "ok" : (v < 1.001) ? "warning" : "alarm";
 		NumberFormat fmt =
 			(repeatabilityLevel < 0.01) ? dec3 :
 			(repeatabilityLevel < 0.1) ? dec2 :
