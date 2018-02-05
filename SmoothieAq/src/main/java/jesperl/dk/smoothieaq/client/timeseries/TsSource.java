@@ -5,8 +5,8 @@ import rx.functions.*;
 
 public interface TsSource<E> {
 
-	Observable<E> elementsFrom(long fromNewestNotIncl, int countNewer, int countOlder, Func1<E,Boolean> predicate);
-	Observable<E> newElements(Func1<E,Boolean> predicate);
+	Observable<E> elementsFrom(long fromNewestNotIncl, int countNewer, int countOlder, Func1<E,Boolean> predicate); // returns elements with newest first and then older
+	Observable<E> newElements(Func1<E,Boolean> predicate); // returns newer and newer elements
 	Observable<Void> refreshListen();
 	void release();
 	

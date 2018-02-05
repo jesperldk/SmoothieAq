@@ -46,25 +46,6 @@ public class TsFull<E extends TsElement> implements TsSource<E> {
 			}
 			while (p >= 0 && older > 0) { if (s.isUnsubscribed()) return; if (filter(predicate,buf[p])) { s.onNext(buf[p]); p--; older--; } }
 			while (older > 0) { if (s.isUnsubscribed()) return; s.onNext(null); older--; }
-//			@SuppressWarnings("unchecked") E[] lookback = (E[]) new TsElement[older];
-//			int lookbackp = 0;
-//			
-//			int p = 0;
-//			while (p < buf.length && buf[p].stamp < frm) {
-//				if (older > 0 && filter(predicate,buf[p])) { lookback[lookbackp % countOlder] = buf[p]; lookbackp++; }
-//				p++;
-//			}
-//			if (p >= buf.length && buf.length > 0) p = buf.length-1;
-//			
-//			while (older > lookbackp) { if (s.isUnsubscribed()) return; s.onNext(null); older--; }
-//			lookbackp = max(0,lookbackp-older);
-//			while (older > 0) { if (s.isUnsubscribed()) return; 
-//				older--;
-//				s.onNext(lookback[lookbackp % countOlder]);
-//				lookbackp++;
-//			}
-//			while (p < buf.length && newer > 0) { if (s.isUnsubscribed()) return; if (filter(predicate,buf[p])) { s.onNext(buf[p]); p++; newer--; } }
-//			while (newer > 0) { if (s.isUnsubscribed()) return; s.onNext(null); newer--; }
 			s.onCompleted();
 		});
 	}

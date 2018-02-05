@@ -1,5 +1,6 @@
 package jesperl.dk.smoothieaq.server.db;
 
+import static java.lang.Math.*;
 import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
 
 import java.nio.*;
@@ -62,13 +63,14 @@ public class  DbFile<DBO extends DbObject> {
 		int p;
 		MappedByteBuffer map;
 		int[] lookbackPs;
-		boolean scanning;
 		int nNewer;
 		int nOlder;
 		int lookbackPp = 0;
+		boolean scanning;
 	}
 	public Observable<DBO> stream(long fromNewestNotIncl, int countNewer, int countOlder) {
-		assert fromNewestNotIncl == 0 || withStamp;
+		assert !(fromNewestNotIncl != 0 && !withStamp);
+		assert !(fromNewestNotIncl == 0 || countNewer != 0);
 		long from = (fromNewestNotIncl == 0) ? Long.MAX_VALUE : fromNewestNotIncl;
 		return Observable.create(SyncOnSubscribe.createSingleState(
 			() -> {
@@ -78,6 +80,7 @@ public class  DbFile<DBO extends DbObject> {
 					if (s.channel.size() > Integer.MAX_VALUE) throw error(log, 110104, Severity.fatal,"File to large for memory map {0}", path);
 					s.p = (int) s.channel.size();
 					s.map = s.channel.map(FileChannel.MapMode.READ_ONLY, 0, s.p);
+					if (fixedDboSize && s.p > headerSize) { s.map.position(s.p-2); dboSize = s.map.getShort(); }
 					s.nNewer = countNewer;
 					s.nOlder = countOlder;
 					s.lookbackPs = new int[s.nNewer];
@@ -92,23 +95,35 @@ public class  DbFile<DBO extends DbObject> {
 			}, 
 			(s,o) -> {
 				try {
-					if (s.lookbackPp >= 0) {
-						// TODO
-					}
-					while (true) { // would have been more natural with a do-while, but my Eclipse dies with that!?
-						if (s.p <= headerSize) {
-							o.onCompleted();
-							s.scanning = false;
-						} else {
+					if (s.scanning) {
+						while (s.p > headerSize) {
 							s.map.position(s.p-2);
 							int dboSize = s.map.getShort();
-							if (fixedDboSize && this.dboSize == 0) this.dboSize = dboSize;
 							s.map.position(s.p = s.p-2-dboSize);
-							DBO dbo = deserialize(s);
-							o.onNext(dbo);
+							long stamp = s.map.getLong();
+							if (stamp >= from) {
+								s.lookbackPs[s.lookbackPp % countNewer] = s.p;
+								s.lookbackPp++;
+							} else {
+								s.p = s.p+2+dboSize;
+								s.nNewer = min(s.nNewer, s.lookbackPp);
+								s.scanning = false;
+							}
 						}
-						break;
-					} 
+					}
+					if (s.nNewer > 0) {
+						s.nNewer--;
+						s.map.position(s.lookbackPs[s.lookbackPp % countNewer]);
+						o.onNext(deserialize(s));
+					} else if (s.p <= headerSize || s.nOlder == 0) {
+						o.onCompleted();
+					} else {
+						s.nOlder--;
+						s.map.position(s.p-2);
+						int dboSize = s.map.getShort();
+						s.map.position(s.p = s.p-2-dboSize);
+						o.onNext(deserialize(s));
+					}
 				} catch (Throwable e) {
 					error(log, e, 110103, Severity.fatal, "Error reading file {0} - {1}", path, e.toString());
 					o.onError(e);

@@ -119,13 +119,13 @@ public class TsTable extends Div {
 	public void toTop() {
 		reset();
 		atBeginning.onNext(atBeginningFlag = true);
-		read(source.elementsFrom(0,0,allocateBelow,null),0,allocateAbove,allocateBelow,null);
+		read(source.elementsFrom(0,0,allocateBelow,null),allocateAbove,allocateBelow,null);
 	}
 	
 	public void toStamp(long stamp) {
 		reset();
 		atBeginning.onNext(atBeginningFlag = false);
-		read(source.elementsFrom(stamp,allocateAbove,allocateBelow,null),0,0,size,null);
+		read(source.elementsFrom(stamp,allocateAbove,allocateBelow,null),0,size,null);
 	}
 	
 	public void down() {
@@ -169,7 +169,7 @@ public class TsTable extends Div {
 		if (size-pBot >= window) {
 			long stamp = stamps[pBot];
 			int skip = 1; while (stamps[pBot-skip] == stamp) skip++;
-			read(source.elementsFrom(stamps[pBot-skip],0,pLast-pBot+skip,null),0,pBot-skip+1,pLast-pBot+skip, () -> queuedFillBottom = false);
+			read(source.elementsFrom(stamps[pBot-skip],0,pLast-pBot+skip,null),pBot-skip+1,pLast-pBot+skip,() -> queuedFillBottom = false);
 		} else {
 			queuedFillBottom = false; nextAction();
 		}
@@ -187,7 +187,7 @@ public class TsTable extends Div {
 		if (pTop >= window) {
 			long stamp = stamps[pTop];
 			int skip = 1; while (stamps[pTop+skip] == stamp) skip++;
-			read(source.elementsFrom(stamps[pTop+skip],pTop+skip+1,0,null),0,0,pTop+skip+1, () -> queuedFillTop = false);
+			read(source.elementsFrom(stamps[pTop+skip],pTop+skip+1,0,null),0,pTop+skip+1,() -> queuedFillTop = false);
 		} else {
 			queuedFillTop = true; nextAction();
 		}
@@ -202,29 +202,22 @@ public class TsTable extends Div {
 		if (subscription == null) queueAsync.onNext(null);
 	}
 	
-	// TODO remove skip arg
-	protected void read(Observable<TsRowData> elements, int skip, int pStart, int count, Action0 endAction) {
-		p = pStart-1; // p = pStart+count;
+	protected void read(Observable<TsRowData> elements, int pStart, int count, Action0 endAction) {
+		p = pStart-1;
 		n = 0;
 		subscription = elements.subscribe(new TsObserver( rd -> {
-			++n; if (n <= skip || n > count) return;
-			p++; if (p  > pLast) return; // p--; if (p  > pLast) return;
+			++n; if (n > count) return;
+			p++; if (p  > pLast) return;
 //			if (p < 0) {
 //				subscription.unsubscribe(); subscription = null;
 //				return;
 //			}
 			if (rd == null) {
 				empty(p);
-//				if (p < pCurr) atBeginningFlag = true;
-//				else { atEndFlag = true; pBot = p-1; }
 				if (p < pCurr) { atBeginningFlag = true; pTop = p+1; }
 				else { atEndFlag = true; if (p-1 < pBot) pBot = p-1; }
 			} else {
 				data(p,rd, p >= pCurr);
-//				if (p == pLast) atEndFlag = false;
-//				if (p == 0) atBeginningFlag = false;
-//				if (p > pBot) pBot = p;
-//				if (p < pCurr) pTop = p;
 				if (p == pLast) atEndFlag = false;
 				if (p == 0) atBeginningFlag = false;
 				if (p > pBot) pBot = p;

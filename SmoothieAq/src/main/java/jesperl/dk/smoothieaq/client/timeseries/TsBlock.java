@@ -5,21 +5,25 @@ import rx.subjects.*;
 public class TsBlock<E extends TsElement> {
 	private TsCache<E> tsCache;
 	
-	public static int blockSize = 10000;
+	public static int blockSize = 50;
 	private E[] data;
-	protected long newest;
-	protected long oldest;
-	protected int newestp = -1;
-	protected int oldestp = -1;
-	protected boolean tof = false;
-	protected boolean eof = false;
-	protected boolean tob = false;
-	protected boolean eob = false;
 	
-	public final Subject<Void, Void> updated = PublishSubject.create();
+	protected TsBlock<E> newerBlock = null;
+	protected boolean newerIsContinous = false;
+	protected boolean atTopOfTs = false;
+	protected long newestNotIncl = 0;
+	protected int newestP = -1;
 	
+	protected TsBlock<E> olderBlock = null;
+	protected boolean olderIsContinous = false;
+	protected boolean atEndOfTs = false;
+	protected long oldestIncl;
+	protected int oldestP = -1;
 	
-	/*friend*/ TsBlock(TsCache<E> tsCache) {
+	private final Subject<Void, Void> updated = PublishSubject.create();
+	private boolean outstandingRequest = false;
+	
+	protected TsBlock(TsCache<E> tsCache) {
 		this.tsCache = tsCache;
 		data = tsCache.allocate(blockSize);
 	}
