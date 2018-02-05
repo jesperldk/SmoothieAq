@@ -202,26 +202,33 @@ public class TsTable extends Div {
 		if (subscription == null) queueAsync.onNext(null);
 	}
 	
+	// TODO remove skip arg
 	protected void read(Observable<TsRowData> elements, int skip, int pStart, int count, Action0 endAction) {
-		p = pStart+count;
+		p = pStart-1; // p = pStart+count;
 		n = 0;
 		subscription = elements.subscribe(new TsObserver( rd -> {
 			++n; if (n <= skip || n > count) return;
-			p--; if (p  > pLast) return;
-			if (p < 0) {
-				subscription.unsubscribe(); subscription = null;
-				return;
-			}
+			p++; if (p  > pLast) return; // p--; if (p  > pLast) return;
+//			if (p < 0) {
+//				subscription.unsubscribe(); subscription = null;
+//				return;
+//			}
 			if (rd == null) {
 				empty(p);
-				if (p < pCurr) atBeginningFlag = true;
-				else { atEndFlag = true; pBot = p-1; }
+//				if (p < pCurr) atBeginningFlag = true;
+//				else { atEndFlag = true; pBot = p-1; }
+				if (p < pCurr) { atBeginningFlag = true; pTop = p+1; }
+				else { atEndFlag = true; if (p-1 < pBot) pBot = p-1; }
 			} else {
 				data(p,rd, p >= pCurr);
+//				if (p == pLast) atEndFlag = false;
+//				if (p == 0) atBeginningFlag = false;
+//				if (p > pBot) pBot = p;
+//				if (p < pCurr) pTop = p;
 				if (p == pLast) atEndFlag = false;
 				if (p == 0) atBeginningFlag = false;
 				if (p > pBot) pBot = p;
-				if (p < pCurr) pTop = p;
+				if (p < pTop) pTop = p;
 			}
 		},endAction));
 		if (subscription.isUnsubscribed()) subscription = null; // yeah, it might already be finished before the assignment above...

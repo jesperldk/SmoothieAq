@@ -43,14 +43,20 @@ public class  RightNowView  extends Composite {
     
     @Override
     protected void onLoad() {
-//        chart();
         table();
+        testTable();
+        chart();
 //		Resources.device.get(1).subscribe(d -> panel.add(new Label("device: "+d.description)));
     }
 
     protected void table() {
-//    	TsView table = new TsView(new TsTest(1000).map(TsMeasurementRowData::new));
     	TsView table = new TsView(ctx.measurements.map(TsMeasurementRowData::new));
+    	table.setTableHeight("300px");
+		panel.add(table);
+    }
+    
+    protected void testTable() {
+    	TsView table = new TsView(new TsTest(1000).map(TsMeasurementRowData::new));
     	table.setTableHeight("300px");
 		panel.add(table);
     }

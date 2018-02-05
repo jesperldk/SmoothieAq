@@ -36,6 +36,8 @@ public class  State extends SimpleState {
 	public final Scheduler scheduler = new Scheduler(sContext);
 	public final Thread schedulerThread = new Thread(scheduler);
 	public final Wires wires = new Wires(this);
+
+public float serno = 0; // !!!!!!!!!!!!!!
 	
 	private boolean ready = false;
 	
@@ -57,6 +59,7 @@ public class  State extends SimpleState {
 		loadIdeable(dbContext.dbDeviceStatus.stream(), ds -> dContext.getWDevice(ds.id).init(ds));
 		loadIdeable(dbContext.dbTask.stream(), t -> dContext.getWDevice(t.deviceId).init(dContext,t));
 		loadIdeable(dbContext.dbTaskStatus.stream(), ts -> dContext.getWTask(ts.id).init(ts));
+dbContext.dbMeasure.stream().subscribe(m -> {if (m.value > serno) serno = m.value;}); // !!!!!!!!!!!!!!
 	}
 
 	protected <DBO extends DbObject> void loadIdeable(Observable<DBO> stream, Action1<? super DBO> load) {

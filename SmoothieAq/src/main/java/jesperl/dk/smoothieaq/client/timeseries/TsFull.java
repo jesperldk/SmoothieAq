@@ -22,30 +22,49 @@ public class TsFull<E extends TsElement> implements TsSource<E> {
 		refresh.onNext(null);
 	}
 
-	@Override public Observable<E> elementsFrom(long fromNewestNotIncl, int preCount, int postCount, Func1<E,Boolean> predicate) {
+	@Override public Observable<E> elementsFrom(long fromNewestNotIncl, int countNewer, int countOlder, Func1<E,Boolean> predicate) {
 		return Observable.unsafeCreate(s -> {
 			long frm = (fromNewestNotIncl == 0) ? Long.MAX_VALUE : fromNewestNotIncl;
-			int pre = preCount;
-			int post = postCount;
-			@SuppressWarnings("unchecked") E[] lookback = (E[]) new TsElement[post];
+			int newer = countNewer;
+			int older = countOlder;
+			@SuppressWarnings("unchecked") E[] lookback = (E[]) new TsElement[newer];
 			int lookbackp = 0;
 			
-			int p = 0;
-			while (p < buf.length && buf[p].stamp < frm) {
-				if (post > 0 && filter(predicate,buf[p])) { lookback[lookbackp % postCount] = buf[p]; lookbackp++; }
-				p++;
+			int p = buf.length-1;
+			while (p >= 0 && buf[p].stamp >= frm) {
+				if (newer > 0 && filter(predicate,buf[p])) { lookback[lookbackp % countNewer] = buf[p]; lookbackp++; }
+				p--;
 			}
-			if (p >= buf.length && buf.length > 0) p = buf.length-1;
+			if (p < 0 && buf.length > 0) p = 0;
 			
-			while (post > lookbackp) { if (s.isUnsubscribed()) return; s.onNext(null); post--; }
-			lookbackp = max(0,lookbackp-post);
-			while (post > 0) { if (s.isUnsubscribed()) return; 
-				post--;
-				s.onNext(lookback[lookbackp % postCount]);
+			while (newer > lookbackp) { if (s.isUnsubscribed()) return; s.onNext(null); newer--; }
+			lookbackp = max(0,lookbackp-newer);
+			while (newer > 0) { if (s.isUnsubscribed()) return; 
+				newer--;
+				s.onNext(lookback[lookbackp % countNewer]);
 				lookbackp++;
 			}
-			while (p < buf.length && pre > 0) { if (s.isUnsubscribed()) return; if (filter(predicate,buf[p])) { s.onNext(buf[p]); p++; pre--; } }
-			while (pre > 0) { if (s.isUnsubscribed()) return; s.onNext(null); pre--; }
+			while (p >= 0 && older > 0) { if (s.isUnsubscribed()) return; if (filter(predicate,buf[p])) { s.onNext(buf[p]); p--; older--; } }
+			while (older > 0) { if (s.isUnsubscribed()) return; s.onNext(null); older--; }
+//			@SuppressWarnings("unchecked") E[] lookback = (E[]) new TsElement[older];
+//			int lookbackp = 0;
+//			
+//			int p = 0;
+//			while (p < buf.length && buf[p].stamp < frm) {
+//				if (older > 0 && filter(predicate,buf[p])) { lookback[lookbackp % countOlder] = buf[p]; lookbackp++; }
+//				p++;
+//			}
+//			if (p >= buf.length && buf.length > 0) p = buf.length-1;
+//			
+//			while (older > lookbackp) { if (s.isUnsubscribed()) return; s.onNext(null); older--; }
+//			lookbackp = max(0,lookbackp-older);
+//			while (older > 0) { if (s.isUnsubscribed()) return; 
+//				older--;
+//				s.onNext(lookback[lookbackp % countOlder]);
+//				lookbackp++;
+//			}
+//			while (p < buf.length && newer > 0) { if (s.isUnsubscribed()) return; if (filter(predicate,buf[p])) { s.onNext(buf[p]); p++; newer--; } }
+//			while (newer > 0) { if (s.isUnsubscribed()) return; s.onNext(null); newer--; }
 			s.onCompleted();
 		});
 	}
