@@ -325,7 +325,7 @@ public abstract class  WDevice<DRIVER extends Driver> extends IdableType impleme
 	@Override public Observable<Float> stream() { return stream(DeviceUtil.toDefaultStream.get(device.deviceClass)); }
 	@Override public Observable<Float> stream(DeviceStream streamId) { return streamsG.get(streamId).b.get(); }
 	@Override public Observable<Pair<DeviceStream,MeasurementType>> streams() { return Observable.from(streamsG.entrySet()).map(e -> pair(e.getKey(),e.getValue().a)); }
-	protected Observable<Float> baseStream() { return Observable.just(getValue()).concatWith(stream); }
+	protected Observable<Float> baseStream() { return status.statusType == enabled ? Observable.just(getValue()).concatWith(stream) : stream; }
 	
 	protected void addStream(State state, DeviceStream streamId, MeasurementType type, Supplier<Observable<Float>> streamG) {
 		DeviceStream typeStream = streamId == DeviceStream.pauseX ? DeviceUtil.toPauseShadowStream.get(device.deviceClass) : streamId;

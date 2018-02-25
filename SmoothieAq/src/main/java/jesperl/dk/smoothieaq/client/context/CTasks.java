@@ -46,8 +46,11 @@ public class CTasks {
 			idToTask.put(compactView.task.id, cTask);
 			tasksSubject.onNext(cTask);
 			ctx.cDevices.device(compactView.task.deviceId).subscribe(cd -> {
-				if (compactView.task.taskType().get().isOfType(auto)) cd.autoTaskX = newTask;
-				else cd.manualTasksSubject.onNext(newTask);
+				if (compactView.task.taskType().get().isOfType(auto)) {
+					cd.autoTasksSubject.onNext(newTask); //GWT.log("set autoTask on "+cd.getCurrentCompactView().name);
+				} else {
+					cd.manualTasksSubject.onNext(newTask); //GWT.log("and manualTask on "+cd.getCurrentCompactView().name);
+				}
 				newTask.cDeviceX = cd;
 			});
 		}

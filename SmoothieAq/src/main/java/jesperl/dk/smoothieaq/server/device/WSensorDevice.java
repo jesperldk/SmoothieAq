@@ -35,17 +35,21 @@ public class  WSensorDevice extends WDevice<SensorDriver> implements SensorDevic
 		startstopX.onNext(1f); 
 	}
 	@Override protected void disable(State state) { 
+		if (enabled) {
+			startstopX.onNext(0f); 
+			prevLevel = disabledLevel;
+			level().onNext(disabledLevel); 
+		}
 		enabled = false;
-		startstopX.onNext(0f); 
-		prevLevel = disabledLevel;
-		stream.onNext(disabledLevel); 
 		super.disable(state);
 	}
 	@Override protected void pause(State state) {
+		if (enabled) {
+			stream.onNext(disabledLevel); 
+			startstopX.onNext(0f);
+		}
 		enabled = true;
-		stream.onNext(disabledLevel); 
 		super.pause(state);
-		startstopX.onNext(1f); 
 	}
 	@Override protected void setupStreams(State state) {
 		addStream(state, DeviceStream.level,device.measurementType,() -> baseStream());

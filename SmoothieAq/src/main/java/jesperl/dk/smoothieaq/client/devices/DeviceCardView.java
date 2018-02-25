@@ -20,6 +20,7 @@ public class DeviceCardView extends MaterialCard {
 	Subscription subscription;
 	
 	public DeviceCardView(Pair<CDevice, DeviceCompactView> p) {
+//		GWT.log("1 DeviceCardView constr");
 		this.cd = p.a;
 		this.dc = p.b;
 		setOrientation(Orientation.LANDSCAPE);
@@ -43,10 +44,13 @@ public class DeviceCardView extends MaterialCard {
 			content.add(currently);
 		}
 		
+//		GWT.log("2 DeviceCardView constr");
 		MaterialCardAction action = new MaterialCardAction();
+//		GWT.log("3 DeviceCardView constr");
 		
 		action.add(DeviceUtil.actions(cd, dc));
 		add(action);
+//		GWT.log("done DeviceCardView constr");
 	}
 
 	@Override protected void onLoad() {

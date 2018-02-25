@@ -1,5 +1,6 @@
-package jesperl.dk.smoothieaq.server.resources.impl;
+package jesperl.dk.smoothieaq.server.resources.config;
 
+import jesperl.dk.smoothieaq.server.db.*;
 import jesperl.dk.smoothieaq.server.device.*;
 import jesperl.dk.smoothieaq.server.device.classes.*;
 import jesperl.dk.smoothieaq.server.state.*;
@@ -10,6 +11,7 @@ public class  RestImpl {
 	public State state() { return State.state(); }
 
 	protected DeviceContext context() { return state().dContext; }
+	protected DbContext dbContext() { return state().dbContext; }
 	
 	protected Wires wires() { return state().wires; }
 	public void doGuarded(Doit doit) { state().wires.doGuarded(doit); }

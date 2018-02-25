@@ -4,6 +4,7 @@ import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
 
 import java.util.logging.*;
 
+import jesperl.dk.smoothieaq.server.resources.config.*;
 import jesperl.dk.smoothieaq.server.resources.impl.*;
 import jesperl.dk.smoothieaq.shared.model.event.*;
 import jesperl.dk.smoothieaq.shared.resources.*;

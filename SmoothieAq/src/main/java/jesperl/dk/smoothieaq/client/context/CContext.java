@@ -8,9 +8,10 @@ public class CContext {
 	public final CDevices cDevices = new CDevices();
 	public final CTasks cTasks = new CTasks();
 	
-	public final TsMeasurements measurements = new TsMeasurements();
+	public TsMeasurements measurements;
 
 	public void init() {
 		cWires.init();
+		measurements = new TsMeasurements();
 	}
 }

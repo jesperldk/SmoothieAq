@@ -50,7 +50,7 @@ public class TsFull<E extends TsElement> implements TsSource<E> {
 		});
 	}
 	
-	private boolean filter(Func1<E,Boolean> predicate, E e) { return predicate == null || predicate.call(e); }
+	private static <E> boolean filter(Func1<E,Boolean> predicate, E e) { return predicate == null || predicate.call(e); }
 
 	@Override public Observable<E> newElements(Func1<E,Boolean> predicate) {
 		return newElements.filter(predicate);

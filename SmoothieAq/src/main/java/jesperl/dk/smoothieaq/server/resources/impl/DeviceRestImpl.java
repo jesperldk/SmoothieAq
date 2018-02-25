@@ -3,6 +3,7 @@ package jesperl.dk.smoothieaq.server.resources.impl;
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 
 import jesperl.dk.smoothieaq.server.device.classes.*;
+import jesperl.dk.smoothieaq.server.resources.config.*;
 import jesperl.dk.smoothieaq.shared.model.device.*;
 import jesperl.dk.smoothieaq.shared.resources.*;
 import rx.*;

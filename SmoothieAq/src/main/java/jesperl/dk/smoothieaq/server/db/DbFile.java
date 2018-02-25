@@ -72,6 +72,7 @@ public class  DbFile<DBO extends DbObject> {
 		assert !(fromNewestNotIncl != 0 && !withStamp);
 		assert !(fromNewestNotIncl == 0 || countNewer != 0);
 		long from = (fromNewestNotIncl == 0) ? Long.MAX_VALUE : fromNewestNotIncl;
+		log.info(()->"stream "+cls.getSimpleName()+", "+fromNewestNotIncl+", "+countNewer+", "+countOlder);
 		return Observable.create(SyncOnSubscribe.createSingleState(
 			() -> {
 				StreamState s = new StreamState();
@@ -86,7 +87,8 @@ public class  DbFile<DBO extends DbObject> {
 					s.lookbackPs = new int[s.nNewer];
 					s.scanning = fromNewestNotIncl != 0;
 				} catch (NoSuchFileException e) {
-					throw error(log, e, 110101, Severity.info, "File not found {0} - {1}", path, e.toString());
+//					throw error(log, e, 110101, Severity.info, "File not found {0} - {1}", path, e.toString());
+					error(log, e, 110101, Severity.info, "File not found {0} - {1}", path, e.toString());
 				} catch (Throwable e) {
 					if (s.channel != null) doNoException(() -> s.channel.close());
 					throw error(log, e, 110102, Severity.fatal, "Error opening file {0} - {1}", path, e.toString());
@@ -94,22 +96,28 @@ public class  DbFile<DBO extends DbObject> {
 				return s;
 			}, 
 			(s,o) -> {
+				if (s.channel == null) { o.onCompleted(); return; }
 				try {
 					if (s.scanning) {
+						log.finest(()->"start scanning "+cls.getSimpleName());
 						while (s.p > headerSize) {
 							s.map.position(s.p-2);
 							int dboSize = s.map.getShort();
 							s.map.position(s.p = s.p-2-dboSize);
 							long stamp = s.map.getLong();
 							if (stamp >= from) {
-								s.lookbackPs[s.lookbackPp % countNewer] = s.p;
-								s.lookbackPp++;
+								if (countNewer > 0) {
+									s.lookbackPs[s.lookbackPp % countNewer] = s.p;
+									s.lookbackPp++;
+								}
 							} else {
 								s.p = s.p+2+dboSize;
 								s.nNewer = min(s.nNewer, s.lookbackPp);
 								s.scanning = false;
+								break;
 							}
 						}
+						log.finest(()->"done scanning "+cls.getSimpleName()+", scanned "+s.lookbackPp);
 					}
 					if (s.nNewer > 0) {
 						s.nNewer--;
@@ -117,6 +125,7 @@ public class  DbFile<DBO extends DbObject> {
 						o.onNext(deserialize(s));
 					} else if (s.p <= headerSize || s.nOlder == 0) {
 						o.onCompleted();
+						log.finest(()->"onCompleted "+cls.getSimpleName());
 					} else {
 						s.nOlder--;
 						s.map.position(s.p-2);
@@ -145,7 +154,7 @@ public class  DbFile<DBO extends DbObject> {
 				((DbWithParrentId)dbo).id = s.map.getInt();
 		}
 		dbo.deserialize(s.map.get(), s.map, context);
-		log.fine("desialized "+cls.getSimpleName());
+		log.finest(()->"desialized "+cls.getSimpleName());
 		return dbo;
 	}
 	
@@ -175,7 +184,7 @@ public class  DbFile<DBO extends DbObject> {
 							buf.putInt(((DbWithParrentId)dbo).id);
 					}
 					dbo.serialize(buf, context);
-					log.fine("serialized "+dbo.getClass().getSimpleName());
+					log.finest(()->"serialized "+dbo.getClass().getSimpleName());
 					buf.putShort((short) (buf.position()-p));
 					if (fixedDboSize && dboSize == 0) dboSize = buf.position()-p;
 				});

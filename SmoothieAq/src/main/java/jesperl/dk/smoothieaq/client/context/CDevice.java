@@ -34,8 +34,8 @@ public class CDevice {
 	public final Single<Device> device;
 	public final Single<DeviceView> deviceView;
 	
-	/*friend*/ CTask autoTaskX;
-	public final Single<CTask> autoTask = Single.just(autoTaskX);
+	/*friend*/ Subject<CTask, CTask> autoTasksSubject = PublishSubject.create();
+	public final Observable<CTask> autoTask = autoTasksSubject.replay().autoConnect();
 	/*friend*/ Subject<CTask, CTask> manualTasksSubject = PublishSubject.create();
 	public final Observable<CTask> manualTasks = manualTasksSubject.replay().autoConnect();
 	
@@ -44,11 +44,12 @@ public class CDevice {
 
 	/*friend*/ CDevice(int id) { 
 		this.id = id;
-		compactView.map(Pair::getB).doOnNext(cv -> {
+		compactView/*.doOnNext(x->GWT.log("got cv on CDevice"))*/.map(Pair::getB).doOnNext(cv -> {
 			currentCompactView = cv;
 		}).first().subscribe(cv -> { // also gets it running hot...
 			setupStream(cv);
 		});
+		autoTask.subscribe(); // gets it running hot
 		manualTasks.subscribe(); // gets it running hot
 		device = Resources.device.get(id);
 		deviceView = Resources.device.getView(id);
@@ -65,16 +66,23 @@ public class CDevice {
 	public boolean isNotDeleted() { return currentCompactView == null || currentCompactView.statusType != deleted; }
 
 	protected void setupStream(DeviceCompactView cv) {
+//		GWT.log("setup stream");
 		for (DeviceStream devStream: toClientStreams.get(cv.deviceClass)) {
 			short streamId = (short) devStream.getId();
 			Observable<TsMeasurement> stream;
 			Subject<TsMeasurement, TsMeasurement> newStream = PublishSubject.create();
-			if (DeviceStreamUtil.toType.get(devStream) == continousStream ) {
+			if (devStream == DeviceStream.alarm) {
+				stream = Observable.just(new TsMeasurement(id, streamId, cv.currentAlarm)).concatWith(newStream).replay(1).autoConnect();
+			} else if (devStream == DeviceStream.duetask) {
+				stream = Observable.just(new TsMeasurement(id, streamId, cv.currentDuetasks)).concatWith(newStream).replay(1).autoConnect();
+			} else if (devStream == DeviceStream.error) {
+				stream = Observable.just(new TsMeasurement(id, streamId, cv.error == null ? 0f : 1f)).concatWith(newStream).replay(1).autoConnect();
+			} else if (DeviceStreamUtil.toType.get(devStream) == continousStream ) {
 				stream = Observable.just(new TsMeasurement(id, streamId, cv.currentValue)).concatWith(newStream).replay(1).autoConnect();
-				stream.subscribe(); // gets it running hot...
 			} else {
 				stream = newStream;
 			}
+			stream.subscribe(); // gets it running hot...
 			ctx.cWires.subscribeMeasurement(id, streamId, newStream );
 			streams.put(streamId, pair(getMeasurementType(streamId), stream));
 			formatters.put(streamId, getFormatter(streamId));
@@ -89,6 +97,7 @@ public class CDevice {
 		stream.subscribe(); // gets it running hot...
 		streams.put(streamId, pair(pair.a, stream));
 		formatters.put(streamId, getFormatter(shadowSourceId));
+//		GWT.log("done setup stream");
 	}
 	
 	private Function<Float,String> getFormatter(short streamId) {

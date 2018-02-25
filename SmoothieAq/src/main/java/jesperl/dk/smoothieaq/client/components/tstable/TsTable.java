@@ -81,7 +81,7 @@ public class TsTable extends Div {
 		queueSubscription = queueAsync.observeOn(GwtSchedulers.requestIdle()).subscribe(v -> {
 			if (!queue.isEmpty()) queue.remove().call();
 		});
-		refreshSubScription = source.refreshListen().doOnNext(v -> refresh()).subscribe();
+		refreshSubScription = source.refreshListen().subscribe(v -> refresh());
 		
 		atBeginningFlag = unloadedStamp == 0;
 		if (unloadedStamp == 0) toTop();
@@ -128,30 +128,32 @@ public class TsTable extends Div {
 		read(source.elementsFrom(stamp,allocateAbove,allocateBelow,null),0,size,null);
 	}
 	
-	public void down() {
+	public void down() { down(1); }
+	public void down(int n) {
+		assert n <= window;
 		if (atTail()) return;
-		if (pBot > pCurr && queue.isEmpty()) {
-			visible(pCurr, false);
-			pCurr++;
+		if (pBot > pCurr+n-1 && queue.isEmpty()) {
+			int nn = n; while (nn-- > 0 && !atTail()) visible(pCurr++, false);
 			if (atTail()) atEnd.onNext(true);
 			if (!queuedFillBottom && pCurr >= allocateAbove+window) { queuedFillBottom = true; queue(()->fillBottom()); }
 		} else if (pBot > pCurr && !queuedFillBottom) {
-			queuedFillBottom = true; queue(()->fillBottom(), ()->down());
+			queuedFillBottom = true; queue(()->fillBottom(), ()->down(n));
 		} else {
-			queue(()->down());
+			queue(()->down(n));
 		}
 	}
-	public void up() {
+	public void up() { up(1); }
+	public void up(int n) {
+		assert n <= window;
 		if (atHead()) return;
-		if (pTop < pCurr && queue.isEmpty()) {
-			pCurr--;
-			visible(pCurr, true);
+		if (pTop < pCurr-n+1 && queue.isEmpty()) {
+			int nn = n; while (nn-- > 0 && !atHead()) visible(--pCurr, true);
 			if (atHead()) atBeginning.onNext(true);
-			if (!queuedFillTop && pCurr <= allocateAbove-window) { queuedFillTop = true; queue(()->fillTop()); }
+			if (!queuedFillTop && pCurr <= allocateAbove-window) { /*GWT.log("queuedFillTop");*/ queuedFillTop = true; queue(()->fillTop()); }
 		} else if (pTop < pCurr && !queuedFillTop) {
-			queuedFillTop = true; queue(()->fillTop(), ()->up());
+			 /*GWT.log("queuedFillTop and up");*/ queuedFillTop = true; queue(()->fillTop(), ()->up(n));
 		} else {
-			queue(()->up());
+			queue(()->up(n));
 		}
 	}
 	
@@ -187,9 +189,9 @@ public class TsTable extends Div {
 		if (pTop >= window) {
 			long stamp = stamps[pTop];
 			int skip = 1; while (stamps[pTop+skip] == stamp) skip++;
-			read(source.elementsFrom(stamps[pTop+skip],pTop+skip+1,0,null),0,pTop+skip+1,() -> queuedFillTop = false);
+			/*GWT.log("readn then clear queuedFillTop");*/ read(source.elementsFrom(stamps[pTop+skip],pTop+skip+1,0,null),0,pTop+skip+1,() -> { /*GWT.log("clear queuedFillTop");*/ queuedFillTop = false; });
 		} else {
-			queuedFillTop = true; nextAction();
+			/*GWT.log("clear queuedFillTop");*/ queuedFillTop = false; nextAction();
 		}
 	}
 	
@@ -264,7 +266,7 @@ public class TsTable extends Div {
 	}
 
 	protected void nextAction() {
-		if (!queue.isEmpty()) queueAsync.onNext(null);
+		while (!queue.isEmpty() && subscription == null) queueAsync.onNext(null);
 	}
 
 	private class TsObserver implements Observer<TsRowData> {

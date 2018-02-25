@@ -1,16 +1,18 @@
 package jesperl.dk.smoothieaq.client;
 
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
+import static jesperl.dk.smoothieaq.util.shared.error.Errors.*;
 
 import java.util.*;
-import java.util.logging.*;
+
+import static jesperl.dk.smoothieaq.client.components.GuiUtil.*;
 
 import jesperl.dk.smoothieaq.shared.model.db.*;
 import jesperl.dk.smoothieaq.util.shared.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
 import rx.functions.*;
 
 public class ClientObjects {
-	private static final Logger log = Logger.getLogger(ClientObjects.class.getName());
 
 	@SafeVarargs
 	static public <K extends Enum<K>,V> Map<K,V> emap(Class<K> cls, Pair<K,V>... ps) {
@@ -43,6 +45,8 @@ public class ClientObjects {
 	public static class SingleResouceObserver<T> implements rx.Observer<T> {
 		@Override public void onCompleted() {}
 		@Override public void onNext(T t) {}
-		@Override public void onError(Throwable e) { log.log(Level.WARNING, "Error from Resource call", e); }
+		@Override public void onError(Throwable e) { resouceError(e); }
 	}
+	
+	public static void resouceError(Throwable e) { wToastError(error(e, 200101, Severity.medium, "Error from Resource call", e.toString())); }
 }

@@ -74,7 +74,7 @@ public class  Wires {
 		initSave(TaskStatus.class, 50, state.dbContext.dbTaskStatus);
 		initSave(TaskDone.class, 50, state.dbContext.dbTaskDone);
 		devMeasures
-			.map(m -> { m.value = ++state.serno; return m;}) // !!!!!!!!!!!!!! 
+//			.map(m -> { m.value = ++state.serno; return m;}) // !!!!!!!!!!!!!! 
 			.subscribe(initSave(Measure.class, 200, state.dbContext.dbMeasure));
 		saveDbClass.map(Collections::singletonList).subscribe(state.dbContext.dbClass.drain());
 //		pulse.map(v -> Measure.create((short)2, DeviceStream.level, 1f)).subscribe(devMeasures);

@@ -3,6 +3,7 @@ package jesperl.dk.smoothieaq.client.components;
 import static jesperl.dk.smoothieaq.client.text.EnumMessages.*;
 import static jesperl.dk.smoothieaq.client.text.FieldMessages.*;
 import static jesperl.dk.smoothieaq.client.text.InheritanceTypeMessages.*;
+import static jesperl.dk.smoothieaq.client.text.MsgMessages.*;
 import static jesperl.dk.smoothieaq.shared.util.Objects2.*;
 import static jesperl.dk.smoothieaq.util.shared.Objects.*;
 import static jesperl.dk.smoothieaq.util.shared.Objects.stream;
@@ -22,6 +23,7 @@ import gwt.material.design.client.ui.html.*;
 import jesperl.dk.smoothieaq.client.enums.*;
 import jesperl.dk.smoothieaq.shared.model.db.*;
 import jesperl.dk.smoothieaq.util.shared.*;
+import jesperl.dk.smoothieaq.util.shared.error.*;
 import jesperl.dk.smoothieaq.util.shared.error.Errors.*;
 import rx.*;
 import rx.Observable;
@@ -42,9 +44,6 @@ public class GuiUtil {
 		String activator = "A"+(dropdownNo++);
 		Span span = new Span();
 		MaterialIcon icon = wIconButton(iconType, iconColor, tooltip, () -> {});
-//		MaterialIcon icon = new MaterialIcon(iconType);
-//		if (iconColor != null) icon.setIconColor(iconColor);
-//		if (tooltip != null) icon.setTooltip(tooltip);
 		icon.setActivates(activator);
 		span.add(icon);
 		MaterialDropDown dropDown = new MaterialDropDown(activator);
@@ -70,30 +69,6 @@ public class GuiUtil {
 		if (doOnClick != null) btn.setWaves(WavesType.DEFAULT);
 		return btn;
 	}
-//	public static MaterialIcon wIconButton2(IconType iconType, Color iconColor, String tooltip, Action doOnClick) {
-//		MaterialIcon icon = new MaterialIcon(iconType) {
-//			@Override protected void onLoad() {
-//				super.onLoad();
-//				if (doOnClick != null) addClickHandler(e -> doOnClick.doit());
-//			}
-//		};
-//		icon.setCircle(true);
-//		if (iconColor != null) icon.setIconColor(iconColor);
-//		if (tooltip != null)  icon.setTooltip(tooltip);
-//		if (doOnClick != null) icon.setWaves(WavesType.DEFAULT);
-////		top: -2px; padding: 0px !important; padding-top: 7px !important; width: 16px !important; height: 16px !important; right: -6px; font-weight: bold; font-family: Roboto, sans-serif;
-////		icon: position: relative
-////		icon.setpLayoutPosition(Position.valueOf(name));
-//		MaterialBadge badge = new MaterialBadge("1", Color.WHITE, Color.RED);
-//		badge.setCircle(true);
-//		badge.setHeight("12px !important");
-//		badge.setWidth("12px !important");
-//		badge.setTop(-4);
-//		badge.setPadding(0);
-//		badge.setRight(2);
-//		icon.add(badge);
-//		return icon;
-//	}
 	public static MaterialWidget wBadge(MaterialWidget icon, Observable<Color> color, Observable<Float> no, boolean hideWhenZero) {
 		Span span = new Span();
 		span.addStyleName("badgeable");
@@ -104,7 +79,7 @@ public class GuiUtil {
 				if (hideWhenZero) span.addStyleName("hide");
 				addStyleName("hide");
 				subscriptions.subscripe(no, n -> {
-					if (n == 0) {
+					if (n < 0.01) {
 						if (hideWhenZero) span.addStyleName("hide");
 						addStyleName("hide");
 					} else {
@@ -319,6 +294,8 @@ public class GuiUtil {
 	public static void wToast(String str) { MaterialToast.fireToast(str); }
 	public static void wToastWarn(String str) { MaterialToast.fireToast(str); }
 	public static void wToastError(String str) { MaterialToast.fireToast(str); }
+	public static void wToastError(jesperl.dk.smoothieaq.util.shared.error.Error error) { MaterialToast.fireToast(msgMsg.format(error)); }
+	public static void wToastError(ErrorException error) { MaterialToast.fireToast(msgMsg.format(error.getError())); }
 	
 	private static final DateTimeFormat weekdayFmt = DateTimeFormat.getFormat("EEE");
 	private static final DateTimeFormat dateFmt = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_SHORT);

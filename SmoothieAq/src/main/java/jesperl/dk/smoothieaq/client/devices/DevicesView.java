@@ -59,7 +59,7 @@ public class DevicesView extends Composite {
         addBtn.addClickHandler(evt -> { Device device = new Device(); wModal(new DeviceEditView(device,true), () -> Resources.device.create(device.copy()).subscribe()); });
 
         devicesSubscription = ctx.cDevices.devices()
-        	.map(cd -> cd.compactView.map(DeviceCardView::new).map(this::deviceCol))
+        	.map(cd -> cd.compactView/*.doOnNext(cv -> GWT.log("got cv on DevicesView towards DeviceCardView"))*/.map(DeviceCardView::new).map(this::deviceCol))
         	.map(GuiUtil::wSingle).subscribe(cardRow::add);
     }
     

@@ -12,3 +12,6 @@ server.resources
 
 server.state
 1401.00
+
+client.generic
+2001.00

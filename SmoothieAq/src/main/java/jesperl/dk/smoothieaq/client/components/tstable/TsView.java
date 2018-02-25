@@ -18,8 +18,10 @@ public class TsView extends Div {
 		tableDiv.add(table);
 		add(tableDiv);
 		add(wButton(null, true, "Top", "Move to newest element and listen for more", ()->table.toTop()));
+		add(wButton(null, false, "Up10", "Move 10 elements up", ()->table.up(10)));
 		add(wButton(null, false, "Up", "Move one element up", ()->table.up()));
 		add(wButton(null, false, "Down", "Move one element down", ()->table.down()));
+		add(wButton(null, false, "Down10", "Move 10 elements down", ()->table.down(10)));
 	}
 	
 	public TsView setTableHeight(String height) {
